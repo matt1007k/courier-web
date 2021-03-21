@@ -16,7 +16,7 @@ def login_view(request):
         if user:
             login(request, user)
             messages.success(request, 'Bienvenido, {}'.format(user.username))
-            return redirect('pages:index')
+            return redirect('dash')
         else: 
             messages.error(request, 'Usuario y/o contraseña incorrecto')
 

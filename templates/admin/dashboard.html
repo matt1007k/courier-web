@@ -1,0 +1,12 @@
+{% extends "layouts/admin.html" %}
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+
+{% block content %}
+    <h5 class="font-medium">Hola {{ request.user.username }},</h5>
+    <h3>Bienvenido</h3>
+    <div class="card" style="margin-top: 40px">
+        <h5>Ganancias de hoy</h5>
+    </div>
+{% endblock content %}

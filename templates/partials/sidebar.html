@@ -4,8 +4,8 @@
         <img src="{% static 'img/logo.png' %}" alt="Cuy Click - Perú" class="logo">
     </div>
     <ul class="sidebar-menu">
-        <li class="active">
-            <a href="#">                       
+        <li class="{% if request.path == '/dashboard/' %}active{% endif %}">
+            <a href="{% url 'dash' %}">                       
                 <i class='bx bx-line-chart bx-sm'></i>
                 <span>Dashboard</span>
             </a>
@@ -28,8 +28,8 @@
 </aside>
 
 <ul class="tabbar">
-    <li class="active">
-        <a href="#">
+    <li class="{% if request.path == '/dashboard/' %}active{% endif %}">
+        <a href="{% url 'dash' %}">
             
             <i class='bx bx-line-chart bx-sm'></i>
             <span>Dashboard</span>
