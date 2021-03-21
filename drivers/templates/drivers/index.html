@@ -1,0 +1,104 @@
+{% extends "layouts/admin.html" %} {% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %} 
+{% block content %}
+<div class="title-section">
+  <h4>{{ title }}</h4>
+  <a href="{% url 'drivers:create' %}" class="btn btn-link">
+    <span>Nuevo motorizado</span>
+  </a>
+</div>
+
+<div class="card">
+     <form method='GET'>
+      <input type='search' name='q' placeholder="¿A quien estás buscando?" value='{{ request.GET.q }}'>
+      <button type='submit' class="btn btn-primary">Buscar</button>
+    </form>
+
+    <div class="table-list">
+        <div class="table-list-head">
+            <div class="table-list-head-item col-id">
+                #
+            </div>
+            <div class="table-list-head-item">
+                Nombre completo
+            </div>
+            <div class="table-list-head-item">
+                Celular
+            </div>
+            <div class="table-list-head-item">
+                Valoración
+            </div>
+            <div class="table-list-head-item">
+                Acciones 
+            </div>
+        </div>
+        {% for driver in object_list %}
+        <div class="table-list-row">
+            <div class="table-list-col">
+                <div class="title">#</div>
+                <p class="text-muted font-bold content">{{ driver.pk }}</p>
+            </div>
+            <div class="table-list-col">
+                <div class="title">Nombre completo</div>
+                <div class="content">
+                    <h6>{{ driver.full_name }}</h6>
+                    <p>DNI {{ driver.dni }}</p>
+                </div>
+            </div>
+            <div class="table-list-col">
+                <div class="title">Celular</div>
+                <p class="text-normal content">{{ driver.cell_phone }}</p>
+            </div>
+            <div class="table-list-col">
+                <div class="title">Valoración</div>
+                <div class="content">
+                    <span class="text-success">4.0</span> <span class="text-normal">(45 votos)</span>
+                </div>
+            </div>
+            <div class="table-list-col actions">
+                <a href="{% url 'drivers:detail' driver.slug %}" class="btn btn-link btn-small">Ver</a>
+                <a href="{% url 'drivers:update' driver.slug %}" class="btn btn-link btn-small">Editar</a>
+                <a href="{% url 'drivers:delete' driver.slug %}" class="btn btn-link danger btn-small">Eliminar</a>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    <div class="table-list-bottom">
+        <div class="table-list-details">
+            <p>
+                Página
+                <span class="font-medium">{{ page_obj.number }}</span>
+                de
+                <span class="font-medium">{{ page_obj.paginator.num_pages }}</span>
+                -
+                Total
+                <span class="font-semibold">{{ object_list.count }}</span>
+                registros
+            </p>
+        </div>
+        <div class="pagination space-x">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Anterior</a>
+          {% else %}
+            <a class="pagination-item disable">Anterior</a>
+          {% endif %}
+
+          {% for i in page_obj.paginator.page_range %} 
+            {% if page_obj.number == i %}
+              <a class="pagination-item page-number active">{{ i }}</a>
+            {% else %}
+              <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Siguiente</a>
+          {% else %}
+            <a class="pagination-item disable">Siguiente</a>
+          {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

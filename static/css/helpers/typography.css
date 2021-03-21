@@ -1,0 +1,142 @@
+h1, h2, h3, h4, h5, h6, .subheading{
+    font-family: 'Monsterrat', Arial, Helvetica, sans-serif;
+    color: rgb(var(--title-color));
+    margin: 0;
+}
+h1, h2, h3, h4{
+    font-weight: bold;
+}
+h5, h6{
+    font-weight: 600;
+}
+h1{
+    font-size: 72px;
+    line-height: 89px;
+}
+h2{
+    font-size: 48px;
+    line-height: 64px;
+}
+h3{
+    font-size: 32px;
+    line-height: 42px;
+}
+h4{
+    font-size: 25px;
+    line-height: 35px;
+}
+h5{
+    font-size: 20px;
+    line-height: 30px;
+    margin-bottom: 10px;
+}
+h6{
+    font-size: 15px;
+    line-height: 25px;
+}
+.subheading{
+    font-size: 14px;
+    text-transform: uppercase;
+}
+p{
+    color: var(--text-color);
+    font-size: 15px;
+    line-height: 25px;
+}
+.text-small{
+    font-size: 12px;
+    color: var(--text-secondary-color);
+    line-height: 22px; 
+}
+.text-primary{
+    color: rgb(var(--primary-color));
+}
+.text-secondary{
+    color: rgb(var(--secondary-color));
+}
+.text-success{
+    color: rgb(var(--success-color));
+}
+.text-danger{
+    color: rgb(var(--danger-color));
+}
+.text-warning{
+    color: rgb(var(--accent-color));
+}
+.text-normal{
+    color: rgb(var(--title-color), .8);
+}
+.text-muted{
+    color: var(--text-secondary-color);
+}
+
+.font-bold{
+    font-weight: 700;
+}
+.font-semibold{
+    font-weight: 600;
+}
+.font-medium{
+    font-weight: 500;
+}
+.font-normal{
+    font-weight: 400;
+}
+
+.text-center{
+    text-align: center;
+}
+.text-left{
+    text-align: left;
+}
+.text-right{
+    text-align: right;
+}
+@media (min-width: 640px) { 
+
+}
+
+@media (min-width: 768px) { 
+
+}
+
+@media (min-width: 1024px) { 
+    h1{
+        font-size: 72px;
+        line-height: 89px;
+    }
+    h2{
+        font-size: 48px;
+        line-height: 64px;
+    }
+    h3{
+        font-size: 32px;
+        line-height: 42px;
+    }
+    h4{
+        font-size: 25px;
+        line-height: 35px;
+    }
+    h5{
+        font-size: 20px;
+        line-height: 30px;
+        margin-bottom: 10px;
+    }
+    h6{
+        font-size: 15px;
+        line-height: 25px;
+    }
+    .subheading{
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+    p{
+        color: var(--text-color);
+        font-size: 15px;
+        line-height: 25px;
+    }
+}
+
+@media (min-width: 1280px) { 
+
+}

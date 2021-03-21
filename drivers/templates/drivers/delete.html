@@ -1,0 +1,12 @@
+{% extends "layouts/pages.html" %} {% block title %}
+<title>Cuy Click Perú - Eliminar motorizado</title>
+{% endblock title %} {% block content %}
+<h1>Eliminar motorizado</h1>
+<form method="post">
+  {% csrf_token %}
+  <h4>¿Estás seguro de eliminar el registro?</h4>
+  <p>Está operación no se puede revertir.</p>
+  <button type="submit">Si, eliminar</button>
+  <a href="{% url 'drivers:index' %}">Cancelar</a>
+</form>
+{% endblock content %}

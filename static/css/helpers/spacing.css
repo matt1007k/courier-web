@@ -1,0 +1,10 @@
+.space-x-2 > :not(template) ~ :not(template) {
+    --space-x-reverse: 0;
+    margin-right: calc(1rem * var(--space-x-reverse));
+    margin-left: calc(1rem * (1 - var(--space-x-reverse)));
+}
+.space-x > :not(template) ~ :not(template) {
+    --space-x-reverse: 0;
+    margin-right: calc(.63rem * var(--space-x-reverse));
+    margin-left: calc(.63rem * (1 - var(--space-x-reverse)));
+}

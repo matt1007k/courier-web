@@ -1,0 +1,38 @@
+.form-group{
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: rgba(var(--title-color), .8);
+}
+.form-group input, input {
+    border-radius: 7px;
+    border: 2px solid var(--btn-default-color);
+    font-weight: 400;
+    outline: none;
+    padding: 18px 20px;
+    background: var(--btn-default-color);
+    color: rgb(var(--title-color), 0.85) !important;
+    font-size: inherit;
+    transition: all .3s;
+}
+.input:-internal-autofill-selected{
+    background: var(--btn-default-color) !important;
+}
+.form-group input:focus, input:focus{
+    border: 2px solid rgb(var(--primary-color));
+}
+.form-group input::placeholder, input::placeholder{
+    color: rgb(var(--title-color), 0.5);
+}
+.form-group input.is-invalid, input.is-invalid{
+    border: 2px solid rgb(var(--danger-color));
+}
+.form-group .text-invalid{
+    color: rgb(var(--danger-color));
+    margin-top: 5px;
+}

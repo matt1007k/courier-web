@@ -1,0 +1,9 @@
+{% extends "layouts/pages.html" %} {% block title %}
+<title>Cuy Click Perú - Inicio</title>
+{% endblock title %} {% load i18n %} {% block content %}
+<h1>Registra un pedido</h1>
+{% if request.user.is_authenticated %}
+<a href="{% url 'auth:logout' %}" class="btn">Salir</a>
+{% translate "This is the title." noop %} {% else %}
+<a href="/auth/login" class="btn">Login</a>
+{% endif %} {% endblock content %}

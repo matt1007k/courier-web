@@ -1,0 +1,13 @@
+{% extends "layouts/pages.html" %} {% block title %}
+<title>Cuy Click Perú - Editar motorizado</title>
+{% endblock title %} {% block content %}
+<h1>Editar motorizado</h1>
+<a href="{% url 'auth:create' %}?next={{request.path|urlencode}}"
+  >Nuevo usuario</a
+>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %} {{ form }}
+  <button type="submit">Editar</button>
+  <a href="{% url 'drivers:index' %}">Cancelar</a>
+</form>
+{% endblock content %}

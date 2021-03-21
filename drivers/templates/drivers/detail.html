@@ -1,0 +1,21 @@
+{% extends "layouts/pages.html" %}
+{% block title %}
+<title>Cuy Click Perú - Perfil del motorizado</title>
+{% endblock title %}
+{% block content %}
+<h1>Perfil del motorizado</h1>
+<div>{{ object.user.username }} {{ object.full_name}}</div>
+
+{% if request.user.is_authenticated and request.user == object.user %}
+{% if object.vehicle %}
+<a href="{% url 'drivers:update-vehicle' object.vehicle.pk %}?next={{ request.path }}">
+  Editar moto
+</a>
+{% else %}
+<a href="{% url 'drivers:create-vehicle' %}?next={{ request.path }}">
+  Registrar moto
+</a>
+{% endif %}
+<div>Detalle de moto {{ object.vehicle.serial_number }}</div>
+{% endif %}
+{% endblock content %}

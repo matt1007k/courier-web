@@ -1,0 +1,27 @@
+{% extends "layouts/pages.html" %}
+
+{% block title %}
+    <title>Cuy Click Perú - Registro</title>
+{% endblock title %}
+
+{% block content %}
+  <div class="container">
+ 
+    <h2>Crear una cuenta</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+            <div class="text-invalid">
+              {{ field.errors }}
+            </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Registrarse</button>
+    </form>
+ </div>
+{% endblock content %}

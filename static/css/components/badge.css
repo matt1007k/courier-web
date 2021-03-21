@@ -1,0 +1,23 @@
+
+.badge{
+    padding: 9px 12px;
+    border-radius: 12px;
+    display: inline-block;
+    font-weight: 500;
+}
+.badge-primary{
+    background: rgba(var(--primary-color), .1);
+    color: rgb(var(--primary-color));
+}
+.badge-success{
+    background: rgba(var(--success-color), .1);
+    color: rgb(var(--success-color));
+}
+.badge-warning{
+    background: rgba(var(--accent-color), .1);
+    color: rgb(var(--accent-color));
+}
+.badge-danger{
+    background: rgba(var(--danger-color), .1);
+    color: rgb(var(--danger-color));
+}

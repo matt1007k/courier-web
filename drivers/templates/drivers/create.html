@@ -1,0 +1,12 @@
+{% extends "layouts/pages.html" %} {% block title %}
+<title>Cuy Click Perú - Registrar motorizado</title>
+{% endblock title %} {% block content %}
+<h1>Registrar motorizado</h1>
+<a href="{% url 'auth:create' %}?next={{request.path|urlencode}}"
+  >Nuevo usuario</a
+>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %} {{ form }}
+  <button type="submit">Guardar</button>
+</form>
+{% endblock content %}
