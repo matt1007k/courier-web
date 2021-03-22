@@ -8,3 +8,9 @@
     margin-right: calc(.63rem * var(--space-x-reverse));
     margin-left: calc(.63rem * (1 - var(--space-x-reverse)));
 }
+.mb-2{
+    margin-bottom: 0.5rem;
+}
+.mb-4{
+    margin-bottom: 1rem;
+}

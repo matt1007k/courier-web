@@ -16,3 +16,16 @@ class ClientModelForm(forms.ModelForm):
             'driver_code',
             'social_media'
         )
+
+class ClientRegisterForm(forms.ModelForm):
+    class Meta:
+        model = Client 
+        fields = (
+            'first_name',
+            'last_name',
+            'address',
+            'logo',
+            'store_name',
+            'driver_code',
+            'social_media'
+        )

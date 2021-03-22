@@ -27,7 +27,7 @@ class DriverListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.query():
-            filters = Q(dni__icontains=self.query()) | Q(last_name__icontains=self.query())
+            filters = Q(dni__icontains=self.query()) | Q(last_name__icontains=self.query()) | Q(first_name__icontains=self.query())
             object_list = self.model.objects.filter(filters)
         else:
             object_list = self.model.objects.all().order_by('-id')

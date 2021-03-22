@@ -1,15 +1,15 @@
 {% extends "layouts/auth.html" %}
 
 {% block title %}
-    <title>Cuy Click Perú - Registro</title>
+    <title>Cuy Click Perú - Completa tu información</title>
 {% endblock title %}
 
 {% block content %}
-  <div class="container-auth">
+  <div class="container-auth medium">
     {% include "partials/message.html" %}
 
-    <h4>Crear una cuenta</h4>
-    <form method="post">
+    <h5 class="text-left">Completa tu información</h5>
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}
         <div class="form-group">
@@ -22,8 +22,7 @@
           {% endif %}
         </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary btn-full">Registrarse</button>
+        <button type="submit" class="btn btn-primary btn-full">Finalizar</button>
     </form>
-    <p>¿Ya tengo una cuenta? <a href="{% url 'auth:login' %}" class="link">Ingresar</a></p>
  </div>
 {% endblock content %}
