@@ -1,6 +1,7 @@
 
 @import 'base.css';
 
+@import 'helpers/flex.css';
 @import 'helpers/spacing.css';
 @import 'helpers/typography.css';
 
@@ -13,6 +14,7 @@
 @import 'components/dragable.css';
 @import 'components/dropdown.css';
 @import 'components/forms.css';
+@import 'components/icon.css';
 @import 'components/navbar.css';
 @import 'components/pagination.css';
 @import 'components/tabbar.css';

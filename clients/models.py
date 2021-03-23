@@ -19,3 +19,6 @@ class Client(models.Model):
     def full_name(self) -> str:
         return "{} {}".format(self.first_name, self.last_name)
 
+    class Meta:
+        verbose_name = "cliente"
+        verbose_name_plural = "clientes"

@@ -60,7 +60,29 @@
 /** page content **/
 .page-admin .page-content{
     flex: auto;
-    overflow: scroll;
+    overflow: auto;
+}
+.content-head{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 2rem 0;
+}
+.content-head .left{
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+ }
+.content-head .right{
+    display: flex;
+    align-items: center;
+}
+@media (min-width: 760px){
+    .content-head{
+        flex-direction: row;
+        align-items: center;
+    }
 }
 @media (min-width: 1140px) { 
     .page-admin .sidebar{

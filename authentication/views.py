@@ -33,12 +33,15 @@ def logout_view(request):
 def register_view(request):
     form = RegisterForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
-
         user = form.save()
         if user:
             login(request, user)
             messages.success(request, 'Cuenta creada con exitó')
             return redirect('auth:complete-info')
+    else:
+        # Append css class to every field that contains errors.
+        for field in form.errors:
+            form[field].field.widget.attrs['class'] += ' is-invalid'
         
     return render(request, 'auth/register.html', context={
         'form': form

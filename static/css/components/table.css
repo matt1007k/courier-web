@@ -33,7 +33,7 @@
     grid-template-columns: 0.5fr 1fr;
     width: 100%;
 }
-.table-list .table-list-row .table-list-col .actions{
+.table-list .table-list-row .table-list-col.actions{
     grid-template-columns: repeat(3, 1fr);
 }
 .table-list .table-list-row .table-list-col .content{

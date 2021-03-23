@@ -16,9 +16,11 @@
           {{ field.label_tag }}
           {{ field }}
           {% if field.errors %}
+            {% for error in field.errors %}
             <div class="text-invalid">
-              {{ field.errors }}
+              {{ error }}
             </div>
+            {% endfor %}
           {% endif %}
         </div>
         {% endfor %}

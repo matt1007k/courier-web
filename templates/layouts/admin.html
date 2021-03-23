@@ -9,7 +9,7 @@
     <title>Cuy Click Perú - Courier</title>
     {% endblock title %}
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="{% static 'css/nomarlize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
   </head>
@@ -24,6 +24,7 @@
             
             {% include "partials/navbar.html" %}
             <div class="container">
+                {% block content_head %} {% endblock content_head %}
                 {% block content %} {% endblock content %}
             </div>
         </div>

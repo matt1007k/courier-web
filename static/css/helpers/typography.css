@@ -48,25 +48,25 @@ p{
     line-height: 22px; 
 }
 .text-primary{
-    color: rgb(var(--primary-color));
+    color: rgb(var(--primary-color)) !important;
 }
 .text-secondary{
-    color: rgb(var(--secondary-color));
+    color: rgb(var(--secondary-color)) !important;
 }
 .text-success{
-    color: rgb(var(--success-color));
+    color: rgb(var(--success-color)) !important;
 }
 .text-danger{
-    color: rgb(var(--danger-color));
+    color: rgb(var(--danger-color)) !important;
 }
 .text-warning{
-    color: rgb(var(--accent-color));
+    color: rgb(var(--accent-color)) !important;
 }
 .text-normal{
-    color: rgb(var(--title-color), .8);
+    color: rgb(var(--title-color), .8) !important;
 }
 .text-muted{
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color) !important;
 }
 
 .font-bold{

@@ -1,6 +1,4 @@
 from django import forms
-# from .models import User as 
-# from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 User = get_user_model()
@@ -46,7 +44,7 @@ class RegisterForm(forms.Form):
 
         if cleaned_data.get('password2') != cleaned_data.get('password'):
             self.add_error('password2', 'La contraseña no coincide')
-
+    
     def save(self):
         return User.objects.create_user(
             self.cleaned_data.get('username'),

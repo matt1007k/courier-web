@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'pages',
     'authentication',
     'drivers',
-    'clients'
+    'clients',
+    'orders',
 ]
 
 MIDDLEWARE = [

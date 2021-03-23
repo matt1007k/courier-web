@@ -1,19 +1,33 @@
 {% extends "layouts/admin.html" %} {% block title %}
 <title>Cuy Click Perú - Editar motorizado</title>
-{% endblock title %} {% block content %}
+{% endblock title %} 
+{% block content_head %}
 <div class="content-head">
-  <h4>Editar motorizado</h4>
-  <a href="{% url 'auth:create' %}?next={{request.path|urlencode}}"
-    class="btn btn-outline-primary btn-small">Nuevo usuario</a
-  >
+  <div class="left">
+      <a href="{% url 'drivers:index' %}" class="btn btn-link btn-small">
+        <i class='bx bx-left-arrow-alt bx-sm'></i>
+      </a>
+      <h4>Editar motorizado</h4>
+  </div>
+  <div class="right">
+      <a href="{% url 'auth:create' %}?next={{request.path|urlencode}}" class="btn btn-link btn-small text-primary">Nuevo usuario</a>
+  </div>
 </div>
-<div class="card">
+{% endblock content_head %}
+{% block content %}
+<div class="card mb-10">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %} 
     {% for field in form %}
     <div class="form-group">
-      {{ field.label_tag }} {{ field }} {% if field.errors %}
-      <div class="text-invalid">{{ field.errors }}</div>
+      {{ field.label_tag }} 
+      {{ field }} 
+      {% if field.errors %}
+        {% for error in field.errors %}
+        <div class="text-invalid">
+          {{ error }}
+        </div>
+        {% endfor %}
       {% endif %}
     </div>
     {% endfor %}
