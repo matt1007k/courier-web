@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.views.generic import CreateView
 
-# Create your views here.
+
+
+# class OrderCreateView(CreateView):
+#     template_name = 'orders/create-order-client.html'
+#     form_class = CreateOrderClientModelForm

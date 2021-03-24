@@ -42,6 +42,7 @@
 .table-list .table-list-row .table-list-col .title{
     display: block;
     color: var(--text-secondary-color);
+    font-weight: 600;
 } 
 .table-list .table-list-row:last-child{
     border-bottom: none;

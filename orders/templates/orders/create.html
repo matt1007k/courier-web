@@ -12,8 +12,7 @@
     </a>
 </div>
 <div class="card mb-10">
-    <form method="post">
-        {% csrf_token %} 
+    
         {% for field in form %}
             <div class="form-group">
             {{ field.label_tag }} 
@@ -27,6 +26,142 @@
         <a href="{% url 'orders:index' %}" class="btn btn-default">Cancelar</a>
         <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
-  </form>
+ 
 </div>
+<form method="post">
+    {% csrf_token %} 
+    <div class="flex mb-10 order-wrapper">
+        <div class="order-content">
+            <div class="card mb-6">
+                <h4 class="tracking-code"># TRACKING <span>CC000232</span></h4>
+                <div class="client-info">
+                    <div>
+                        <h6>Juan Carlos Villalobos Rojas</h6>
+                        <p>DNI 70361125</p>
+                    </div>
+                    <div>
+                        <h6>Celular</h6>
+                        <p>952415252</p>
+                    </div>
+                    <div>
+                        <h6>Dirección</h6>
+                        <p>Jr. Los pasajes 322</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card order-details">
+
+                <div class="order-details-head">
+                    <h4>Detalle del pedido</h4>
+                    <a href="#" class="link">Ver cálculo de tarifa</a>
+                </div>
+
+                <div class="order-details-content">
+
+                    <a href="#" class="btn btn-link btn-small">Agregar elemento de envío</a>
+
+                    <div class="order-details-item">
+
+                        <div class="actions right">
+                            <a href="#" class="btn btn-link btn-small">Ver detalle</a>
+                            <a href="#" class="btn btn-link btn-small">Editar</a>
+                            <a href="#" class="btn btn-link btn-small text-danger">Eliminar</a>
+                        </div>
+
+                        <div class="address">   
+
+                            <div class="origin">
+                                <h5 class="m-0">Jr. Los Angeles 322</h5>
+                                <p class="mb-4">Jesús María, Lima</p>
+
+                                <h6>Referencia</h6>
+                                <p>A media cuadra del grifo hola.</p>
+                            </div>
+
+                            <i class='icon bx bx-right-arrow-alt bx-sm'></i> 
+
+                            <div class="destiny">
+                                <h5 class="m-0">Av. Brasil 432</h5>
+                                <p class="mb-2">Cercado, Lima</p>
+
+                                <h6>Referencia</h6>
+                                <p class="mb-2">Al lado la plaza central</p>
+
+                                <h6>Para</h6>
+                                <p>Josef Rojas Gutierrez</p>
+                            </div>
+
+                        </div>
+
+                        <div class="footer">
+                        
+                            <h5>Detalles del paquete</h5> 
+                            <div class="footer-details">
+                                <div class="package">
+                                    <a href="#" class="package-picture">
+                                        <img src="./media/logo.png" alt="Imagen del pago">
+                                    </a>
+                                    <div class="package-details">
+                                        <h6>Descripción</h6>
+                                        <p>1 caja - etiqueta con mis datos</p>
+                                    </div>
+                                </div>
+                                <div class="summary">
+                                    <div class="text-center">
+                                        <p>Distancia</p>
+                                        <h4>2.5KM</h4>
+                                    </div>
+                                    <div class="text-center tracking-price">
+                                        <p>Precio de tarifa</p>
+                                        <div class="price">
+                                            <span class="text-muted font-medium" style="margin-bottom: 5px; margin-right: 5px;">S/.</span>
+                                            <div class="h4 font-bold">
+                                                25
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="order-total mb-10">
+            <div class="card">
+                <div class="text-right">
+                    <h5 class="m-0">Total a pagar</h5> 
+                    <div>
+                        <span class="h4 text-body font-medium">S/.</span>
+                        <span class="h2 font-bold">50<span/>
+                    </div>
+                </div>
+                <div class="order-total-payed">
+                    <div class="flex items-center justity-end mb-6">
+                        <a href="#" class="link">Ver forma de pago</a>
+                    </div>
+                    <h6 class="mb-2">Imagen del pago realizado</h6>
+                    <input type="file" name="payed_image" id="payed_image" class="input w-full">
+                    <a href="#" class="payed-image">
+                        <img src="./media/logo.png" alt="Imagen del pago">
+                    </a>
+
+                    <h6 class="mb-2 mt-4">Comprobante electrónico</h6>
+                    <select name="type_ticket" id="type_ticket" class="input w-full">
+                        <option value="factura">Factura</option>
+                        <option value="boleta">Boleta</option>
+                    </select>
+                </div>
+                <div class="actions full">
+                    <button class="btn btn-primary">Completar pedido</button>
+                    <a href="#" class="btn btn-default">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+ </form>
 {% endblock content %}

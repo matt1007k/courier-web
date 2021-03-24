@@ -1,35 +1,35 @@
-h1, h2, h3, h4, h5, h6, .subheading{
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .subheading{
     font-family: 'Montserrat', Arial, Helvetica, sans-serif;
     color: rgb(var(--title-color));
     margin: 0;
 }
-h1, h2, h3, h4{
+h1, h2, h3, h4, .h1, .h2, .h3, .h4{
     font-weight: bold;
 }
-h5, h6{
+h5, h6, .h5, .h6{
     font-weight: 600;
 }
-h1{
+h1, .h1{
     font-size: 34px;
     line-height: 44px;
 }
-h2{
+h2, .h2{
     font-size: 28px;
     line-height: 38px;
 }
-h3{
+h3, .h3{
     font-size: 25px;
     line-height: 35px;
 }
-h4{
+h4, .h4{
     font-size: 20px;
     line-height: 30px;
 }
-h5{
+h5, .h5{
     font-size: 17px;
     line-height: 27px;
 }
-h6{
+h6, .h6{
     font-size: 15px;
     line-height: 25px;
 }
@@ -62,8 +62,8 @@ p{
 .text-warning{
     color: rgb(var(--accent-color)) !important;
 }
-.text-normal{
-    color: rgb(var(--title-color), .8) !important;
+.text-body{
+    color: var(--text-color) !important;
 }
 .text-muted{
     color: var(--text-secondary-color) !important;
@@ -100,28 +100,28 @@ p{
 }
 
 @media (min-width: 1024px) { 
-    h1{
+    h1, .h1{
         font-size: 72px;
         line-height: 89px;
     }
-    h2{
+    h2, .h2{
         font-size: 48px;
         line-height: 64px;
     }
-    h3{
+    h3, .h3{
         font-size: 32px;
         line-height: 42px;
     }
-    h4{
+    h4, .h4{
         font-size: 25px;
         line-height: 35px;
     }
-    h5{
+    h5, .h5{
         font-size: 20px;
         line-height: 30px;
         margin-bottom: 10px;
     }
-    h6{
+    h6, .h6{
         font-size: 15px;
         line-height: 25px;
     }

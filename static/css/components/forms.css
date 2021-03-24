@@ -42,7 +42,7 @@
 .input:-internal-autofill-selected{
     background: var(--btn-default-color) !important;
 }
-.form-group input:focus, input:focus, textarea:focus, select:focus {
+.form-group input:focus, input:focus, textarea:focus, select:focus{
     border: 2px solid rgb(var(--primary-color));
 }
 .form-group input::placeholder, input::placeholder{
