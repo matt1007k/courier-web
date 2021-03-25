@@ -19,7 +19,7 @@ def login_view(request):
         if user:
             login(request, user)
             messages.success(request, 'Bienvenido {}'.format(user.username))
-            next_url = str(request.GET.get('next'))
+            next_url = request.GET.get('next')
             if next_url:
                 return redirect(next_url)
             return redirect('dash')

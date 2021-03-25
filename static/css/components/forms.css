@@ -10,6 +10,7 @@
     color: rgba(var(--title-color), .8);
 }
 .form-group input, input, textarea {
+    width: 100%;
     border-radius: 7px;
     border: 2px solid var(--btn-default-color);
     font-weight: 400;
@@ -22,6 +23,7 @@
     transition: all .3s;
 }
 .form-group select, select {
+    width: 100%;
     border-radius: 7px;
     border: 2px solid var(--btn-default-color);
     font-weight: 400;

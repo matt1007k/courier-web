@@ -16,6 +16,6 @@ class DetailForm(forms.Form):
     image = forms.ImageField(required=False, label='Imagen del paquete (opcional)', widget=forms.FileInput(attrs={
         'class': 'input'
     }))
-    description = forms.CharField(max_length=150, label='descripción del paquete' ,widget=forms.Textarea(attrs={
+    description = forms.CharField(max_length=150, label='Descripción del paquete' ,widget=forms.Textarea(attrs={
         'class': 'input'
     }))
