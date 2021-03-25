@@ -1,0 +1,82 @@
+{% extends "layouts/admin.html" %} {% block title %}
+<title>Cuy Click Perú - Registrar envío</title>
+{% endblock title %}
+
+{% block content_head %}
+<div class="content-head">
+  <div class="left">
+      <a href="{% url 'orders:create-client' %}" class="btn btn-link btn-small">
+        <i class='bx bx-left-arrow-alt bx-sm'></i>
+      </a>
+      <h4>Registrar envío</h4>
+  </div>
+</div>
+{% endblock content_head %}
+
+{% block content %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+    <div class="card mb-4">
+        <h5 class="mb-2">Información de la persona a enviar</h5>
+        <p class="mb-4">El paquete no debe superar los <span class="h6">5kg</span> y las dimensiones de <span class="h6">30x30x30cm</span>.</p>
+        <div class="form-grid-2">
+        {% for field in info_form %}
+        <div class="form-group">
+            {{ field.label_tag }} 
+            {{ field }} 
+            {% if field.errors %}
+                {% for error in field.errors %}
+                <div class="text-invalid">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div class="card mb-10">
+        <div class="form-grid-3 detail-address">
+            <div>
+                <h5 class="mb-4">Dirección de recojo</h5>
+                {% for field in origin_form %}
+                <div class="form-group">
+                    {{ field.label_tag }} 
+                    {{ field }} 
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                        <div class="text-invalid">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <i class='icon bx bx-right-arrow-alt bx-md text-title'></i> 
+            <div>
+                <h5 class="mb-4">Dirección de destino</h5>
+                {% for field in destiny_form %}
+                <div class="form-group">
+                    {{ field.label_tag }} 
+                    {{ field }} 
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                        <div class="text-invalid">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="actions right mt-5">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{% url 'orders:create-client' %}" class="btn btn-default">Cancelar</a>
+        </div>
+    </div>
+  </form>
+{% endblock content %}

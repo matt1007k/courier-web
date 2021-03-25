@@ -12,15 +12,14 @@ class Driver(models.Model):
     first_name = models.CharField(max_length=100, verbose_name='Nombre')
     last_name = models.CharField(max_length=100, verbose_name='Apellidos')
     slug = models.SlugField(blank=True, null=True, unique=True)
-    code = models.CharField(max_length=10, verbose_name='código')
+    code = models.CharField(max_length=9, unique=True, verbose_name='código')
     dni = models.CharField(max_length=8, unique=True)
-    address = models.CharField(max_length=100, verbose_name='dirección')
     cell_phone = models.CharField(max_length=9, verbose_name='Num. de celular')
     cell_phone2 = models.CharField(max_length=9, null=True, blank=True, verbose_name='Num. de celular 2')
-    current_address = models.CharField(max_length=200, verbose_name='dirección actual')
+    address = models.CharField(max_length=100, verbose_name='dirección')
     references = models.TextField(max_length=200, verbose_name='referencias')
     district = models.CharField(max_length=100, verbose_name='distrito')
-    avatar = models.ImageField(upload_to="drivers/", null=False, blank=False)
+    address_gps = models.JSONField(null=True, blank=True, max_length=100, verbose_name='dirección actual')
     payment_account = models.CharField(max_length=14, verbose_name='número de cuenta')
 
     def __str__(self) -> str:
@@ -55,3 +54,7 @@ class Vehicle(models.Model):
 
     def __str__(self):
         return self.serial_number
+
+    class Meta:
+        verbose_name = "vehiculo"
+        verbose_name_plural = "vehiculos"

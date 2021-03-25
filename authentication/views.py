@@ -19,6 +19,9 @@ def login_view(request):
         if user:
             login(request, user)
             messages.success(request, 'Bienvenido {}'.format(user.username))
+            next_url = str(request.GET.get('next'))
+            if next_url:
+                return redirect(next_url)
             return redirect('dash')
         else: 
             messages.error(request, 'Usuario y/o contraseña incorrecto')
@@ -36,7 +39,6 @@ def register_view(request):
         user = form.save()
         if user:
             login(request, user)
-            messages.success(request, 'Cuenta creada con exitó')
             return redirect('auth:complete-info')
     else:
         # Append css class to every field that contains errors.
@@ -53,7 +55,7 @@ class CompleteInfoClientView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self) -> str:
         messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))
-        return reverse("dash")
+        return reverse('dash')
     
     def form_valid(self, form: ClientRegisterForm) -> HttpResponse:
         form.instance.user = self.request.user
@@ -65,6 +67,6 @@ class UserCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self) -> str:
         messages.success(self.request, 'Usuario registrado con exitó')
-        return self.request.GET.get('next', reverse('auth:create'))
+        return reverse('auth:create')
 
 

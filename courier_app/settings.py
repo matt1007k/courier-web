@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'drivers',
     'clients',
     'orders',
+    'addresses',
+    'details',
 ]
 
 MIDDLEWARE = [

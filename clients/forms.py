@@ -1,7 +1,7 @@
 from django import forms
-from django.forms import fields
 
 from .models import Client
+from drivers.models import Driver
 
 class ClientModelForm(forms.ModelForm):
     class Meta:
@@ -9,13 +9,18 @@ class ClientModelForm(forms.ModelForm):
         fields = (
             'first_name',
             'last_name',
-            'address',
-            'address_gps',
             'logo',
             'store_name',
             'driver_code',
             'social_media'
         )
+
+    def clean_driver_code(self):
+        driver_code: str = self.cleaned_data.get('driver_code')
+
+        if not Driver.objects.filter(code=driver_code).exists():
+            raise forms.ValidationError('El código de motorizado no existe.')
+        return driver_code
 
 class ClientRegisterForm(forms.ModelForm):
     class Meta:
@@ -23,9 +28,13 @@ class ClientRegisterForm(forms.ModelForm):
         fields = (
             'first_name',
             'last_name',
-            'address',
             'logo',
             'store_name',
             'driver_code',
-            'social_media'
         )
+    def clean_driver_code(self):
+        driver_code: str = self.cleaned_data.get('driver_code')
+
+        if not Driver.objects.filter(code=driver_code).exists():
+            raise forms.ValidationError('El código de motorizado no existe.')
+        return driver_code

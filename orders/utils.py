@@ -1,6 +1,21 @@
 from .models import Order
 
-def generate_tracking_code(request):
+def get_or_create_order(request):
+    user = request.user if request.user.is_authenticated else None
+    order_id  = request.session.get('order_id')
+
+    if order_id:
+        order = Order.objects.get(pk=order_id)
+    else:
+        tracking_code = get_generate_tracking_code()
+        order = Order.objects.create(
+                                client=user.client, 
+                                tracking_code=tracking_code
+                                )
+    request.session['order_id'] = order.id
+    return order
+
+def get_generate_tracking_code():
     orders_count = Order.objects.count()
     zero = ''
     
@@ -17,5 +32,5 @@ def generate_tracking_code(request):
     if orders_count >= 100000:
         zero = ''
 
-    code = '{}{}'.format(zero, orders_count)
+    code = '{}{}'.format(zero, orders_count + 1)
     return 'CC{}'.format(code)

@@ -35,6 +35,9 @@ body.dark{
 .container{
     padding: 0 20px;
 }
+.w-full{
+    width: 100%;
+}
 @media (min-width: 1024px){
     .container{
         max-width: 980px;

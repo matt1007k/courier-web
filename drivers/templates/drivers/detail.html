@@ -4,7 +4,7 @@
 {% endblock title %}
 {% block content %}
 <h1>Perfil del motorizado</h1>
-<div>{{ object.user.username }} {{ object.full_name}}</div>
+<div>{{ object.code }} {{ object.full_name}}</div>
 
 {% if request.user.is_authenticated and request.user == object.user %}
 {% if object.vehicle %}

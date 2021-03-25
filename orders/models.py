@@ -19,6 +19,7 @@ class Order(models.Model):
     total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     type_ticket = models.CharField(max_length=10, choices=TypeTicket.choices, default=TypeTicket.FACTURA, verbose_name="Comprobante electrónico")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')
+    payed_image = models.ImageField(upload_to='orders/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen del pago realizado')
 
     def __str__(self) -> str:
         return self.tracking_code 

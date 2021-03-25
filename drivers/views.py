@@ -1,4 +1,5 @@
 from typing import Any
+from django.http import request
 from django.http.response import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,6 +10,8 @@ from django.db.models import Q
 from drivers.forms import DriverModelForm, VehicleModelForm
 
 from .models import Driver, Vehicle
+
+from .utils import generate_driver_code
 
 class DriverListView(LoginRequiredMixin, ListView):
     template_name = 'drivers/index.html'
@@ -46,13 +49,9 @@ class DriverCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Registro realizado con exitó")
         return reverse('drivers:index')
 
-    # def form_valid(self, form: DriverModelForm) -> HttpResponse:
-    #     # form.save()
-    #     # driver = form.save(commit=False) # instance
-    #     # self.request.user
-    #     # driver.field = value
-    #     # driver.save()
-    #     return super(DriverModelForm, self).form_valid(form)
+    def form_valid(self, form: DriverModelForm) -> HttpResponse:
+        form.instance.code = generate_driver_code()
+        return super().form_valid(form)
     
 class DriverUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'drivers/edit.html'
@@ -80,13 +79,14 @@ class VehicleCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self) -> str:
         messages.success(self.request, "Moto registrado con exitó")
-        return reverse('drivers:detail')
+        return reverse('drivers:detail', kwargs={'slug':self.request.user.driver.slug})
     
     def form_valid(self, form: VehicleModelForm) -> HttpResponse:
-        vehicle = form.save(commit=False)
-        vehicle.driver = self.request.user.driver
-        vehicle.save()
-        return super(VehicleModelForm, self).form_valid(form)
+        form.instance.driver = self.request.user.driver
+        # vehicle = form.save(commit=False)
+        # vehicle.driver = self.request.user.driver
+        # vehicle.save()
+        return super().form_valid(form)
 
 class VehicleUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'vehicles/edit.html'
@@ -95,5 +95,5 @@ class VehicleUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self) -> str:
         messages.success(self.request, "Moto editado con exitó")
-        return self.request.GET.get('next', reverse('drivers:index'))
+        return self.request.GET.get('next', reverse('drivers:detail', kwargs={'slug': self.request.user.driver.slug}))
     
