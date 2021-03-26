@@ -1,5 +1,5 @@
 {% extends "layouts/admin.html" %} {% block title %}
-<title>Cuy Click Perú - Registrar envío</title>
+<title>Cuy Click Perú - Editar envío</title>
 {% endblock title %}
 {% block content_head %}
 <div class="content-head">
@@ -7,11 +7,11 @@
       <a href="{% url 'orders:create-client' %}" class="btn btn-link btn-small">
         <i class='bx bx-left-arrow-alt bx-sm'></i>
       </a>
-      <h4>Registrar envío</h4>
+      <h4>Editar envío</h4>
   </div>
 </div>
 {% endblock content_head %}
 
 {% block content %}
- {% include 'details/snippets/form.html' with btnText='Guardar' %}
+ {% include 'details/snippets/form.html' with btnText='Editar' %}
 {% endblock content %}

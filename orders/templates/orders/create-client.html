@@ -50,77 +50,7 @@
                     <a href="{% url 'orders:create-detail' %}" class="btn btn-link btn-small">Agregar elemento de envío</a>
 
                     {% for item in order.detail_set.all %}
-                    <div class="order-details-item">
-                        <div class="actions right">
-                            <a href="#" class="btn btn-link btn-small">Ver detalle</a>
-                            <a href="#" class="btn btn-link btn-small">Editar</a>
-                            <a href="{% url 'details:delete' item.id %}?next={{request.path}}" class="btn btn-link btn-small text-danger">Eliminar</a>
-                        </div>
-
-                        <div class="address">   
-
-                            <div class="origin">
-                                <h5 class="m-0">{{ item.address_origin.address }}</h5>
-                                <p class="mb-4">{{ item.address_origin.address_city }}</p>
-
-                                <h6>Referencia</h6>
-                                <p>{{ item.address_origin.reference }}</p>
-                            </div>
-
-                            <i class='icon bx bx-right-arrow-alt bx-md'></i> 
-
-                            <div class="destiny">
-                                <h5 class="m-0">{{ item.address_destiny.address }}</h5>
-                                <p class="mb-2">{{ item.address_destiny.address_city }}</p>
-
-                                <h6>Referencia</h6>
-                                <p class="mb-2">{{ item.address_destiny.reference }}</p>
-
-                                <h6>Para</h6>
-                                <p>{{ item.full_name }}</p>
-                            </div>
-
-                        </div>
-
-                        <div class="footer">
-                        
-                            <h5>Detalles del paquete</h5> 
-                            <div class="footer-details">
-                                <div class="package">
-                                    {% if item.image %}
-                                    <a href="#" class="package-picture">
-                                        <img src="{{ item.image.url }}" alt="Imagen del paquete">
-                                    </a>
-                                    {% else%}
-                                    <div class="package-picture text-center" style="width: 90px">
-                                        <p class="text-small" style="padding: 10px 0;background: #a1a1a1;border-radius: 8px;">Imagen no disponible</p>
-                                    </div>
-                                    {% endif %}
-                                    <div class="package-details">
-                                        <h6>Descripción</h6>
-                                        <p>{{ item.description }}</p>
-                                    </div>
-                                </div>
-                                <div class="summary">
-                                    <div class="text-center">
-                                        <p>Distancia</p>
-                                        <h4>{{ item.distance }}KM</h4>
-                                    </div>
-                                    <div class="text-center tracking-price">
-                                        <p>Precio de tarifa</p>
-                                        <div class="price">
-                                            <span class="text-muted font-medium" style="margin-bottom: 5px; margin-right: 5px;">S/.</span>
-                                            <div class="h4 font-bold">
-                                               {{ item.sub_total }} 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
+                        {% include 'orders/snippets/detail-item.html' %} 
                     {% endfor %}
 
                 </div>
@@ -164,10 +94,3 @@
     </div>
  </form>
 {% endblock content %}
-{% block scripts %}
- <script>
-    (function(){
-        console.log('Js load')
-    }())
- </script>
-{% endblock scripts %}

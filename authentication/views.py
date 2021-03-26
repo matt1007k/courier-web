@@ -71,6 +71,7 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
     
     def form_valid(self, form: AddressModelForm) -> HttpResponse:
         form.instance.client = self.request.user.client
+        form.instance.default = True
         return super().form_valid(form)
 
 class UserCreateView(LoginRequiredMixin, CreateView):

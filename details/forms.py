@@ -1,5 +1,7 @@
 from django import forms
 
+from .models import Detail
+
 class DetailForm(forms.Form):
     first_name = forms.CharField(max_length=100, label='Nombre', widget=forms.TextInput(attrs={
         'class': 'input'
@@ -19,3 +21,15 @@ class DetailForm(forms.Form):
     description = forms.CharField(max_length=150, label='Descripción del paquete' ,widget=forms.Textarea(attrs={
         'class': 'input'
     }))
+
+class DetailModelForm(forms.ModelForm):
+    class Meta:
+        model = Detail
+        fields = (
+            'first_name',
+            'last_name',
+            'email',
+            'cell_phone',
+            'image',
+            'description',
+        )

@@ -15,6 +15,24 @@ def get_or_create_order(request):
     request.session['order_id'] = order.id
     return order
 
+def fields_origin_form(detail):
+    fields = {
+        'origin_address': detail.address_origin.address,
+        'origin_district': detail.address_origin.district,
+        'origin_city': detail.address_origin.city,
+        'origin_reference': detail.address_origin.reference,
+    }
+    return fields
+
+def fields_destiny_form(detail):
+    fields = {
+        'destiny_address': detail.address_destiny.address,
+        'destiny_district': detail.address_destiny.district,
+        'destiny_city': detail.address_destiny.city,
+        'destiny_reference': detail.address_destiny.reference,
+    }
+    return fields
+
 def get_generate_tracking_code():
     orders_count = Order.objects.count()
     zero = ''

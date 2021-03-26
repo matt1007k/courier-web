@@ -1,3 +1,4 @@
+from typing import Dict
 from django.db import models
 
 from clients.models import Client
@@ -11,9 +12,29 @@ class AddressManager(models.Manager):
             object.district = district
             object.city = city
             object.reference = reference
+            object.save()
         
-        object.save()
         return object
+        
+    def update_or_create_address_origin(self, client, form_cleaned_data: Dict):
+        address_origin = self.update_or_create(
+                client = client,
+                address = form_cleaned_data['origin_address'],
+                district = form_cleaned_data['origin_district'],
+                city = form_cleaned_data['origin_city'],
+                reference = form_cleaned_data['origin_reference'],
+            )
+        return address_origin[0]
+
+    def update_or_create_address_destiny(self, client, form_cleaned_data):
+        address_destiny = self.update_or_create(
+                client = client,
+                address = form_cleaned_data['destiny_address'],
+                district = form_cleaned_data['destiny_district'],
+                city = form_cleaned_data['destiny_city'],
+                reference = form_cleaned_data['destiny_reference'],
+            )
+        return address_destiny[0]
         
 
 class Address(models.Model):

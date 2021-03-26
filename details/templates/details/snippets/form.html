@@ -1,0 +1,175 @@
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+    <div class="card mb-4">
+        <div class="form-grid-2 mb-4">
+            <div>
+                <h5 class="mb-2">Información de la persona a enviar</h5>
+                <p>El paquete no debe superar los <span class="h6">5kg</span> y las dimensiones de <span class="h6">30x30x30cm</span>.</p>
+            </div>
+            <div>
+                <a class="btn btn-default" id="complete-info-me">Completar con mi infomación</a>
+            </div>
+        </div>
+        <div class="form-grid-2">
+        {% for field in info_form %}
+        <div class="form-group">
+            {{ field.label_tag }} 
+            {{ field }} 
+            {% if field.errors %}
+                {% for error in field.errors %}
+                <div class="text-invalid">
+                    {{ error }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+    <div class="card mb-10">
+        <div class="form-grid-3 detail-address">
+            <div>
+                
+                <h5 class="mb-4">Dirección de recojo</h5>
+                <div class="mb-4 w-full">
+                    <div class="form-group">
+                        {% if my_addressess_list %}
+                        <select name="origin_addressess" id="origin_addressess" class="input">
+                            <option value="">Selección dirección anterior</option> 
+                            {% for address in my_addressess_list %}
+                                {% if detail_obj %}
+                                <option value="{{ address.id }}" {% if detail_obj.address_origin.id == address.id%}selected{% endif %}>{{ address.address_complete }}</option>                                
+                                {% else %}
+                                <option value="{{ address.id }}">{{ address.address_complete }}</option>                                
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la vista de <a href="#">Mis direcciones</a> </p>
+                        <a href="#" onClick="clearFieldsOrigin()" class="link mt-2">Limpiar campos</a>
+                    </div> 
+                    <h6 class="text-center">O completa los campos</h6>
+                </div>
+                {% for field in origin_form %}
+                <div class="form-group">
+                    {{ field.label_tag }} 
+                    {{ field }} 
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                        <div class="text-invalid">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <i class='icon bx bx-right-arrow-alt bx-md text-title'></i> 
+            <div>
+                <h5 class="mb-4">Dirección de destino</h5>
+                <div class="mb-4 w-full">
+                    <div class="form-group">
+                        {% if my_addressess_list %}
+                        <select name="destiny_addressess" id="destiny_addressess" class="input">
+                            <option value="">Selección dirección anterior</option> 
+                            {% for address in my_addressess_list %}
+                                {% if detail_obj %}
+                                <option value="{{ address.id }}" {% if detail_obj.address_destiny.id == address.id%}selected{% endif %}>{{ address.address_complete }}</option>                                
+                                {% else %}
+                                <option value="{{ address.id }}">{{ address.address_complete }}</option>                                
+                                {% endif %}                               
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la vista de <a href="#">Mis direcciones</a> </p>
+                        <a href="#" onClick="clearFieldsDestiny()" class="link mt-2">Limpiar campos</a>
+                    </div> 
+                    <h6 class="text-center">O completa los campos</h6>
+                </div>
+                {% for field in destiny_form %}
+                <div class="form-group">
+                    {{ field.label_tag }} 
+                    {{ field }} 
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                        <div class="text-invalid">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="actions right mt-5">
+            <button type="submit" class="btn btn-primary">{{ btnText }}</button>
+            <a href="{% url 'orders:create-client' %}" class="btn btn-default">Cancelar</a>
+        </div>
+    </div>
+  </form>
+
+{% block scripts %}
+<script type="text/javascript" >
+    {% if request.user.is_authenticated %}
+        var btnCompleteInfoMe = document.getElementById('complete-info-me');
+        var selectOriginAddress = document.getElementById('origin_addressess');
+        var selectDestinyAddress = document.getElementById('destiny_addressess');
+        var form = document.querySelector('form');
+        btnCompleteInfoMe.addEventListener('click', function(ev){
+            form.first_name.value = "{{ request.user.client.first_name }}";
+            form.last_name.value = "{{ request.user.client.last_name }}";
+            form.email.value = "{{ request.user.email }}";
+            form.cell_phone.value = "{{ request.user.client.cell_phone }}";
+        })
+        var my_addressess_list =  [{% for address in my_addressess_list %} [{
+            id: parseInt("{{ address.id|escapejs }}"), 
+            address: "{{ address.address|escapejs }}",
+            district: "{{ address.district|escapejs }}",
+            city: "{{ address.city|escapejs }}",
+            reference: "{{ address.reference|escapejs }}",
+        }]        
+        {% if not forloop.last %},{% endif %}{% endfor %}];
+        
+        my_addressess_list = my_addressess_list.map(function(item) {
+            return item[0];
+        })
+
+        selectOriginAddress.addEventListener('change', function(ev){
+            var id = parseInt(ev.target.value);
+            var origin_address = my_addressess_list.find(function(item){
+                return item.id === id;
+            });
+            form.origin_address.value = origin_address.address;
+            form.origin_district.value = origin_address.district;
+            form.origin_city.value = origin_address.city;
+            form.origin_reference.value = origin_address.reference;
+
+        })
+        selectDestinyAddress.addEventListener('change', function(ev){
+            var id = parseInt(ev.target.value);
+            var destiny_address = my_addressess_list.find(function(item, index){
+                return item.id === id;
+            });
+            form.destiny_address.value = destiny_address.address;
+            form.destiny_district.value = destiny_address.district;
+            form.destiny_city.value = destiny_address.city;
+            form.destiny_reference.value = destiny_address.reference;
+        
+        });
+
+        function clearFieldsOrigin(){
+            form.origin_address.value = '';
+            form.origin_district.value = '';
+            form.origin_city.value = '';
+            form.origin_reference.value = '';
+        }
+        function clearFieldsDestiny(){
+            form.destiny_address.value = '';
+            form.destiny_district.value = '';
+            form.destiny_city.value = '';
+            form.destiny_reference.value = '';
+        }
+    {% endif %}
+</script>
+{% endblock scripts %}
