@@ -9,6 +9,7 @@ class ClientModelForm(forms.ModelForm):
         fields = (
             'first_name',
             'last_name',
+            'cell_phone',
             'logo',
             'store_name',
             'driver_code',
@@ -28,6 +29,7 @@ class ClientRegisterForm(forms.ModelForm):
         fields = (
             'first_name',
             'last_name',
+            'cell_phone',
             'logo',
             'store_name',
             'driver_code',

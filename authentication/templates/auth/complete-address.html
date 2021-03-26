@@ -1,15 +1,15 @@
 {% extends "layouts/auth.html" %}
 
 {% block title %}
-    <title>Cuy Click Perú - Completa tu información</title>
+    <title>Cuy Click Perú - Completa tu direccíon</title>
 {% endblock title %}
 
 {% block content %}
   <div class="container-auth medium">
     {% include "partials/message.html" %}
 
-    <h5 class="text-left">Completa tu información</h5>
-    <form method="post" enctype="multipart/form-data">
+    <h5 class="text-left">Completa tu direccíon</h5>
+    <form method="post">
         {% csrf_token %}
         {% for field in form %}
         <div class="form-group">
@@ -24,7 +24,7 @@
           {% endif %}
         </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary btn-full">Continuar</button>
+        <button type="submit" class="btn btn-primary btn-full">Finalizar</button>
     </form>
  </div>
 {% endblock content %}

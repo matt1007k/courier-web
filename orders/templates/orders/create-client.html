@@ -30,11 +30,11 @@
                     </div>
                     <div>
                         <h6>Celular</h6>
-                        <p>952415252</p>
+                        <p>{{ user.client.cell_phone }}</p>
                     </div>
                     <div>
                         <h6>Dirección</h6>
-                        <p>Jr. Los pasajes 322</p>
+                        <p>{{ user.client.address_set.first.address_district }}</p>
                     </div>
                 </div>
             </div>
@@ -89,10 +89,12 @@
                                 <div class="package">
                                     {% if item.image %}
                                     <a href="#" class="package-picture">
-                                        <img src="{{ item.image.url }}" alt="Imagen del pago">
+                                        <img src="{{ item.image.url }}" alt="Imagen del paquete">
                                     </a>
                                     {% else%}
-                                    <div class="package-picture" style="width: 90px"></div>
+                                    <div class="package-picture text-center" style="width: 90px">
+                                        <p class="text-small" style="padding: 10px 0;background: #a1a1a1;border-radius: 8px;">Imagen no disponible</p>
+                                    </div>
                                     {% endif %}
                                     <div class="package-details">
                                         <h6>Descripción</h6>
@@ -102,14 +104,14 @@
                                 <div class="summary">
                                     <div class="text-center">
                                         <p>Distancia</p>
-                                        <h4>2.5KM</h4>
+                                        <h4>{{ item.distance }}KM</h4>
                                     </div>
                                     <div class="text-center tracking-price">
                                         <p>Precio de tarifa</p>
                                         <div class="price">
                                             <span class="text-muted font-medium" style="margin-bottom: 5px; margin-right: 5px;">S/.</span>
                                             <div class="h4 font-bold">
-                                                25
+                                               {{ item.sub_total }} 
                                             </div>
                                         </div>
                                     </div>

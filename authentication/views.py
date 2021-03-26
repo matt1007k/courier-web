@@ -10,6 +10,7 @@ from django.contrib import messages
 
 from .forms import CustomUserForm, RegisterForm
 from clients.forms import ClientRegisterForm
+from addresses.forms import AddressModelForm
 
 def login_view(request):
     if request.method == 'POST':
@@ -54,11 +55,22 @@ class CompleteInfoClientView(LoginRequiredMixin, CreateView):
     form_class = ClientRegisterForm
 
     def get_success_url(self) -> str:
-        messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))
-        return reverse('dash')
+        return reverse('auth:complete-address')
     
     def form_valid(self, form: ClientRegisterForm) -> HttpResponse:
         form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class CompleteAddressClientView(LoginRequiredMixin, CreateView):
+    template_name = 'auth/complete-address.html'
+    form_class = AddressModelForm
+
+    def get_success_url(self) -> str:
+        messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))
+        return reverse('dash')
+    
+    def form_valid(self, form: AddressModelForm) -> HttpResponse:
+        form.instance.client = self.request.user.client
         return super().form_valid(form)
 
 class UserCreateView(LoginRequiredMixin, CreateView):

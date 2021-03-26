@@ -12,15 +12,9 @@
     margin-bottom: 40px;
 }
 .order-content .client-info{
-    display: flex;
-    flex-direction: column;
-}
-.order-content .client-info > :not(template) ~ :not(template) {
-    --space-x-reverse: 0;
-    margin-bottom: calc(1rem * var(--space-x-reverse));
-    margin-top: calc(1rem * (1 - var(--space-x-reverse)));
-    margin-right: 0;
-    margin-left: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px; 
 }
 .order-details{
     margin-bottom: 20px;
@@ -130,14 +124,7 @@
         margin-left: 15px;
     }
     .order-content .client-info{
-        flex-direction: row;
-    }
-    .order-content .client-info > :not(template) ~ :not(template) {
-        --space-x-reverse: 0;
-        margin-right: calc(4rem * var(--space-x-reverse));
-        margin-left: calc(4rem * (1 - var(--space-x-reverse)));
-        margin-bottom: 0;
-        margin-top: 0;
+        grid-template-columns: 1.1fr .4fr 1fr;
     }
     .order-details .order-details-content .order-details-item .address{
         grid-template-columns: 1fr 5em 1fr;

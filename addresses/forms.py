@@ -1,5 +1,17 @@
 from django import forms
 
+from .models import Address
+
+class AddressModelForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = (
+            'address',
+            'district',
+            'city',
+            'reference'
+        )
+
 class OriginAddressForm(forms.Form):
     origin_address = forms.CharField(label='Dirección', max_length=100, widget=forms.TextInput(attrs={
         'class': 'input'

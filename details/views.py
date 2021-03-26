@@ -56,10 +56,12 @@ def create_client_view(request):
             last_name = request.POST.get('last_name'),
             email = request.POST.get('email'),
             cell_phone = request.POST.get('cell_phone'),
-            image = request.FILES['image'] if 'image' in request.FILES else False,
+            image = request.FILES['image'] if 'image' in request.FILES else None,
             description = request.POST.get('description'),
             address_origin=address_origin[0],
-            address_destiny=address_destiny[0]
+            address_destiny=address_destiny[0],
+            distance=12,
+            sub_total=10
         )
         if not detail is None:
             messages.success(request, 'El pedido de envío agregado con exitó.')

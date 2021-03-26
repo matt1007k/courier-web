@@ -36,6 +36,9 @@ class Address(models.Model):
     def address_complete(self):
         return f"{self.address}, {self.district}, {self.city}"
 
+    def address_district(self):
+        return f"{self.address}, {self.district}"
+        
     def address_city(self):
         return f"{self.district}, {self.city}"
 
