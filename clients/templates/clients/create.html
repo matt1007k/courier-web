@@ -1,39 +1,42 @@
 {% extends "layouts/admin.html" %} {% block title %}
-<title>Cuy Click Perú - Editar motorizado</title>
-{% endblock title %} 
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+
 {% block content_head %}
 <div class="content-head">
   <div class="left">
-      <a href="{% url 'drivers:index' %}" class="btn btn-link btn-small">
+      <a href="{% url 'clients:index' %}" class="btn btn-link btn-small">
         <i class='bx bx-left-arrow-alt bx-sm'></i>
       </a>
-      <h4>Editar motorizado</h4>
+      <h4>{{ title }}</h4>
   </div>
   <div class="right">
       <a href="{% url 'auth:create' %}?next={{request.path|urlencode}}" class="btn btn-link btn-small text-primary">Nuevo usuario</a>
   </div>
 </div>
 {% endblock content_head %}
+
 {% block content %}
+
 <div class="card card-form mb-10">
   <form method="post" enctype="multipart/form-data">
-    {% csrf_token %} 
+    {% csrf_token %}
     {% for field in form %}
-    <div class="form-group">
-      {{ field.label_tag }} 
-      {{ field }} 
-      {% if field.errors %}
-        {% for error in field.errors %}
-        <div class="text-invalid">
-          {{ error }}
-        </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-    {% endfor %}
-    <div class="actions right">
+      <div class="form-group">
+        {{ field.label_tag }} 
+        {{ field }} 
+        {% if field.errors %}
+          {% for error in field.errors %}
+          <div class="text-invalid">
+            {{ error }}
+          </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% endfor %}
+    <div class="actions right mt-5">
       <a href="{% url 'drivers:index' %}" class="btn btn-default">Cancelar</a>
-      <button type="submit" class="btn btn-primary">Editar</button>
+      <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
   </form>
 </div>

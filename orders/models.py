@@ -1,6 +1,9 @@
 from django.db import models
 
+from django.db.models.signals import pre_save
+from django.urls.base import reverse
 from clients.models import Client
+from drivers.models import Driver
 
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
@@ -14,6 +17,7 @@ class Order(models.Model):
         BOLETA = 'BOLETA'
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Motorizado')
     tracking_code = models.CharField(max_length=8, unique=True, verbose_name="Código de seguimiento")
     status = models.CharField(max_length=50, choices=OrderStatus.choices, default=OrderStatus.PENDING, verbose_name='Estado')
     total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
@@ -24,6 +28,30 @@ class Order(models.Model):
     def __str__(self) -> str:
         return self.tracking_code 
 
+    def get_index_path(self):
+        return reverse('orders:index')
+
+    def get_detail_path(self):
+        return reverse('orders:detail', kwargs={'id': self.pk})
+
+    def get_update_path(self):
+        return reverse('orders:update', kwargs={'id': self.pk})
+
+    def get_delete_path(self):
+        return reverse('orders:delete', kwargs={'id': self.pk})
+
+    @property
+    def get_first_detail(self):
+        return self.detail_set.first()
+
     class Meta:
         verbose_name = "pedido"
         verbose_name_plural = "pedidos"
+
+def set_driver(sender, instance, *args, **kwargs):
+    if instance.client and instance.client.driver_code:
+        driver = Driver.objects.filter(code=instance.client.driver_code).first()
+        instance.driver = driver
+
+
+pre_save.connect(set_driver, sender=Order)

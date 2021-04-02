@@ -1,0 +1,53 @@
+{% extends 'layouts/admin.html' %}
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% load static %}
+{% block content_head %}
+<div class="content-head">
+  <div class="left">
+      <a href="{{ request.GET.next }}" class="btn btn-link btn-small">
+        <i class='bx bx-left-arrow-alt bx-sm'></i>
+      </a>
+      <h4>{{ title }}</h4>
+  </div>
+</div>
+{% endblock content_head %}
+
+{% block content %}
+<div class="profile">
+    <div class="avatar avatar-lg">
+        {% if object.user.avatar %}
+            <img src="{{ object.user.avatar.url }}" alt="{{ object.full_name }}">
+        {% else %}
+            <img src="{% static 'img/avatar.png' %}" alt="{{ object.full_name }}">
+        {% endif %}
+    </div>
+    <div class="info">
+        <h5 class="m-0">{{ object.full_name }}</h5>
+        <p>{{ object.user.username }}</p>
+    </div>
+</div>
+
+{% if request.user == object.user %}
+<div class="profile-actions">
+    <a href="#" class="btn btn-primary btn-small">Editar cuenta</a> 
+</div>
+{% endif %}
+
+<div class="profile-content mb-10">
+    <div class="col">
+        <div class="card profile-count mb-4">
+            <div class="text-center">
+                <h3>{{ object.orders_count }}</h3>
+                <div class="text-small text-uppercase font-medium">Pedidos</div>
+            </div>
+            <div class="text-center">
+                <h3>{{ object.addressess_count }}</h3>
+                <div class="text-small text-uppercase font-medium">Direcciones</div>
+            </div>
+        </div> 
+    </div> 
+</div> 
+
+{% endblock content %}

@@ -7,7 +7,7 @@
 .page-admin .sidebar{
     width: 255px;
     background: var(--bg-secondary-color);
-    box-shadow: 0px 3px 16px rgba(var(--title-color), 0.02);
+    box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.06);
     padding: 0px 10px;
     height: 100%;
     display: none;
@@ -60,28 +60,49 @@
 /** page content **/
 .page-admin .page-content{
     flex: auto;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .content-head{
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    align-items: flex-start;
-    margin: 2rem 0;
+    align-items: center;
+    margin-bottom: 2rem;
 }
 .content-head .left{
-    margin-bottom: 1rem;
     display: flex;
     align-items: center;
+    flex: auto;
  }
 .content-head .right{
     display: flex;
     align-items: center;
 }
+.content-head .left > .btn, .content-head .right > .btn, .content-head .right .container-modal > .btn{
+    padding: 12px 8px;
+}
+.content-head .right > .btn span{
+    display: none;
+}
+.content-head .right > .btn i{
+    display: block;
+}
 @media (min-width: 760px){
     .content-head{
         flex-direction: row;
         align-items: center;
+    }
+    .content-head .left{
+        flex: none;
+    }
+    .content-head .right > .btn span{
+        display: block;
+    }
+    .content-head .right > .btn i{
+        display: none;
+    }
+    .content-head .left > .btn, .content-head .right > .btn, .content-head .right .container-modal > .btn{
+        padding: 12px 24px;
     }
 }
 @media (min-width: 1140px) { 

@@ -1,3 +1,4 @@
+from drivers.models import Driver
 from .models import Order
 
 def get_or_create_order(request):
@@ -8,6 +9,7 @@ def get_or_create_order(request):
         order = Order.objects.get(pk=order_id)
     else:
         tracking_code = get_generate_tracking_code()
+        
         order = Order.objects.create(
                                 client=user.client, 
                                 tracking_code=tracking_code

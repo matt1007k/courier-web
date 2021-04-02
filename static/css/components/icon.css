@@ -12,7 +12,7 @@
 }
 .icon-primary-default{
     background: rgba(var(--primary-color), .2);
-    color: rgb(var(--primary-color));
+    color: rgb(var(--title-color));
 }
 .icon-success{
     background: rgb(var(--success-color));
@@ -27,7 +27,7 @@
     color: white;
 }
 .icon-warning-default{
-    background: rgba(var(--accent-color), .2);
+    background: rgba(var(--accent-color), .3);
     color: rgb(var(--accent-color));
 }
 .icon-danger{
@@ -50,4 +50,9 @@
     font-size: 42px;
     width: 80px;
     height: 80px;
+}
+
+/* Icon SVG */
+.icon-svg > path, .icon-svg > g circle{
+    fill: rgb(var(--title-color));
 }

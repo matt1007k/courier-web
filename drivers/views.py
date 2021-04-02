@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 from django.http import request
 from django.http.response import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
@@ -39,6 +39,12 @@ class DriverListView(LoginRequiredMixin, ListView):
 class DriverDetailView(DetailView):
     model = Driver
     template_name = 'drivers/detail.html'
+
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Perfil del motorizado'
+        return context
 
 
 class DriverCreateView(LoginRequiredMixin, CreateView):

@@ -1,0 +1,180 @@
+{% extends "layouts/admin.html" %} 
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %} 
+{% load static %}
+{% load humanize %}
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <h4>{{ title }}</h4>
+    </div>
+    <div class="right">
+        <div x-data="{ isOpen: false }" class="container-modal">
+            <button @click="isOpen = true" class="btn btn-link btn-small">
+            <svg
+            class="filter"
+            width="24"
+            height="24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
+                    fill="#2E3A59"
+                />
+            </svg>
+            </button>
+            <div 
+                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                class="modal modal-right">
+                <div 
+                    class="modal-content card" style="width: 400px" 
+                    @click.away="isOpen = false" 
+                >
+                    <div class="head">
+                        <h6>Búsqueda avanzada</h6>
+                        <div class="close">
+                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                <i class='bx bx-x bx-sm' ></i>
+                            </button>
+                        </div>
+                    </div>
+                    <form method='GET' class="form-modal">
+                        <div class="form-group">
+                            <input type='search' name='q' placeholder="¿Qué estás buscando?" value='{{ request.GET.q }}' class="input">
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Fecha de registro</label>
+                            <input type="date" class="input" name="date" id="date" value="{{ request.GET.date }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Estado</label>
+                            <select name="status" id="status" class="input">
+                                <option value="">Seleccionar el estado</option>
+                                <option value="{{ statuses.PENDING }}" {% if status == 'PENDING'%}selected{% endif %}>Pendiente</option>
+                                <option value="{{ statuses.DELIVERED }}" {% if status == 'DELIVERED'%}selected{% endif %}>Entregado</option>
+                                <option value="{{ statuses.CANCELED }}" {% if status == 'CANCELED'%}selected{% endif %}>Cancelado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="actions right">
+                            <button type='submit' class="btn btn-primary">Buscar</button>
+                        </div>
+                    </form> 
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'orders:create' %}" class="btn btn-link btn-small text-primary">
+            <i class='bx bx-plus bx-sm' ></i>
+            <span>Nuevo pedido</span> 
+        </a>
+    </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+ <div class="filter-list space-x-2">
+    <a href="{% url 'orders:index' %}?status={{ statuses.PENDING }}" class="btn btn-{% if status == statuses.PENDING %}primary{% else %}link{% endif %} btn-small">Pendiente</a>
+    <a href="{% url 'orders:index' %}?status={{ statuses.DELIVERED }}" class="btn btn-{% if status == statuses.DELIVERED %}primary{% else %}link{% endif %} btn-small">Entregado</a>
+    <a href="{% url 'orders:index' %}?status={{ statuses.CANCELED }}" class="btn btn-{% if status == statuses.CANCELED %}primary{% else %}link{% endif %} btn-small">Cancelado</a>
+</div>
+ <div class="mb-10 order-list-grid">  
+    <div class="order-list-head">
+        <div class="order-list-head-item">
+            Detalles del pedido
+        </div>
+        <div class="order-list-head-item">
+            Dirección de recojo
+        </div>
+        <div class="order-list-head-item">
+            Dirección de envió
+        </div>
+        <div class="order-list-head-item">
+            Acciones 
+        </div>
+    </div>
+
+    {% if object_list.count > 0 %}
+    
+    {% for order in object_list %}
+    
+    <div class="card order-list-row">
+        <div class="order-list-col">
+            <div class="icon icon-warning-default rounded rounded-md">
+                <img src="{% static 'img/icon/order-icon.svg' %}"/>
+            </div>
+            <div class="content">
+                <p class="text-small text-muted font-normal"># TRACKING {{ order.tracking_code }}</p>
+                <h6>{{ order.client.full_name }}</h6>
+                <div class="order-detail">
+                    <p>{{ order.created_at|timesince }}</p>
+                    <p>&middot;</p>
+                    {% include "orders/snippets/status.html" %}
+                </div>
+            </div>
+            <a href="#" class="icon-view h6">
+                <i class='bx bxs-chevron-right bx-sm' ></i>
+            </a>
+        </div>
+        <div class="order-list-col">
+            <h6>{{ order.get_first_detail.address_origin.address }}</h6>
+            <p>{{ order.get_first_detail.address_origin.address_city }}</p>
+        </div>
+        <div class="order-list-col">
+            <h6>{{ order.get_first_detail.address_destiny.address }}</h6>
+            <p>{{ order.get_first_detail.address_destiny.address_city }}</p>
+        </div>
+        <div class="order-list-col actions">
+            {% comment %} <a href="{{ order.get_detail_path }}" class="btn btn-link btn-small">Ver</a> {% endcomment %}
+            <a href="#" class="btn btn-link btn-small">Editar</a>
+            <a href="#" class="btn btn-link danger btn-small">Eliminar</a>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="mb-10 table-list-bottom">
+        <div class="table-list-details">
+            <p>
+                Página
+                <span class="font-medium">{{ page_obj.number }}</span>
+                de
+                <span class="font-medium">{{ page_obj.paginator.num_pages }}</span>
+                -
+                Total
+                <span class="font-semibold">{{ object_list.count }}</span>
+                registros
+            </p>
+        </div>
+        <div class="pagination space-x">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Anterior</a>
+          {% else %}
+            <a class="pagination-item disable">Anterior</a>
+          {% endif %}
+
+          {% for i in page_obj.paginator.page_range %} 
+            {% if page_obj.number == i %}
+              <a class="pagination-item page-number active">{{ i }}</a>
+            {% else %}
+              <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Siguiente</a>
+          {% else %}
+            <a class="pagination-item disable">Siguiente</a>
+          {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card mb-10">
+        <p>
+            Sin registros...
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

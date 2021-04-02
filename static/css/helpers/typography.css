@@ -68,6 +68,9 @@ p{
 .text-muted{
     color: var(--text-secondary-color) !important;
 }
+.text-white{
+    color: white;
+}
 
 .font-bold{
     font-weight: 700;
@@ -90,6 +93,13 @@ p{
 }
 .text-right{
     text-align: right;
+}
+
+.text-capitalize{
+    text-transform: capitalize;
+}
+.text-uppercase{
+    text-transform: uppercase;
 }
 @media (min-width: 640px) { 
 

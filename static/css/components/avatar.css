@@ -13,21 +13,47 @@
     border-radius: 50%;
     background: white;
 }
+.avatar.more{
+    background: var(--bg-secondary-color);
+    color: rgb(var(--title-color));
+    font-weight: 500;
+}
+
+.avatars{
+    display: flex;
+    align-items: center;
+}
+.avatars > .avatar:nth-child(n+2){
+    --space-x-reverse: 0;
+    margin-right: calc(-0.6rem * var(--space-x-reverse));
+    margin-left: calc(-0.6rem * (1 - var(--space-x-reverse)));
+}
+
+.avatar-sm{
+    width: 30px;
+    height: 30px;
+    font-size: 10px;
+}
+.avatar-sm img{
+    width: 24px;
+    height: 24px;
+}
 
 .avatar-md{
     width: 40px;
     height: 40px;
+    padding: 5px;
 }
 .avatar-md img{
     width: 32px;
     height: 32px;
 }
 
-.avatar-sm{
-    width: 30px;
-    height: 30px;
+.avatar-lg{
+    width: 85px;
+    height: 85px;
 }
-.avatar-sm img{
-    width: 24px;
-    height: 24px;
+.avatar-lg img{
+    width: 68px;
+    height: 68px;
 }

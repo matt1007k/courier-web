@@ -16,6 +16,9 @@
 .btn:hover, .btn-circle:hover {
     opacity: .8;
 }
+.btn.btn-xs{
+    padding: 8px 16px;
+}
 .btn.btn-small{
     padding: 12px 24px;
 }
@@ -51,14 +54,17 @@
 }
 .btn-link{
     background-color: transparent;
-    color: rgb(var(--title-color));
+    color: rgb(var(--title-color)) !important;
+}
+.btn-link > svg path{
+    fill: rgb(var(--title-color));
 }
 .btn-link:hover{
     background-color: var(--btn-default-color);
     color: rgb(var(--title-color));
 }
 .btn-link.danger{
-    color: rgb(var(--danger-color));
+    color: rgb(var(--danger-color)) !important;
 }
 .btn-outline-secondary{
     background-color: transparent;
@@ -74,6 +80,11 @@
     background-color: transparent;
     border: 2px solid rgb(var(--danger-color));
     color: rgb(var(--danger-color));
+}
+.btn-outline-warning{
+    background-color: transparent;
+    border: 2px solid rgb(var(--accent-color));
+    color: rgb(var(--accent-color));
 }
 .btn-full{
     width: 100%;

@@ -1,0 +1,13 @@
+.rounded-sm{
+    border-radius: 4px;
+}
+
+.rounded-md{
+    border-radius: 8px;
+}
+.rounded-lg{
+    border-radius: 16px;
+}
+.rounded-circle{
+    border-radius: 16px;
+}

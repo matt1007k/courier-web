@@ -9,6 +9,10 @@
     background: rgba(var(--primary-color), .1);
     color: rgb(var(--primary-color));
 }
+.badge-secondary{
+    background: rgba(var(--secondary-color), .1);
+    color: rgb(var(--secondary-color));
+}
 .badge-success{
     background: rgba(var(--success-color), .1);
     color: rgb(var(--success-color));
@@ -20,4 +24,36 @@
 .badge-danger{
     background: rgba(var(--danger-color), .1);
     color: rgb(var(--danger-color));
+}
+.color-container{
+    display: flex;
+    align-items: center;
+}
+
+.color{
+    height: 32px;
+    width: 9px;
+    border-radius: 31px;
+    margin-right: 10px;
+} 
+.color.color-sm{
+    height: 14px;
+    width: 5px;
+    border-radius: 8px;
+    margin-right: 5px;
+}
+.color-primary{
+    background: rgb(var(--primary-color));
+}
+.color-secondary{
+    background: rgb(var(--secondary-color));
+}
+.color-warning{
+    background: rgb(var(--accent-color));
+}
+.color-success{
+    background: rgb(var(--success-color));
+}
+.color-danger{
+    background: rgb(var(--danger-color));
 }

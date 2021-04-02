@@ -1,0 +1,18 @@
+<span class="color-container">
+    {% if order.status == 'PENDING' %}
+    <div class="color color-warning color-sm"></div>
+    <span class="text-body">Pendiente</span>
+    {% elif order.status == 'IN PROCCESS' %}
+    <div class="color color-secondary color-sm"></div>
+    <span class="text-body">En Proceso</span>
+    {% elif order.status == 'DELIVERED' %}
+    <div class="color color-success color-sm"></div>
+    <span class="text-body">Entregado</span>
+    {% elif order.status == 'CANCELED' %}
+    <div class="color color-danger color-sm"></div>
+    <span class="text-body">Cancelado</span>
+    {% else %}
+    <div class="color color-warning color-sm"></div>
+    <span class="text-body">Pendiente</span>
+    {% endif %}
+</span>

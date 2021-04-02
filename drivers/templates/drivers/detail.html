@@ -1,21 +1,112 @@
 {% extends "layouts/admin.html" %}
 {% block title %}
-<title>Cuy Click Perú - Perfil del motorizado</title>
+<title>Cuy Click Perú - {{ title }}</title>
 {% endblock title %}
+{% load static %}
+{% block content_head %}
+<div class="content-head">
+  <div class="left">
+      <a href="{{ request.GET.next }}" class="btn btn-link btn-small">
+        <i class='bx bx-left-arrow-alt bx-sm'></i>
+      </a>
+      <h4>{{ title }}</h4>
+  </div>
+</div>
+{% endblock content_head %}
 {% block content %}
-<h1>Perfil del motorizado</h1>
-<div>{{ object.code }} {{ object.full_name}}</div>
+<div class="profile">
+    <div class="avatar avatar-lg">
+        {% if object.user.avatar %}
+            <img src="{{ object.user.avatar.url }}" alt="{{ object.full_name }}">
+        {% else %}
+            <img src="{% static 'img/avatar.png' %}" alt="{{ object.full_name }}">
+        {% endif %}
+    </div>
+    <div class="info">
+        <h5 class="m-0">{{ object.full_name }}</h5>
+        <p><b>CÓDIGO</b> {{ object.code }}</p>
+    </div>
+</div>
 
 {% if request.user.is_authenticated and request.user == object.user %}
-{% if object.vehicle %}
-<a href="{% url 'drivers:update-vehicle' object.vehicle.pk %}?next={{ request.path }}">
-  Editar moto
-</a>
-{% else %}
-<a href="{% url 'drivers:create-vehicle' %}?next={{ request.path }}">
-  Registrar moto
-</a>
+<div class="profile-actions">
+    <a href="#" class="btn btn-primary btn-small">Editar cuenta</a> 
+    {% if object.vehicle %}
+    <a href="{% url 'drivers:update-vehicle' object.vehicle.pk %}?next={{ request.path }}" class="btn btn-link btn-small">
+      Editar moto
+    </a>
+    {% else %}
+    <a href="{% url 'drivers:create-vehicle' %}?next={{ request.path }}" class="btn btn-link btn-small">
+      Registrar moto
+    </a>
+    {% endif %}
+</div>
 {% endif %}
-<div>Detalle de moto {{ object.vehicle.serial_number }}</div>
-{% endif %}
+
+
+<div class="profile-content mb-10">
+    <div class="col">
+        <div class="card profile-count mb-4">
+            <div class="text-center">
+                <h3>{{ object.orders_count }}</h3>
+                <div class="text-small text-uppercase font-medium">Pedidos</div>
+            </div>
+            <div class="text-center">
+                <h3>{{ object.clients_count }}</h3>
+                <div class="text-small text-uppercase font-medium">Clientes atendidos</div>
+            </div>
+        </div> 
+        <div class="mb-4 card driver-avatars">
+          <h6 class="title">Clientes asociados</h6>
+          <div class="avatars">
+              <div class="avatar avatar-sm">
+                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
+              </div> 
+              <div class="avatar avatar-sm">
+                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
+              </div> 
+              <div class="avatar avatar-sm">
+                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
+              </div> 
+              <div class="avatar avatar-sm">
+                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
+              </div> 
+              <div class="avatar more avatar-sm">
+                  <span>5+</span>
+              </div> 
+          </div>
+      </div>
+    </div>
+    
+     <div class="col card valorations">
+        <div class="valorations-head">
+            <div class="title">
+                <h6>Valoraciones</h6>
+                <div class="badge badge-secondary">8</div>
+            </div>
+            <a href="#" class="btn btn-outline-warning btn-xs">Valorar</a>
+        </div>   
+        <div class="valoration-list">
+            <div class="valoration-item">
+                <div class="avatar avatar-md">
+                    <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
+                </div>
+                <div class="valoration-content">
+                    <h6>Juan Rojas Licas</h6>
+                    <div class="valoration-detail">
+                        <p>hace 2 días</p>
+                        <p>&middot;</p>
+                        <span>
+                            <i class='bx bxs-star text-warning'></i>
+                            <span class="text-body">5.0</span>
+                        </span>
+                    </div>
+                    <p>Excelente, cumplió con la entrega de mi pedido.</p>
+                </div>
+            </div>
+            
+            <a href="#" class="mt-2 btn btn-primary btn-full">Ver más</a>
+        </div>
+    </div>
+</div> 
 {% endblock content %}

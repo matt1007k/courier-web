@@ -1,0 +1,197 @@
+{% extends "layouts/admin.html" %} 
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %} 
+{% load static %}
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <h4>{{ title }}</h4>
+    </div>
+    <div class="right">
+        <div x-data="{ isOpen: false }" class="container-modal">
+            <button @click="isOpen = true" class="btn btn-link btn-small">
+            <svg
+            class="filter"
+            width="24"
+            height="24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
+                    fill="#2E3A59"
+                />
+            </svg>
+            </button>
+            <div 
+                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                class="modal modal-right">
+                <div 
+                    class="modal-content card" style="width: 400px" 
+                    @click.away="isOpen = false" 
+                >
+                    <div class="head">
+                        <h6>Búsqueda avanzada</h6>
+                        <div class="close">
+                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                <i class='bx bx-x bx-sm' ></i>
+                            </button>
+                        </div>
+                    </div>
+                    <form method='GET' class="form-modal">
+                        <div class="form-group">
+                            <input type='search' name='q' placeholder="¿Qué estás buscando?" value='' class="input">
+                        </div>
+                        <div class="actions right">
+                        <button type='submit' class="btn btn-primary">Buscar</button>
+                        </div>
+                    </form> 
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'clients:create' %}" class="btn btn-link btn-small text-primary">
+            <i class='bx bx-plus bx-sm' ></i>
+            <span>Nuevo cliente</span> 
+        </a>
+    </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+
+    <div class="mb-4 client-list-grid">
+        <div class="client-list-head">
+            <div class="client-list-head-item">
+                Detalles del cliente
+            </div>
+            <div class="client-list-head-item">
+                Dirección principal
+            </div>
+            <div class="client-list-head-item">
+                Acciones 
+            </div>
+        </div>
+        
+        {% for client in object_list %} 
+        <div class="card client-list-row" x-data="{ isOpen: false }">
+            <div class="client-list-col">
+                <div class="avatar avatar-md">
+                    {% if client.user.avatar %}
+                    <img src="{{ client.user.avatar.url }}" alt="{{ client.full_name }}">
+                    {% else %}
+                    <img src="{% static 'img/avatar.png' %}" alt="{{ client.full_name }}">
+                    {% endif %}
+                </div>
+                <div class="content">
+                    <h6>{{ client.full_name }}</h6>
+                    <div class="client-detail">
+                        <p>{{ client.user.username }}</p>
+                        <p>&middot;</p>
+                        <p>{{ client.user.email }}</p>
+                    </div>
+                </div>
+                <a class="icon-view" @click="isOpen = true">
+                    <svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <g id="icon_more" data-name="icon more" transform="translate(0 -2)">
+                            <rect id="Rectangle_177" data-name="Rectangle 177" width="24" height="24" transform="translate(0 2)" fill="none" opacity="0.997"/>
+                            <g id="Group_133" data-name="Group 133" transform="translate(2 -16)" opacity="0.5">
+                            <circle id="Ellipse_75" data-name="Ellipse 75" cx="2" cy="2" r="2" transform="translate(2 23)" fill="#22154a" opacity="0.697"/>
+                            <circle id="Ellipse_76" data-name="Ellipse 76" cx="2" cy="2" r="2" transform="translate(8 23)" fill="#22154a" opacity="0.697"/>
+                            <circle id="Ellipse_77" data-name="Ellipse 77" cx="2" cy="2" r="2" transform="translate(14 23)" fill="#22154a" opacity="0.697"/>
+                            </g>
+                        </g>
+                    </svg>
+                </a>
+            </div>
+            <div class="client-list-col">
+                {% if client.has_address_default %}
+                <h6>{{ client.address_default.address }}</h6>
+                <p>{{ client.address_default.address_city }}</p>
+                {% else %}
+                <p class="text-small">Sin dirección principal</p>
+                {% endif %}
+            </div>
+            <div class="client-list-col actions">
+                <a href="{{ client.get_detail_path }}?next={{ request.path }}" class="btn btn-link btn-small">Ver</a>
+                <a href="{{ client.get_update_path }}" class="btn btn-link btn-small">Editar</a>
+                <a href="{{ client.get_delete_path }}" class="btn btn-link danger btn-small">Eliminar</a>
+            </div>
+            <div 
+                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                class="modal modal-sheet">
+                <div 
+                    class="modal-content card" style="width: 100%" 
+                    @click.away="isOpen = false" 
+                >
+                    <div class="head">
+                        <h6>Acciones</h6>
+                        <div class="close">
+                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                <i class='bx bx-x bx-sm' ></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-modal">
+                        <div class="options">
+                            <a href="#" class="option-item">
+                                <span>Ver detalle</span>
+                                <div class="icon ">
+                                    <i class='bx bx-chevron-right bx-sm'></i>
+                                </div>
+                            </a>
+                            <a href="#" class="option-item">
+                                <span>Editar</span>
+                                <div class="icon ">
+                                    <i class='bx bx-edit bx-sm'></i>
+                                </div>
+                            </a>
+                            <a href="#" class="option-item danger">
+                                <span>Eliminar</span>
+                                <div class="icon ">
+                                    <i class='bx bx-trash bx-sm'></i>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %} 
+    </div>
+    <div class="mb-10 table-list-bottom">
+        <div class="table-list-details">
+            <p>
+                Página
+                <span class="font-medium">{{ page_obj.number }}</span>
+                de
+                <span class="font-medium">{{ page_obj.paginator.num_pages }}</span>
+                -
+                Total
+                <span class="font-semibold">{{ object_list.count }}</span>
+                registros
+            </p>
+        </div>
+        <div class="pagination space-x">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Anterior</a>
+          {% else %}
+            <a class="pagination-item disable">Anterior</a>
+          {% endif %}
+
+          {% for i in page_obj.paginator.page_range %} 
+            {% if page_obj.number == i %}
+              <a class="pagination-item page-number active">{{ i }}</a>
+            {% else %}
+              <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Siguiente</a>
+          {% else %}
+            <a class="pagination-item disable">Siguiente</a>
+          {% endif %}
+        </div>
+    </div>
+{% endblock content %}

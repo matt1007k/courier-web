@@ -1,3 +1,4 @@
+from clients.models import Client
 import uuid
 from django.db import models
 from django.db.models.fields.related import OneToOneField
@@ -27,6 +28,15 @@ class Driver(models.Model):
 
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+    def orders_count(self):
+        return self.order_set.count()
+
+    def get_clients(self):
+        return Client.objects.filter(driver_code=self.code)
+        
+    def clients_count(self):
+        return self.get_clients().count()
     
     class Meta:
         verbose_name = "motorizado"

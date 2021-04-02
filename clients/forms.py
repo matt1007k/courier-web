@@ -7,6 +7,7 @@ class ClientModelForm(forms.ModelForm):
     class Meta:
         model = Client 
         fields = (
+            'user',
             'first_name',
             'last_name',
             'cell_phone',

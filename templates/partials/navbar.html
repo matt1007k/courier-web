@@ -10,19 +10,36 @@
         <div class="dropdown" x-data="{ isOpen: false }">
             <a href="#" class="nav-item" @click="isOpen = !isOpen">
                 <div class="avatar avatar-md">
-                    <img src="{% static 'img/avatar.png' %}" alt="Jose Gorge">
+                    {% if request.user.avatar %}
+                        <img src="{{ request.user.avatar.url }}" alt="{{ request.user }}">
+                    {% else %}
+                        <img src="{% static 'img/avatar.png' %}" alt="{{ request.user }}">
+                    {% endif %}
                 </div>
                 <div class="nav-content">
                     <h6>{{ request.user.username }}</h6>
-                    <p>DNI 73625115</p>
+
+                    <p>{{ request.user.email }}</p>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="17.414" height="9.707"><path data-name="Icon view" d="M16.707.707l-8 8-8-8" fill="none" stroke="#514477" stroke-linejoin="round" stroke-width="2"/></svg>
             </a>
             <div class="dropdown-menu right" x-show.transition.in.scale.opacity.400ms.out.origin.top.right.scale.20="isOpen" @click.away="isOpen = false">
-                <a href="#" class="dropdown-item">
-                    <i class='bx bx-user-circle bx-sm'></i>
-                    <span>Pefil</span>
-                </a>
+                {% if request.user.client %}
+                    <a href="{% url 'clients:detail' request.user.client.slug %}?next={{ request.path }}" class="dropdown-item">
+                        <i class='bx bx-user-circle bx-sm'></i>
+                        <span>Pefil</span>
+                    </a>
+                {% elif request.user.driver %}
+                    <a href="{% url 'drivers:detail' request.user.driver.slug %}?next={{ request.path }}" class="dropdown-item">
+                        <i class='bx bx-user-circle bx-sm'></i>
+                        <span>Pefil</span>
+                    </a>
+                {% else  %}
+                    <a href="" class="dropdown-item">
+                        <i class='bx bx-user-circle bx-sm'></i>
+                        <span>Pefil</span>
+                    </a>
+                {% endif %}
                 <a href="{% url 'auth:logout' %}" class="dropdown-item">
                     <i class='bx bx-exit bx-sm'></i>
                     <span>Salir</span>
