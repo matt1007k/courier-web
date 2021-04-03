@@ -1,0 +1,144 @@
+{% extends "layouts/admin.html" %} 
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %} 
+{% load static %}
+{% load humanize %}
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <h4>{{ title }}</h4>
+    </div>
+    <div class="right">
+        <div x-data="{ isOpen: false }" class="container-modal">
+            <button @click="isOpen = true" class="btn btn-link btn-small">
+            <svg
+            class="filter"
+            width="24"
+            height="24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
+                    fill="#2E3A59"
+                />
+            </svg>
+            </button>
+            <div 
+                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                class="modal modal-right">
+                <div 
+                    class="modal-content card" style="width: 400px" 
+                    @click.away="isOpen = false" 
+                >
+                    <div class="head">
+                        <h6>Búsqueda avanzada</h6>
+                        <div class="close">
+                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                <i class='bx bx-x bx-sm' ></i>
+                            </button>
+                        </div>
+                    </div>
+                    <form method='GET' class="form-modal">
+                        <div class="form-group">
+                            <input type='search' name='q' placeholder="¿Qué estás buscando?" value='{{ request.GET.q }}' class="input">
+                        </div>
+                        
+                        <div class="actions right">
+                            <button type='submit' class="btn btn-primary">Buscar</button>
+                            <a href="{% url 'addresses:index' %}" class="btn btn-default">Limpiar</a>
+                        </div>
+                    </form> 
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'addresses:create' %}" class="btn btn-link btn-small text-primary">
+            <i class='bx bx-plus bx-sm' ></i>
+            <span>Nueva dirección</span> 
+        </a>
+    </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+
+    {% if object_list.count > 0 %}
+    
+    <div class="address-list">
+    {% for address in object_list %}
+        <div class="card address-item">
+            <div class="address-detail">
+                <div class="icon icon-primary-default rounded rounded-md">
+                    <i class='bx bx-current-location bx-sm  '></i>
+                </div>
+                <div class="content">
+                    <h6>{{ address.address }}</h6>
+                    <p>{{ address.address_city }}</p>
+                    {% if address.default %}
+                    <div class="text-small">
+                        <div class="badge badge-secondary badge-sm">Principal</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if not address.default %}
+                    <a href="{% url 'addresses:default' address.pk %}" class="icon-view h6">
+                        <i class='bx bxs-bookmark-star bx-sm text-secondary'></i>
+                        <span class="text-small">Principal</span>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="actions">
+                <a href="{{ address.get_update_path }}" class="btn btn-link btn-small">Editar</a>
+                <a href="{{ address.get_delete_path }}" class="btn btn-link danger btn-small">Eliminar</a>
+            </div>
+        </div>
+        
+    {% endfor %}
+    </div>
+
+    <div class="mb-10 table-list-bottom">
+        <div class="table-list-details">
+            <p>
+                Página
+                <span class="font-medium">{{ page_obj.number }}</span>
+                de
+                <span class="font-medium">{{ page_obj.paginator.num_pages }}</span>
+                -
+                Total
+                <span class="font-semibold">{{ object_list.count }}</span>
+                registros
+            </p>
+        </div>
+        <div class="pagination space-x">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Anterior</a>
+          {% else %}
+            <a class="pagination-item disable">Anterior</a>
+          {% endif %}
+
+          {% for i in page_obj.paginator.page_range %} 
+            {% if page_obj.number == i %}
+              <a class="pagination-item page-number active">{{ i }}</a>
+            {% else %}
+              <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Siguiente</a>
+          {% else %}
+            <a class="pagination-item disable">Siguiente</a>
+          {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card mb-10">
+        <p>
+            Sin registros...
+        </p>
+    </div>
+    {% endif %}
+{% endblock content %}

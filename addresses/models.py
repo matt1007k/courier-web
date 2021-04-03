@@ -1,5 +1,6 @@
 from typing import Dict
 from django.db import models
+from django.urls import reverse
 
 from clients.models import Client
 
@@ -51,6 +52,15 @@ class Address(models.Model):
     def __str__(self) -> str:
         return self.address_complete()
 
+    def get_index_path(self):
+        return reverse('addresses:index')
+
+    def get_update_path(self):
+        return reverse('addresses:update', kwargs={'pk': self.pk})
+
+    def get_delete_path(self):
+        return reverse('addresses:delete', kwargs={'pk': self.pk})
+
     def address_all(self):
         return f"{self.address}, {self.district}, {self.city}, {self.reference}"
 
@@ -62,6 +72,10 @@ class Address(models.Model):
         
     def address_city(self):
         return f"{self.district}, {self.city}"
+
+    def update_default(self, default=False):
+        self.default = default
+        self.save()
 
     class Meta:
         verbose_name = "dirección"

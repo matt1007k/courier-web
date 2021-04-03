@@ -37,7 +37,6 @@ class OrderListView(LoginRequiredMixin, ListView):
         if self.query() and self.query_date():            
             filters = Q(tracking_code__icontains=self.query()) | Q(client__first_name__icontains=self.query()) | Q(client__last_name__icontains=self.query()) | Q(created_at__date=self.query_date())
             
-            print('date: ',   self.query_date())
             object_list = self.model.objects.filter(filters)
         elif self.query_date() and self.query_status():
             object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.PENDING, created_at__date=self.query_date()).order_by('-id')

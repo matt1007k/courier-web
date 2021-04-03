@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('pages.urls', namespace="index")),
     path('dashboard/', dashboard, name="dash"),
     path('auth/', include('authentication.urls', namespace='auth')),
+    path('addresses/', include('addresses.urls', namespace='addresses')),
     path('clients/', include('clients.urls', namespace='clients')),
     path('drivers/', include('drivers.urls', namespace='drivers')),
     path('orders/', include('orders.urls', namespace='orders')),
