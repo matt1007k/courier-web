@@ -66,10 +66,12 @@
             </div>
         </div>
 
-        <a href="{% url 'orders:create' %}" class="btn btn-link btn-small text-primary">
+        {% if perms.orders.add_order %}
+        <a href="{% url 'orders:create-client' %}" class="btn btn-link btn-small text-primary">
             <i class='bx bx-plus bx-sm' ></i>
             <span>Nuevo pedido</span> 
         </a>
+        {% endif %}
     </div>
 </div>
 {% endblock content_head %}
@@ -113,9 +115,11 @@
                     {% include "orders/snippets/status.html" %}
                 </div>
             </div>
+            {% if perms.orders.view_order %}
             <a href="#" class="icon-view h6">
                 <i class='bx bxs-chevron-right bx-sm' ></i>
             </a>
+            {% endif %}
         </div>
         <div class="order-list-col">
             <h6>{{ order.get_first_detail.address_origin.address }}</h6>
@@ -126,9 +130,15 @@
             <p>{{ order.get_first_detail.address_destiny.address_city }}</p>
         </div>
         <div class="order-list-col actions">
-            {% comment %} <a href="{{ order.get_detail_path }}" class="btn btn-link btn-small">Ver</a> {% endcomment %}
+            {% if perms.orders.view_order %}
+            <a href="#" class="btn btn-link btn-small">Ver</a>
+            {% endif %}
+            {% if perms.orders.change_order %}
             <a href="#" class="btn btn-link btn-small">Editar</a>
+            {% endif %}
+            {% if perms.orders.delete_order %}
             <a href="#" class="btn btn-link danger btn-small">Eliminar</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}

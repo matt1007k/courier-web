@@ -10,8 +10,8 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li>
-            <a href="#">
+        <li class="{% if request.path == '/orders/' %}active{% endif %}">
+            <a href="{% url 'orders:index' %}">
                 
                 <i class='bx bx-trip bx-sm'></i>
                 <span>Pedidos</span>

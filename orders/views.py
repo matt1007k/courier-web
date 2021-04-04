@@ -6,13 +6,14 @@ from datetime import datetime
 
 from django.views.generic import ListView
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .utils import get_or_create_order
 from .models import Order
 
-class OrderListView(LoginRequiredMixin, ListView):
+class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'orders.view_order'
     template_name = 'orders/index.html'
     paginate_by = 10
     model = Order
@@ -34,19 +35,28 @@ class OrderListView(LoginRequiredMixin, ListView):
         return self.request.GET.get('status')
 
     def get_queryset(self):
-        if self.query() and self.query_date():            
-            filters = Q(tracking_code__icontains=self.query()) | Q(client__first_name__icontains=self.query()) | Q(client__last_name__icontains=self.query()) | Q(created_at__date=self.query_date())
+        # if self.query() and self.query_date():            
+        #     filters = Q(tracking_code__icontains=self.query()) | Q(client__first_name__icontains=self.query()) | Q(client__last_name__icontains=self.query()) | Q(created_at__date=self.query_date())
             
-            object_list = self.model.objects.filter(filters)
-        elif self.query_date() and self.query_status():
-            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.PENDING, created_at__date=self.query_date()).order_by('-id')
-        else:
-            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
+        #     object_list = self.model.objects.filter(client=client).filter(filters)
+        # elif self.query_date() and self.query_status():
+        #     object_list = self.model.objects.filter(client=client).filter(status=self.query_status() or Order.OrderStatus.PENDING, created_at__date=self.query_date()).order_by('-id')
+        # else:
+        #     object_list = self.model.objects.filter(client=client).filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
             # created_at__date='2021-3-25'
             # created_at__range=(start_date, end_date)
+        if self.request.user.is_client:
+            object_list = self.request.user.client.order_set.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
+        elif self.request.user.is_driver:
+            object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
+            print(self.request.user.driver.order_set.count())
+        else:
+            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.PENDING, created_at__date=self.query_date()).order_by('-id')
+        
         return object_list
 
 @login_required()
+@permission_required('orders.add_order', login_url='/orders')
 def create_order_client_view(request):
     order = get_or_create_order(request) 
     if request.method == 'POST':

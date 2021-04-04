@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from django.contrib.auth.models import Group
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -39,6 +40,8 @@ def register_view(request):
     if request.method == 'POST' and form.is_valid():
         user = form.save()
         if user:
+            client_group = Group.objects.get(name='Cliente')
+            user.groups.add(client_group)
             login(request, user)
             return redirect('auth:complete-info')
     else:
