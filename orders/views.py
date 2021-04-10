@@ -1,3 +1,5 @@
+from django.db.models.signals import pre_init
+from clients.models import Client
 from typing import Any, Dict
 from django.contrib import messages
 from django.db.models import Q
@@ -9,7 +11,7 @@ from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from .utils import get_or_create_order
+from .utils import delete_order, get_or_create_order
 from .models import Order
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -22,7 +24,9 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Pedidos'
         context['statuses'] = Order.OrderStatus
+        context['client_list'] = Client.objects.all()[:5]
         context['status'] = self.query_status() or Order.OrderStatus.PENDING
+        delete_order(self.request)
         return context
 
     def query(self):
@@ -51,7 +55,7 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
             print(self.request.user.driver.order_set.count())
         else:
-            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.PENDING, created_at__date=self.query_date()).order_by('-id')
+            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
         
         return object_list
 
@@ -66,7 +70,7 @@ def create_order_client_view(request):
             image_payed = request.FILES['image_payed']
             order.image_payed = image_payed
             order.save()
-            messages.success(request, 'El pedido se ha realizado con exitó')
+            messages.success(request, 'El pedido se ha realizado con éxito')
             # return redirect('orders:index') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
@@ -85,11 +89,29 @@ def create_order_view(request):
             image_payed = request.FILES['image_payed']
             order.image_payed = image_payed
             order.save()
-            messages.success(request, 'El pedido se ha realizado con exitó')
+            messages.success(request, 'El pedido se ha realizado con éxito')
             # return redirect('orders:index') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
         
-    return render(request, 'orders/create-client.html', context={
+    return render(request, 'orders/create.html', context={
+        'order': order
+    })
+
+@login_required()
+def cancel_order_view(request):
+    if request.method == 'GET':
+        delete_order(request) 
+        return redirect('orders:index')
+
+    messages.error(request, 'Error al cancelar el pedido')
+    return redirect('orders:index')
+
+@login_required()
+def add_addresses_view(request):
+    template_name = 'orders/add-addresses.html'
+    order = get_or_create_order(request)
+
+    return render(request, template_name, context={
         'order': order
     })

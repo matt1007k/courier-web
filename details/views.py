@@ -14,15 +14,15 @@ from addresses.forms import OriginAddressForm, DestinyAddressForm
 from orders.utils import fields_destiny_form, get_or_create_order, fields_origin_form
 
 @login_required()
-def create_client_view(request):
-    template = 'details/create-client.html'
+def create_detail_view(request):
+    template = 'details/create.html'
     info_form = DetailForm(request.POST or None)
     origin_form = OriginAddressForm(request.POST or None)
     destiny_form = DestinyAddressForm(request.POST or None)
-    client = request.user.client 
+    order = get_or_create_order(request)
+    client = order.client 
     my_addressess_list = Address.objects.filter(client=client).order_by('-id')
     if request.method == 'POST' and info_form.is_valid() and origin_form.is_valid()  and destiny_form.is_valid():
-        order = get_or_create_order(request)
         address_origin = Address.objects.update_or_create_address_origin(client, origin_form.cleaned_data)
         address_destiny = Address.objects.update_or_create_address_destiny(client, destiny_form.cleaned_data)
         detail = Detail.objects.create(
@@ -39,15 +39,17 @@ def create_client_view(request):
             sub_total=10
         )
         if not detail is None:
-            messages.success(request, 'El pedido de envío agregado con exitó.')
+            messages.success(request, 'El pedido de envío agregado con éxito.')
             return redirect('orders:create-client')
 
 
     return render(request, template, context={
+        'order': order,
         'info_form': info_form,
         'origin_form': origin_form,
         'destiny_form': destiny_form,
-        'my_addressess_list': my_addressess_list
+        'my_addressess_list': my_addressess_list,
+        'title': 'Dirección de envió'
     })
 
 @login_required()
@@ -72,7 +74,7 @@ def update_client_view(request, pk):
             finfo.image = request.FILES['image']
             finfo.save()
 
-        messages.success(request, 'El pedido de envío editado con exitó.')
+        messages.success(request, 'El pedido de envío editado con éxito.')
         return redirect('orders:create-client')
 
     return render(request, template, context={
@@ -87,7 +89,7 @@ class DeleteDetailView(LoginRequiredMixin, DeleteView):
     template_name = 'details/delete.html'
 
     def get_success_url(self) -> str:
-        messages.success(self.request, "El pedido de envío eliminado con exitó")
+        messages.success(self.request, "El pedido de envío eliminado con éxito")
         return self.request.GET.get('next', reverse('orders:create-client'))
 
     def get_queryset(self):

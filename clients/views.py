@@ -22,7 +22,7 @@ class ClientListVew(LoginRequiredMixin, ListView):
 class ClienteCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'clients/create.html'
     form_class = ClientModelForm
-    success_message = 'Registro creado con exitó'
+    success_message = 'Registro creado con éxito'
 
     def get_success_url(self) -> str:
         return reverse('clients:index')
@@ -46,7 +46,7 @@ class ClientUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     template_name = 'clients/edit.html'
     form_class = ClientModelForm
     model = Client
-    success_message = 'Registro editado con exitó'
+    success_message = 'Registro editado con éxito'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -66,5 +66,5 @@ class ClientDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         return context 
 
     def get_success_url(self) -> str:
-        messages.success(self.request, 'Registro eliminado con exitó')
+        messages.success(self.request, 'Registro eliminado con éxito')
         return reverse('clients:index')

@@ -14,6 +14,14 @@
     background: rgba(var(--primary-color), .2);
     color: rgb(var(--title-color));
 }
+.icon-secondary{
+    background: rgb(var(--secondary-color));
+    color: white;
+}
+.icon-secondary-default{
+    background: rgba(var(--secondary-color), .2);
+    color: rgb(var(--secondary-color));
+}
 .icon-success{
     background: rgb(var(--success-color));
     color: white;
@@ -40,6 +48,11 @@
 }
 .icon-cicle{
     border-radius: 50%;
+}
+.icon-sm{
+    font-size: 24px;
+    width: 28px;
+    height: 28px;
 }
 .icon-lg{
     font-size: 32px;

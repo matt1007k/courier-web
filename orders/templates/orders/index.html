@@ -67,11 +67,54 @@
         </div>
 
         {% if perms.orders.add_order %}
-        <a href="{% url 'orders:create-client' %}" class="btn btn-link btn-small text-primary">
-            <i class='bx bx-plus bx-sm' ></i>
-            <span>Nuevo pedido</span> 
-        </a>
+            {% if request.user.is_client%}
+            <a href="{% url 'orders:create-client' %}" class="btn btn-link btn-small text-primary">
+                <i class='bx bx-plus bx-sm' ></i>
+                <span>Nuevo pedido</span> 
+            </a>
+            {% else %}
+            <div x-data="{ isOpen: false }" class="container-modal">
+                <button @click="isOpen = true" class="btn btn-link btn-small">
+                    Nuevo pedido
+                </button>
+                <div 
+                    x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                    class="modal">
+                    <div 
+                        class="modal-content card" style="width: 400px" 
+                        @click.away="isOpen = false" 
+                    >
+                        <div class="head">
+                            <h6>Nuevo pedido para</h6>
+                            <div class="close">
+                                <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                    <i class='bx bx-x bx-sm' ></i>
+                                </button>
+                            </div>
+                        </div>
+                        <form method='POST' action="{% url 'orders:create' %}" class="form-modal">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="client_id">Cliente</label>
+                                <select name="client_id" id="client_id" class="input" required>
+                                    <option value="">Seleccionar el client</option>
+                                    {% for client in client_list %}
+                                    <option value="{{ client.id }}">{{ client.full_name }}</option> 
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="actions right">
+                                <a href="{% url 'orders:index' %}" class="btn btn-default">Cancelar</a>
+                                <button type='submit' class="btn btn-primary">Continuar</button>
+                            </div>
+                        </form> 
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         {% endif %}
+       
     </div>
 </div>
 {% endblock content_head %}

@@ -9,7 +9,7 @@
     background-color: var(--bg-secondary-color);
     padding: 14px 9px;
     min-width: 200px;
-    /* z-index: 1; */
+    z-index: 1;
 }
 .dropdown .dropdown-menu.right{
     right: 0;
@@ -30,4 +30,21 @@
 .dropdown .dropdown-menu .dropdown-item:hover{
     background-color: rgb(var(--primary-color));
     color: white;
+}
+.dropdown .dropdown-menu .dropdown-item-2{
+    text-decoration: none;
+    padding: 10px 13px;
+    border-radius: 8px;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    transition-property: all;
+    transition-duration: 200ms;
+}
+.dropdown .dropdown-menu .dropdown-item-2 span{
+    margin-right: 10px;
+    flex: auto;
+}
+.dropdown .dropdown-menu .dropdown-item-2:hover{
+    background-color: rgb(var(--primary-color), .04);
 }

@@ -29,14 +29,16 @@ body.dark{
     --btn-default-color: rgba(255, 255, 255, 0.15);
     --bg-primary-color: #2c2c2c;
     --bg-secondary-color: #414141;
-
+    /* blue */
+    /* --bg-primary-color: #1f1c2f;
+    --bg-secondary-color: #292448; */
 }
 
 .container{
     padding: 0 20px;
 }
 .w-full{
-    width: 100%;
+    width: 100% !important;
 }
 
 @media (min-width: 1024px){

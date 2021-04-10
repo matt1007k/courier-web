@@ -32,7 +32,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'Sesión cerrada con exitó.')
+    messages.success(request, 'Sesión cerrada con éxito.')
     return redirect('auth:login')
 
 def register_view(request):
@@ -82,7 +82,7 @@ class UserCreateView(LoginRequiredMixin, CreateView):
     form_class = CustomUserForm
 
     def get_success_url(self) -> str:
-        messages.success(self.request, 'Usuario registrado con exitó')
+        messages.success(self.request, 'Usuario registrado con éxito')
         return reverse('auth:create')
 
 

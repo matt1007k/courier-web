@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from .views import dashboard
 
+
 urlpatterns = [
     path('', include('pages.urls', namespace="index")),
     path('dashboard/', dashboard, name="dash"),
@@ -31,6 +32,8 @@ urlpatterns = [
     path('details/', include('details.urls', namespace='details')),
     path('admin/', admin.site.urls),
 ] 
+
+handler404 = 'courier_app.views.custom_page_not_found_view'
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

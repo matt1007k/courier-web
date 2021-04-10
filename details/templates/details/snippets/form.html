@@ -1,13 +1,22 @@
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
     <div class="card mb-4">
+    <div x-data="postsState()" x-init="initData()">
+                            <h5 x-text="message"></h5>
+                            <button @click="getPost()">def</button>
+                            <div class="mt-5">
+                                <template x-for="post in posts" :key="post.id">
+                                    <h6 x-text="post.title"></h6>
+                                </template>
+                            </div>
+                        </div>
         <div class="form-grid-2 mb-4">
             <div>
                 <h5 class="mb-2">Información de la persona a enviar</h5>
                 <p>El paquete no debe superar los <span class="h6">5kg</span> y las dimensiones de <span class="h6">30x30x30cm</span>.</p>
             </div>
             <div>
-                <a class="btn btn-default" id="complete-info-me">Completar con mi infomación</a>
+                <a class="btn btn-default" id="complete-info-me">Completar con {% if request.user.is_client %}mi infomación{% else %} la información del cliente {% endif %}</a>
             </div>
         </div>
         <div class="form-grid-2">
@@ -45,7 +54,7 @@
                             {% endfor %}
                         </select>
                         {% endif %}
-                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la vista de <a href="#">Mis direcciones</a> </p>
+                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la sección de <a href="{% url 'addresses:index' %}">Mis direcciones</a> </p>
                         <a href="#" onClick="clearFieldsOrigin()" class="link mt-2">Limpiar campos</a>
                     </div> 
                     <h6 class="text-center">O completa los campos</h6>
@@ -81,7 +90,7 @@
                             {% endfor %}
                         </select>
                         {% endif %}
-                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la vista de <a href="#">Mis direcciones</a> </p>
+                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la sección de <a href="{% url 'addresses:index' %}">Mis direcciones</a> </p>
                         <a href="#" onClick="clearFieldsDestiny()" class="link mt-2">Limpiar campos</a>
                     </div> 
                     <h6 class="text-center">O completa los campos</h6>
@@ -104,23 +113,39 @@
         
         <div class="actions right mt-5">
             <button type="submit" class="btn btn-primary">{{ btnText }}</button>
-            <a href="{% url 'orders:create-client' %}" class="btn btn-default">Cancelar</a>
+            <a href="{% url 'orders:add-addresses' %}" class="btn btn-default">Cancelar</a>
         </div>
     </div>
   </form>
 
 {% block scripts %}
 <script type="text/javascript" >
+ function postsState(){
+            return {
+                posts: [], 
+                message: 'Hello fow',
+                initData(){
+                    fetch('https://jsonplaceholder.typicode.com/posts?page=1')
+                        .then(res => res.json())
+                        .then(data => { 
+                            this.posts = data;
+                        });
+                },
+                getPost(){
+                    console.log(this.posts)
+                },
+            }
+        }
     {% if request.user.is_authenticated %}
         var btnCompleteInfoMe = document.getElementById('complete-info-me');
         var selectOriginAddress = document.getElementById('origin_addressess');
         var selectDestinyAddress = document.getElementById('destiny_addressess');
         var form = document.querySelector('form');
         btnCompleteInfoMe.addEventListener('click', function(ev){
-            form.first_name.value = "{{ request.user.client.first_name }}";
-            form.last_name.value = "{{ request.user.client.last_name }}";
-            form.email.value = "{{ request.user.email }}";
-            form.cell_phone.value = "{{ request.user.client.cell_phone }}";
+            form.first_name.value = "{{ order.client.first_name }}";
+            form.last_name.value = "{{ order.client.last_name }}";
+            form.email.value = "{{ order.client.user.email }}";
+            form.cell_phone.value = "{{ order.client.cell_phone }}";
         })
         var my_addressess_list =  [{% for address in my_addressess_list %} [{
             id: parseInt("{{ address.id|escapejs }}"), 

@@ -45,7 +45,7 @@ class AddressListView(LoginRequiredMixin, ListView):
 class AddressCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'addresses/create.html'
     form_class = AddressModelForm
-    success_message = 'Registro creado con exitó'
+    success_message = 'Registro creado con éxito'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -64,7 +64,7 @@ class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     template_name = 'addresses/edit.html'
     form_class = AddressModelForm
     model = Address
-    success_message = 'Registro editado con exitó'
+    success_message = 'Registro editado con éxito'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -91,7 +91,7 @@ class AddressDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         return context
 
     def get_success_url(self) -> str:
-        messages.success(self.request, 'Registro eliminado con exitó')
+        messages.success(self.request, 'Registro eliminado con éxito')
         return reverse('addresses:index')
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:

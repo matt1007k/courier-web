@@ -42,7 +42,7 @@
     width: 100%;    
 }
 .card-form{
-    width: 100%;
+    width: 100% !important;
 }
 .bg-primary{
     background: rgb(var(--primary-color));
@@ -69,12 +69,21 @@
         margin-bottom: 0;
         flex: 0;
     }
+    .actions.reverse-col{
+        flex-direction: column-reverse;
+    }
+    .actions.reverse-row{
+        flex-direction: row-reverse;
+    }
     .actions .link, .actions .btn, .actions a{
         width: auto;
     }
     .card-form{
-        width: 80%;
-        margin: 0 auto;
+        width: 80% !important;
+        margin: 0 auto !important;
+    }
+    .card-create-order{
+        width: 100% !important;
     }
 }
 @media (min-width: 1024px){
@@ -82,7 +91,11 @@
         padding: 32px;
     }
     .card-form{
-        width: 60%;
-        margin: 0 auto;
+        width: 60% !important;
+        margin: 0 auto !important;
+    }
+    .card-create-order{
+        width: 80% !important;
+        margin: 0 auto !important;
     }
 }

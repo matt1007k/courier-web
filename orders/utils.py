@@ -1,5 +1,6 @@
-from drivers.models import Driver
+from django.shortcuts import redirect
 from .models import Order
+from clients.models import Client
 
 def get_or_create_order(request):
     user = request.user if request.user.is_authenticated else None
@@ -10,13 +11,25 @@ def get_or_create_order(request):
     else:
         tracking_code = get_generate_tracking_code()
         
+        if user.is_client:
+            client = user.client
+        else:
+            client = Client.objects.get(pk=request.POST.get('client_id'))
         order = Order.objects.create(
-                                client=user.client, 
+                                client=client, 
                                 tracking_code=tracking_code
                                 )
     request.session['order_id'] = order.id
     return order
 
+def delete_order(request):
+    order_id = request.session.get('order_id')
+    print('orderId', order_id)
+    if order_id:
+        Order.objects.get(pk=order_id).delete()
+        print('delete')
+        request.session['order_id'] = None
+        
 def fields_origin_form(detail):
     fields = {
         'origin_address': detail.address_origin.address,

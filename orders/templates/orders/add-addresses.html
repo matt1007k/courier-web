@@ -6,19 +6,16 @@
 {% block content_head %}
 <div class="content-head">
     <div class="left">
-        <a href="{% url 'orders:cancel-order' %}" class="btn btn-link btn-small">
-            <i class='bx bx-left-arrow-alt bx-sm'></i>
+        <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Cálculo de tarifa">
+            <i class='bx bx-help-circle bx-sm'></i>
         </a>
-        <h4>Registrar pedido</h4>
     </div>
     <div class="right">
-        {% if request.user.is_administrator %}
-        <a href="#" class="btn btn-link btn-small">
-            <i class="bx bx-user-plus bx-sm"></i>
-            <span>Agregar cliente</span>
+        <a href="{% url 'orders:create-detail' %}" class="btn btn-link btn-small">
+            <i class="bx bx-location-plus bx-sm"></i>
+            <span>Agregar dirección</span>
         </a>
-        {% endif %}
-    </div>    
+    </div>   
 </div>
 {% endblock %}
 {% block content %}
@@ -26,10 +23,10 @@
     <div class="card card-create-order create-order">
         
         <div class="step-wrapper">
-            <div class="step active">
+            <div class="step success">
                 <div class="step-icon-wrapper">
                     <div class="step-icon">
-                        <i class='bx bx-user-pin bx-sm' ></i>
+                        <i class='bx bx-check bx-sm' ></i>
                     </div> 
                     <div class="step-progress-desktop"></div>
                 </div> 
@@ -39,7 +36,7 @@
                 </div>
                 <div class="step-progress-mobile"></div>
             </div>
-            <div class="step">
+            <div class="step active">
                 <div class="step-icon-wrapper">
                     <div class="step-icon">
                         <i class='bx bx-map-pin bx-sm' ></i>
@@ -90,7 +87,7 @@
         </div>
         <div class="mt-8 actions reverse right">
             <a href="{% url 'orders:cancel-order' %}" class="btn btn-default">Cancelar</a>
-            <a href="{% url 'orders:add-addresses' %}" class="btn btn-primary">Siguiente</a>
+            <a href="#" class="btn btn-primary">Siguiente</a>
         </div>
     </div>
 </div>  

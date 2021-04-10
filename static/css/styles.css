@@ -13,6 +13,7 @@
 @import 'components/badge.css';
 @import 'components/buttons.css';
 @import 'components/card.css';
+@import 'components/collapse.css';
 @import 'components/dragable.css';
 @import 'components/dropdown.css';
 @import 'components/forms.css';
@@ -21,6 +22,8 @@
 @import 'components/navbar.css';
 @import 'components/options.css';
 @import 'components/pagination.css';
+@import 'components/step.css';
+@import 'components/radio.css';
 @import 'components/tabbar.css';
 @import 'components/table.css';
 
@@ -31,3 +34,4 @@
 @import 'pages/order-create.css';
 @import 'pages/order-list.css';
 @import 'pages/profile.css';
+@import 'pages/valoration.css';

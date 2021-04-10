@@ -52,7 +52,7 @@ class DriverCreateView(LoginRequiredMixin, CreateView):
     form_class = DriverModelForm
 
     def get_success_url(self) -> str:
-        messages.success(self.request, "Registro realizado con exitó")
+        messages.success(self.request, "Registro realizado con éxito")
         return reverse('drivers:index')
 
     def form_valid(self, form: DriverModelForm) -> HttpResponse:
@@ -65,14 +65,14 @@ class DriverUpdateView(LoginRequiredMixin, UpdateView):
     model = Driver
 
     def get_success_url(self) -> str:
-        messages.success(self.request, "Registro editado con exitó")
+        messages.success(self.request, "Registro editado con éxito")
         return reverse('drivers:index')
 
 class DriverDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'drivers/delete.html'
 
     def get_success_url(self) -> str:
-        messages.success(self.request, "Registro eliminado con exitó")
+        messages.success(self.request, "Registro eliminado con éxito")
         return reverse('drivers:index')
 
     def get_queryset(self):
@@ -84,7 +84,7 @@ class VehicleCreateView(LoginRequiredMixin, CreateView):
     form_class = VehicleModelForm
 
     def get_success_url(self) -> str:
-        messages.success(self.request, "Moto registrado con exitó")
+        messages.success(self.request, "Moto registrado con éxito")
         return reverse('drivers:detail', kwargs={'slug':self.request.user.driver.slug})
     
     def form_valid(self, form: VehicleModelForm) -> HttpResponse:
@@ -100,6 +100,6 @@ class VehicleUpdateView(LoginRequiredMixin, UpdateView):
     model = Vehicle
 
     def get_success_url(self) -> str:
-        messages.success(self.request, "Moto editado con exitó")
+        messages.success(self.request, "Moto editado con éxito")
         return self.request.GET.get('next', reverse('drivers:detail', kwargs={'slug': self.request.user.driver.slug}))
     
