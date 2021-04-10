@@ -5,10 +5,10 @@
 {% block content_head %}
 <div class="content-head">
   <div class="left">
-      <a href="{% url 'drivers:index' %}" class="btn btn-link btn-small">
+      <a href="{% url 'orders:add-addresses' %}" class="btn btn-link btn-small">
         <i class='bx bx-left-arrow-alt bx-sm'></i>
       </a>
-      <h4>Eliminar pedido de envío</h4>
+      <h4>Eliminar dirección de envío</h4>
   </div>
 </div>
 {% endblock content_head %}
@@ -22,7 +22,7 @@
     <div>
         <form method="post">
           {% csrf_token %}
-          <h5>¿Estás seguro de eliminar el pedido de envío?</h5>
+          <h5>¿Estás seguro de eliminar el dirección de envío?</h5>
           <p>Los datos no se podrán recuperar, después que realice está operación</p>
           <div class="actions right mt-6">
           <button type="submit" class="btn btn-danger">Si, eliminar</button>

@@ -1,4 +1,3 @@
-from django.db.models.signals import pre_init
 from clients.models import Client
 from typing import Any, Dict
 from django.contrib import messages
@@ -26,7 +25,7 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         context['statuses'] = Order.OrderStatus
         context['client_list'] = Client.objects.all()[:5]
         context['status'] = self.query_status() or Order.OrderStatus.PENDING
-        delete_order(self.request)
+        self.request.session['order_id'] = None
         return context
 
     def query(self):
@@ -82,20 +81,10 @@ def create_order_client_view(request):
 @login_required()
 def create_order_view(request):
     order = get_or_create_order(request) 
-    if request.method == 'POST':
-        if 'image_payed' in request.FILES:
-            if order.detail_set.count() == 0:
-                messages.error(request, 'El pedido no tiene ningún elemento de envió')
-            image_payed = request.FILES['image_payed']
-            order.image_payed = image_payed
-            order.save()
-            messages.success(request, 'El pedido se ha realizado con éxito')
-            # return redirect('orders:index') 
-        else:
-            messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
         
     return render(request, 'orders/create.html', context={
-        'order': order
+        'order': order,
+        'title': 'Registrar pedido'
     })
 
 @login_required()
@@ -113,5 +102,28 @@ def add_addresses_view(request):
     order = get_or_create_order(request)
 
     return render(request, template_name, context={
-        'order': order
+        'order': order,
+        'title': 'Pedido - Direcciones de envió'
+    })
+
+@login_required()
+def payment_view(request):
+    template_name = 'orders/payment.html'
+    order = get_or_create_order(request)
+    if request.method == 'POST':
+        if 'image_payed' in request.FILES:
+            if order.detail_set.count() == 0:
+                messages.error(request, 'El pedido no tiene ningún elemento de envió')
+            image_payed = request.FILES['image_payed']
+            order.image_payed = image_payed
+            order.type_ticket = request.POST.get('type_ticket')
+            order.save()
+            messages.success(request, 'El pedido se ha realizado con éxito')
+            return redirect('orders:index') 
+        else:
+            messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
+
+    return render(request, template_name, context={
+        'order': order,
+        'title': 'Pedido - Realizar pago'
     })

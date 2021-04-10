@@ -68,7 +68,7 @@
 
         {% if perms.orders.add_order %}
             {% if request.user.is_client%}
-            <a href="{% url 'orders:create-client' %}" class="btn btn-link btn-small text-primary">
+            <a href="{% url 'orders:create' %}" class="btn btn-link btn-small text-primary">
                 <i class='bx bx-plus bx-sm' ></i>
                 <span>Nuevo pedido</span> 
             </a>

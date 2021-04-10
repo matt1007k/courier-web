@@ -7,19 +7,15 @@
 {% block content_head %}
 <div class="content-head">
     <div class="left">
-        <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Cálculo de tarifa">
+        <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Formas de pago">
             <i class='bx bx-help-circle bx-sm'></i>
         </a>
     </div>
-    <div class="right">
-        <a href="{% url 'orders:create-detail' %}" class="btn btn-link btn-small">
-            <i class="bx bx-location-plus bx-sm"></i>
-            <span>Agregar dirección</span>
-        </a>
-    </div>   
 </div>
 {% endblock %}
 {% block content %}
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
 <div class="mb-10">
     <div class="card card-create-order create-order">
         
@@ -37,7 +33,7 @@
                 </div>
                 <div class="step-progress-mobile"></div>
             </div>
-            <div class="step active">
+            <div class="step success">
                 <div class="step-icon-wrapper">
                     <div class="step-icon">
                         <i class='bx bx-map-pin bx-sm' ></i>
@@ -50,7 +46,7 @@
                 </div>
                 <div class="step-progress-mobile"></div>
             </div>
-            <div class="step">
+            <div class="step active">
                 <div class="step-icon-wrapper">
                     <div class="step-icon">
                         <i class='bx bx-credit-card bx-sm' ></i>
@@ -70,35 +66,6 @@
                 {% for detail in order.detail_set.all %}
                 
                 <div class="address-item">
-                    <div class="address-head" x-data="{ isOpen: false }">
-                        <div class="icon icon-secondary-default icon-sm rounded-sm">
-                            <i class='bx bx-map-pin bx-xs' ></i>
-                        </div>
-                        <div class="dropdown">
-                        <button @click="isOpen = !isOpen" class="btn btn-link btn-xsmall">
-                        <svg class="cursor-pointer icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <g id="icon_more" data-name="icon more" transform="translate(0 -2)">
-                                <rect id="Rectangle_177" data-name="Rectangle 177" width="24" height="24" transform="translate(0 2)" fill="none" opacity="0.997"/>
-                                <g id="Group_133" data-name="Group 133" transform="translate(2 -16)" opacity="0.5">
-                                <circle id="Ellipse_75" data-name="Ellipse 75" cx="2" cy="2" r="2" transform="translate(2 23)" fill="#22154a" opacity="0.697"/>
-                                <circle id="Ellipse_76" data-name="Ellipse 76" cx="2" cy="2" r="2" transform="translate(8 23)" fill="#22154a" opacity="0.697"/>
-                                <circle id="Ellipse_77" data-name="Ellipse 77" cx="2" cy="2" r="2" transform="translate(14 23)" fill="#22154a" opacity="0.697"/>
-                                </g>
-                            </g>
-                        </svg>
-                        </button>
-                        <div class="dropdown-menu right" x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpen" @click.away="isOpen = false">
-                            <a href="{% url 'orders:update-detail' detail.pk %}" class="dropdown-item-2">
-                                <span>Editar</span>
-                                <i class='bx bx-edit bx-sm'></i>
-                            </a>
-                            <a href="{% url 'details:delete' detail.pk %}?next={{ request.path}}" class="dropdown-item-2 text-danger">
-                                <span>Eliminar</span>
-                                <i class='bx bx-trash bx-sm'></i>
-                            </a>
-                        </div>
-                        </div>
-                    </div>
                     <div class="address-delivered">
                         <div class="address-origin">
                             <h6>{{ detail.address_origin.address }}</h6>
@@ -189,7 +156,7 @@
                 {% endfor %}
 
                 {% else %}
-                    <h5 class="text-muted text-center">No hay una dirección de envió para este pedido.</h5>
+                    <h5 class="text-muted text-center">No hay una dirección de envió para para este pedido.</h5>
                     <div class="text-small text-center">Le aconsejamos agregar una dirección para continuar...</div>
                 {% endif %}
             </div>
@@ -217,14 +184,51 @@
                         </div>
                     </div>
                 </div>
+                <form class="">
+                    <div class="form-group mt-5">
+                        <input type="text" class="input" placeholder="Ingrese cupón de promoción">
+                    </div>
+                    <div class="actions right mt-2">
+                        <button class="btn btn-secondary btn-small">Aplicar</button>
+                    </div>
+                </form>
+                <div class="mt-5">
+                    <h6>Imágenes del pago realizado</h6>
+                    <input type="file" class="input mt-2" name="image_payed" required>
+                </div>
+                <div class="mt-5">
+                    <h6>Tipo de comprobante</h6>
+                    <div class="radio-group mt-2">
+                        <div class="radio-input">
+                            <input type="radio" name="type_ticket" id="boleta" checked value="BOLETA" required>
+                                <label for="boleta">
+                                <i class='bx bx-radio-circle bx-sm'></i>
+                                <i class='active bx bx-radio-circle-marked bx-sm' ></i>
+                                <span>
+                                    Boleta
+                                </span>
+                            </label>
+                        </div>
+                        <div class="radio-input">
+                            <input type="radio" name="type_ticket" id="factura" value="FACTURA" required>
+                                <label for="factura">
+                                <i class='bx bx-radio-circle bx-sm'></i>
+                                <i class='active bx bx-radio-circle-marked bx-sm' ></i>
+                                <span>
+                                    Factura
+                                </span>
+                            </label>
+                        </div>
+                    </div> 
+                </div>
+                <div class="mt-6 actions full">
+                    <button type="submit" class="btn btn-primary">Completar pedido</button>
+                    <a href="{% url 'orders:add-addresses' %}" class="btn btn-default">Regresar</a>
+                </div>
             </div>
         </div>
         
-        <div class="mt-8 actions reverse right">
-            <a href="{% url 'orders:create' %}" class="btn btn-default">Regresar</a>
-            <a href="{% url 'orders:payment' %}" class="btn btn-primary">Siguiente</a>
-        </div>
     </div>
 </div>  
-    
+</form>   
 {% endblock content %}

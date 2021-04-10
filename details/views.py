@@ -36,11 +36,10 @@ def create_detail_view(request):
             address_origin=address_origin,
             address_destiny=address_destiny,
             distance=12,
-            sub_total=10
         )
         if not detail is None:
-            messages.success(request, 'El pedido de envío agregado con éxito.')
-            return redirect('orders:create-client')
+            messages.success(request, 'La dirección de envío fue agregado con éxito.')
+            return redirect('orders:add-addresses')
 
 
     return render(request, template, context={
@@ -53,18 +52,18 @@ def create_detail_view(request):
     })
 
 @login_required()
-def update_client_view(request, pk):
+def update_detail_view(request, pk):
     template = 'details/update-client.html'    
     detail_obj = get_object_or_404(Detail, pk=pk)
     
+    order = get_or_create_order(request)
+    client = order.client
     info_form = DetailModelForm(request.POST or None, instance=detail_obj)
     origin_form = OriginAddressForm(request.POST or None, initial=fields_origin_form(detail=detail_obj))
     destiny_form = DestinyAddressForm(request.POST or None, initial=fields_destiny_form(detail=detail_obj))    
-    client = request.user.client 
     my_addressess_list = Address.objects.filter(client=client).order_by('-id')
 
     if request.method == 'POST' and info_form.is_valid() and origin_form.is_valid()  and destiny_form.is_valid():
-        order = get_or_create_order(request)
         # detail_obj.distance=12.00,
         # detail_obj.sub_total=10.00
         detail_obj.update_information(order, info_form.instance)
@@ -74,23 +73,24 @@ def update_client_view(request, pk):
             finfo.image = request.FILES['image']
             finfo.save()
 
-        messages.success(request, 'El pedido de envío editado con éxito.')
-        return redirect('orders:create-client')
+        messages.success(request, 'La dirección de envío fue editado con éxito.')
+        return redirect('orders:add-addresses')
 
     return render(request, template, context={
         'detail_obj': detail_obj,
         'info_form': info_form,
         'origin_form': origin_form,
         'destiny_form': destiny_form,
-        'my_addressess_list': my_addressess_list
+        'my_addressess_list': my_addressess_list,
+        'title': 'Editar dirección de envió'
     })
 
 class DeleteDetailView(LoginRequiredMixin, DeleteView):
     template_name = 'details/delete.html'
 
     def get_success_url(self) -> str:
-        messages.success(self.request, "El pedido de envío eliminado con éxito")
-        return self.request.GET.get('next', reverse('orders:create-client'))
+        messages.success(self.request, "La dirección de envío fue eliminado con éxito")
+        return self.request.GET.get('next', reverse('orders:add-addresses'))
 
     def get_queryset(self):
         return Detail.objects.all()
