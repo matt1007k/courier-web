@@ -3,6 +3,7 @@
 <title>Cuy Click Perú - {{ title }}</title>
 {% endblock title %}
 {% load static %}
+{% load humanize %}
 {% block content_head %}
 <div class="content-head">
   <div class="left">
@@ -59,21 +60,20 @@
         <div class="mb-4 card driver-avatars">
           <h6 class="title">Clientes asociados</h6>
           <div class="avatars">
+            {% for client in object.get_last_clients %}
               <div class="avatar avatar-sm">
-                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
+                {% if client.user.avatar %}
+                  <img src="{{ client.user.avatar.url }}" alt="{{ client.full_name }}">
+                {% else %}
+                  <img src="{% static 'img/avatar.png' %}" alt="{{ client.full_name }}">
+                {% endif %}
               </div> 
-              <div class="avatar avatar-sm">
-                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
-              </div> 
-              <div class="avatar avatar-sm">
-                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
-              </div> 
-              <div class="avatar avatar-sm">
-                  <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
-              </div> 
+            {% endfor %}
+            {% if object.clients_count > object.get_last_clients.count %}
               <div class="avatar more avatar-sm">
-                  <span>5+</span>
+                  <span>{{ object.clients_more_count }}+</span>
               </div> 
+            {% endif %}
           </div>
       </div>
     </div>
@@ -81,31 +81,43 @@
      <div class="col card valorations">
         <div class="valorations-head">
             <div class="title">
-                <h6>Valoraciones</h6>
-                <div class="badge badge-secondary">8</div>
+                <h6>Últimas valoraciones</h6>
+                <div class="badge badge-secondary">{{ object.valorations_count }}</div>
             </div>
-            <a href="#" class="btn btn-outline-warning btn-xs">Valorar</a>
+            {% if perms.valorations.add_valoration %}
+                <a href="{% url 'drivers:valoration' object.slug %}?next={{request.path|urlencode}}" class="btn btn-outline-warning btn-xs">Valorar</a>
+            {% endif %}
         </div>   
         <div class="valoration-list">
+            {% if object.valorations_count %}
+            {% for valoration in object.get_last_valorations %}
+            
             <div class="valoration-item">
                 <div class="avatar avatar-md">
-                    <img src="{% static 'img/avatar.png' %}" alt="Juan Rojas Licas">
+                    {% if valoration.client.user.avatar %}
+                    <img src="{{ valoration.client.user.avatar.url }}" alt="{{ valoration.client.full_name }}">
+                    {% else %}
+                    <img src="{% static 'img/avatar.png' %}" alt="{{ valoration.client.full_name }}">
+                    {% endif %}
                 </div>
                 <div class="valoration-content">
-                    <h6>Juan Rojas Licas</h6>
+                    <h6>{{ valoration.client.full_name }}</h6>
                     <div class="valoration-detail">
-                        <p>hace 2 días</p>
+                        <p>Hace {{ valoration.created_at|timesince }}</p>
                         <p>&middot;</p>
                         <span>
                             <i class='bx bxs-star text-warning'></i>
-                            <span class="text-body">5.0</span>
+                            <span class="text-body">{{ valoration.rating }}</span>
                         </span>
                     </div>
-                    <p>Excelente, cumplió con la entrega de mi pedido.</p>
+                    <p>{{ valoration.experience }}</p>
                 </div>
             </div>
-            
-            <a href="#" class="mt-2 btn btn-primary btn-full">Ver más</a>
+            {% endfor %}
+            {% comment %} <a href="#" class="mt-2 btn btn-primary btn-full">Ver más</a> {% endcomment %}
+            {% else %}
+            <p class="text-small">El motorizado no tiene valoraciones</p>
+            {% endif %}
         </div>
     </div>
 </div> 

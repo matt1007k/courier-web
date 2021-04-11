@@ -34,9 +34,24 @@ class Driver(models.Model):
 
     def get_clients(self):
         return Client.objects.filter(driver_code=self.code)
+
+    def get_last_clients(self, take=6):
+        return self.get_clients()[:take]
+    
+    def get_valorations(self):
+        return self.valoration_set.all().order_by('-id')
+
+    def get_last_valorations(self, take=5):
+        return self.get_valorations()[:take]
         
     def clients_count(self):
         return self.get_clients().count()
+
+    def clients_more_count(self):
+        return self.clients_count() - self.get_last_clients().count()
+
+    def valorations_count(self):
+        return self.valoration_set.count()
     
     class Meta:
         verbose_name = "motorizado"

@@ -1,0 +1,57 @@
+{% extends "layouts/admin.html" %} {% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+
+{% block content_head %}
+<div class="content-head">
+  <div class="left">
+      <a href="{{ request.GET.next }}" class="btn btn-link btn-small">
+        <i class='bx bx-left-arrow-alt bx-sm'></i>
+      </a>
+      <h4>{{ title }}</h4>
+  </div>
+  
+</div>
+{% endblock content_head %}
+
+{% block content %}
+
+<div class="card card-form mb-10">
+    <h6>Danos tu opinión</h6>
+  <form method="post">
+    {% csrf_token %}
+    <div class="valoration-numbers">
+        <i class='icon-star bx bxs-star bx-sm text-warning' ></i>
+        <div class="radio-group">
+            <div class="radio-btn">
+                <input type="radio" name="rating" id="value1" value="1" required>
+                <label for="value1">1</label>
+            </div>
+            <div class="radio-btn">
+                <input type="radio" name="rating" id="value2" value="2" required>
+                <label for="value2">2</label>
+            </div>
+            <div class="radio-btn">
+                <input type="radio" name="rating" id="value3" value="3" required>
+                <label for="value3">3</label>
+            </div>
+            <div class="radio-btn">
+                <input type="radio" name="rating" id="value4" value="4" required>
+                <label for="value4">4</label>
+            </div>
+            <div class="radio-btn">
+                <input type="radio" name="rating" id="value5" value="5" required>
+                <label for="value5">5</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <textarea name="experience" id="experience" cols="20" rows="7" placeholder="Describe tu experiencia" required>{{ request.POST.experience }}</textarea>
+    </div>
+    <div class="actions right mt-5">
+      <a href="{{ request.GET.next }}" class="btn btn-default">Cancelar</a>
+      <button type="submit" class="btn btn-primary">Valorar</button>
+    </div>
+  </form>
+</div>
+{% endblock content %}
