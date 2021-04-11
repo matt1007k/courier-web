@@ -7,7 +7,49 @@
     <h4>{{ title }}</h4>
   </div>
   <div class="right">
+  <div x-data="{ isOpen: false }" class="container-modal">
+    <button @click="isOpen = true" class="btn btn-link btn-small">
+      <svg
+        class="filter"
+        width="24"
+        height="24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
+                fill="#2E3A59"
+            />
+        </svg>
+        </button>
+        <div 
+            x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+            class="modal modal-right">
+            <div 
+                class="modal-content card" style="width: 400px" 
+                @click.away="isOpen = false" 
+            >
+                <div class="head">
+                    <h6>Búsqueda avanzada</h6>
+                    <div class="close">
+                        <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                            <i class='bx bx-x bx-sm' ></i>
+                        </button>
+                    </div>
+                </div>
+                <form method='GET' class="form-modal">
+                    <div class="form-group">
+                        <input type='search' name='q' placeholder="¿Qué estás buscando?" value='{{ request.GET.q }}' class="input">
+                    </div>
+                    <div class="actions right">
+                    <button type='submit' class="btn btn-primary">Buscar</button>
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
     <a href="{% url 'drivers:create' %}" class="btn btn-link btn-small text-primary">
+      <i class='bx bx-plus bx-sm' ></i>
       <span>Nuevo motorizado</span>
     </a>
   </div>
@@ -16,11 +58,6 @@
 {% block content %}
 
 <div class="card mb-10">
-     <form method='GET' class="mb-4">
-      <input type='search' style="width: 270px" name='q' placeholder="¿Que estás buscando?" value='{{ request.GET.q }}'>
-      <button type='submit' class="btn btn-primary">Buscar</button>
-    </form>
-
     <div class="table-list">
         <div class="table-list-head">
             <div class="table-list-head-item col-id">
@@ -59,13 +96,23 @@
             <div class="table-list-col">
                 <div class="title">Valoración</div>
                 <div class="content">
-                    <span class="text-success">4.0</span> <span class="text-normal">(45 votos)</span>
+                  {% if driver.valorations_count > 0 %}
+                    <span class="text-success">4.0</span> <span class="text-normal">({{driver.valorations_count}} votos)</span>
+                  {% else %}
+                    <span class="text-small text-muted">Sin valoraciones</span>
+                  {% endif %}
                 </div>
             </div>
             <div class="table-list-col actions">
+              {% if perms.drivers.view_driver %}
                 <a href="{% url 'drivers:detail' driver.slug %}" class="btn btn-link btn-small">Ver</a>
+              {% endif %}
+              {% if perms.drivers.change_driver %}
                 <a href="{% url 'drivers:update' driver.slug %}" class="btn btn-link btn-small">Editar</a>
+              {% endif %}
+              {% if perms.drivers.delete_driver %}
                 <a href="{% url 'drivers:delete' driver.slug %}" class="btn btn-link danger btn-small">Eliminar</a>
+              {% endif %}
             </div>
         </div>
         {% endfor %}
