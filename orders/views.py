@@ -1,3 +1,4 @@
+from orders.mails import Mail
 from clients.models import Client
 from typing import Any, Dict
 from django.contrib import messages
@@ -111,19 +112,27 @@ def payment_view(request):
     template_name = 'orders/payment.html'
     order = get_or_create_order(request)
     if request.method == 'POST':
-        if 'image_payed' in request.FILES:
+        if 'image_payed' in request.FILES and order.total > 0:
             if order.detail_set.count() == 0:
                 messages.error(request, 'El pedido no tiene ningún elemento de envió')
             image_payed = request.FILES['image_payed']
             order.image_payed = image_payed
             order.type_ticket = request.POST.get('type_ticket')
             order.save()
-            messages.success(request, 'El pedido se ha realizado con éxito')
-            return redirect('orders:index') 
+            Mail.send_complete_order(order, request.user)
+            return redirect('orders:payment-success') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
 
     return render(request, template_name, context={
         'order': order,
         'title': 'Pedido - Realizar pago'
+    })
+
+@login_required()
+def payment_success_view(request):
+    template_name = 'orders/payment-success.html'
+    order = get_or_create_order(request)
+    return render(request, template_name, context={
+        'order': order
     })

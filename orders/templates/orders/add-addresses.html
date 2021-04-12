@@ -222,7 +222,7 @@
         
         <div class="mt-8 actions reverse right">
             <a href="{% url 'orders:create' %}" class="btn btn-default">Regresar</a>
-            <a href="{% url 'orders:payment' %}" class="btn btn-primary">Siguiente</a>
+            <a {% if order.detail_set.count > 0 %} href="{% url 'orders:payment' %}" disabled {% endif %} class="btn btn-primary">Siguiente</a>
         </div>
     </div>
 </div>  

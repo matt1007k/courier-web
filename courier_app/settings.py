@@ -146,3 +146,12 @@ AUTH_USER_MODEL = 'authentication.User'
 
 # LOGIN_REDIRECT_URL = '/auth/login'
 LOGIN_URL = '/auth/login'
+
+from decouple import config
+
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mattfor17@gmail.com'
+EMAIL_HOST_PASSWORD = config('USER_MAIL_PASSWORD')
+EMAIL_USE_TLS = True
+

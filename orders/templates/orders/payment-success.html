@@ -1,0 +1,28 @@
+{% extends "layouts/admin.html" %} {% block title %}
+<title>Cuy Click Perú - Pedido realizado con éxito</title>
+{% endblock title %} 
+
+{% block content_head %}
+<div class="content-head"></div>
+{% endblock content_head %}
+{% block content %}
+ <div class="card card-form card-delete mt-6 mb-10" style="width: 50% !important;">
+    <div class="mb-4 flex justify-start">
+        <div class="icon icon-success icon-cicle icon-xl">
+          <i class='bx bx-check-circle bx-xl'></i>
+        </div>
+    </div>
+    <div class="text-center">
+        <h5>Pedido realizado con éxito</h5>
+        <p>El detalle de tu pedido serán enviados al correo del destinatario, con el # TRACKING podrás seguir la ubicación de tu pedido.</p>
+        <div class="actions right mt-6">
+        <a href="{% url 'orders:index' %}" class="btn btn-primary">Ir a mis pedidos</a>
+        <a href="#" class="btn btn-default">
+          <i class='bx bx-download bx-sm'></i>
+          <span>Rotulado</span>
+        </a>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
