@@ -1,4 +1,5 @@
 import decimal
+from promo_codes.models import PromoCode
 from django.db import models
 
 from django.db.models.signals import pre_save
@@ -28,6 +29,7 @@ class Order(models.Model):
     payed_image = models.ImageField(upload_to='orders/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen del pago realizado')
     igv = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     sub_total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
+    promo_code = models.OneToOneField(PromoCode, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.tracking_code 
@@ -44,6 +46,25 @@ class Order(models.Model):
     def get_delete_path(self):
         return reverse('orders:delete', kwargs={'id': self.pk})
 
+    def apply_promo_code(self, promo_code):
+        if self.promo_code is None:
+            print('aplly code')
+            self.promo_code = promo_code
+            self.save()
+
+            self.update_totals()
+            promo_code.use()
+
+    def get_discount(self):
+        if self.promo_code:
+            discount = (self.get_total() * decimal.Decimal(self.promo_code.discount)) 
+            return round(float(discount), 2)
+
+        return 0
+
+    def get_total_previous(self):
+        return self.total + decimal.Decimal(self.get_discount())
+
     def update_totals(self):
         self.update_total()
         self.update_subtotal()
@@ -55,8 +76,12 @@ class Order(models.Model):
         self.save()
 
     def update_total(self):
-        self.total = sum([ detail.price_rate for detail in self.detail_set.all() ])
+        print('discount: ', self.get_discount())
+        self.total = self.get_total() - decimal.Decimal(self.get_discount())
         self.save()
+
+    def get_total(self):
+        return sum([ detail.price_rate for detail in self.detail_set.all() ])
 
     @property
     def get_first_detail(self):

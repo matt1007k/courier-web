@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'addresses',
     'details',
     'valorations',
+    'promo_codes'
 ]
 
 MIDDLEWARE = [

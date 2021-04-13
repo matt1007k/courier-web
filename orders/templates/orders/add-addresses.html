@@ -4,6 +4,8 @@
 <title>Cuy Click Perú - {{ title }}</title>
 {% endblock title %}
 {% load static %}
+{% load l10n %}
+
 {% block content_head %}
 <div class="content-head">
     <div class="left">
@@ -175,13 +177,13 @@
                 </div> 
                 <div class="address-order-summary">
                     <div class="distance">
-                        <h5 class="m-0">{{ detail.distance }}</h5>
+                        <h5 class="m-0">{{ detail.distance|unlocalize }}</h5>
                         <p class="text-small">Distancia</p>
                     </div>
                     <div class="rate">
                         <div class="price flex items-center">
                             <span class="text-muted mr-1">S/.</span>
-                            <div class="h5 m-0">{{ detail.price_rate }}</div>
+                            <div class="h5 m-0">{{ detail.price_rate|unlocalize }}</div>
                         </div>
                         <p class="text-small m-0">Precio de tarifa</p>
                     </div>
@@ -199,21 +201,21 @@
                         <h class="text-muted">Subtotal</h>
                         <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
                             <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
-                            {{ order.sub_total }}
+                            {{ order.sub_total|unlocalize }}
                         </div>
                     </div>
                     <div class="order-row">
                         <h6 class="text-muted">IGV</h6>
                         <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
                             <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
-                            {{ order.igv }}
+                            {{ order.igv|unlocalize }}
                         </div>
                     </div>
                     <div class="order-row mt-4">
                         <h6 class="m-0">Total a pagar</h6>
                         <div class="price h4 flex justity-end items-center">
                             <span class="h6 text-muted m-0 mr-1">S/. </span>
-                            {{ order.total }}
+                            {{ order.total|unlocalize }}
                         </div>
                     </div>
                 </div>

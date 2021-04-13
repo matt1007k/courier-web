@@ -4,6 +4,8 @@
 <title>Cuy Click Perú - {{ title }}</title>
 {% endblock title %}
 {% load static %}
+{% load l10n %}
+
 {% block content_head %}
 <div class="content-head">
     <div class="left">
@@ -142,13 +144,13 @@
                 </div> 
                 <div class="address-order-summary">
                     <div class="distance">
-                        <h5 class="m-0">{{ detail.distance }}</h5>
+                        <h5 class="m-0">{{ detail.distance|unlocalize }}</h5>
                         <p class="text-small">Distancia</p>
                     </div>
                     <div class="rate">
                         <div class="price flex items-center">
                             <span class="text-muted mr-1">S/.</span>
-                            <div class="h5 m-0">{{ detail.price_rate }}</div>
+                            <div class="h5 m-0">{{ detail.price_rate|unlocalize }}</div>
                         </div>
                         <p class="text-small m-0">Precio de tarifa</p>
                     </div>
@@ -166,32 +168,54 @@
                         <h class="text-muted">Subtotal</h>
                         <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
                             <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
-                            {{ order.sub_total }}
+                            <span id="subtotal">{{ order.sub_total|unlocalize }}</span>
                         </div>
                     </div>
                     <div class="order-row">
                         <h6 class="text-muted">IGV</h6>
                         <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
                             <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
-                            {{ order.igv }}
+                            <span id="igv">{{ order.igv|unlocalize }}</span>
                         </div>
                     </div>
+                    
+                    <div id="discount-wrapper" class="order-row" style="display: {% if order.promo_code %}grid;{% else %}none;{% endif %}">
+                        <h6 class="text-danger">Descuento</h6>
+                        <div class="price h6 font-semibold text-danger flex justity-end items-center m-0">
+                            <span class="text-base font-medium text-danger m-0 mr-1">-S/.</span>
+                            <span id="discount">{{ order.get_discount|unlocalize }}</span>
+                        </div>
+                    </div>
+                    <div id="total-previous-wrapper" class="order-row" style="display: {% if order.promo_code %}grid;{% else %}none;{% endif %}">
+                        <span class="font-medium text-danger text-small">Total anterior</span>
+                        <span class="font-medium text-right text-danger text-small" style="text-decoration: line-through">S/. <span id="total-previous">{{ order.get_total_previous|unlocalize }}</span></span> 
+                    </div>
+                    
                     <div class="order-row mt-4">
                         <h6 class="m-0">Total a pagar</h6>
                         <div class="price h4 flex justity-end items-center">
                             <span class="h6 text-muted m-0 mr-1">S/. </span>
-                            {{ order.total }}
+                            <span id="total">{{ order.total|unlocalize }}</span>
                         </div>
+                        
                     </div>
                 </div>
-                <form class="">
-                    <div class="form-group mt-5">
-                        <input type="text" class="input" placeholder="Ingrese cupón de promoción">
-                    </div>
-                    <div class="actions right mt-2">
-                        <button class="btn btn-secondary btn-small">Aplicar</button>
-                    </div>
-                </form>
+
+                <div class="form-group mt-5">
+                    <input type="text" class="input" name="promo-code" id="promo-code" placeholder="Ingrese cupón de promoción" value="{{ order.promo_code.code }}" {% if order.promo_code %}readonly{% endif %}>
+                    {% if order.promo_code %}
+                        <div class="mt-2 text-success">
+                            Cupón de promoción aplicada
+                        </div>
+                    {% else %}
+                        <div id="promo-code-message" class="mt-2"></div>
+                    {% endif %}
+                </div>
+                {% if not order.promo_code %}
+                <div class="actions right mt-2">
+                    <button id="btn-promocode" class="btn btn-secondary btn-small">Aplicar</button>
+                </div>
+                {% endif %}
                 <div class="mt-5">
                     <h6>Imágenes del pago realizado</h6>
                     <input type="file" class="input mt-2" name="image_payed" required>
@@ -232,3 +256,48 @@
 </div>  
 </form>   
 {% endblock content %}
+{% block scripts %}
+    <script>
+        var btnAplyCode = document.getElementById('btn-promocode');
+        const inputPromoCode = document.getElementById('promo-code');
+        const messagePromoCode = document.getElementById('promo-code-message');
+        const total = document.getElementById('total');
+        const igv = document.getElementById('igv');
+        const sub_total = document.getElementById('subtotal');
+        const discount_wrapper = document.getElementById('discount-wrapper');
+        const total_previous_wrapper = document.getElementById('total-previous-wrapper');
+        btnAplyCode.addEventListener('click', function(ev){
+            ev.preventDefault();
+            const code = inputPromoCode.value;
+            if (code){
+                fetch('/promo-codes/validate/?code='+code)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === true){
+                            igv.innerText = data.igv;
+                            sub_total.innerText = data.sub_total;
+                            code.value = data.code;
+                            code.readOnly = true;
+                            messagePromoCode.classList.add('text-success');
+                            messagePromoCode.innerText = 'Cupón de promoción aplicado';
+                            btnAplyCode.style.display = 'none';
+
+                            discount_wrapper.style.display = 'grid'
+                            discount_wrapper.querySelector('#discount').innerHTML = data.discount;
+
+                            total_previous_wrapper.style.display = 'grid'
+                            total_previous_wrapper.querySelector('#total-previous').innerHTML = data.total_previous;
+                            total.innerText = data.total;
+                        } else{
+                            messagePromoCode.classList.add('text-danger');
+                            messagePromoCode.innerText = 'Cupón de promoción no válido';
+                        }
+                    });
+
+            }else{
+                messagePromoCode.classList.add('text-danger');
+                messagePromoCode.innerText = 'Ingrese un cupón de promoción';
+            }
+        });
+    </script>
+{% endblock scripts %}
