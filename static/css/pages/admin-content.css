@@ -30,9 +30,15 @@
     border-radius: 16px;
     transition: all .3s;
 }
-.page-admin .sidebar .sidebar-menu li.active, .page-admin .sidebar .sidebar-menu li.active a, .page-admin .sidebar .sidebar-menu li.active a i {
+.page-admin .sidebar .sidebar-menu li a img{
+    filter: var(--filter-secondary-color);
+}
+.page-admin .sidebar .sidebar-menu li.active, .page-admin .sidebar .sidebar-menu li.active a, .page-admin .sidebar .sidebar-menu li.active a i{
     background: rgb(var(--primary-color));
     color: white;
+}
+.page-admin .sidebar .sidebar-menu li.active a img{
+    filter: invert(100%) sepia(100%) saturate(9%) hue-rotate(167deg) brightness(103%) contrast(105%);
 }
 .page-admin .sidebar .sidebar-menu li:hover {
     opacity: 0.8;

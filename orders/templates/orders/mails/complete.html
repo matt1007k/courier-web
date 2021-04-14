@@ -11,4 +11,7 @@
 {% block content %}
 <div>Cliente: {{ user.client.full_name }}</div>
 <div>Pedido #:{{ order.tracking_code }}</div>
+<div class="mt-5">
+  <button class="btn btn-secondary">Consultar pedido</button>
+</div>
 {% endblock content %}

@@ -11,6 +11,13 @@
     justify-content: center;
     align-items: center;
 }
+.card-message{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
 
 .actions{
     display: flex;
@@ -86,6 +93,9 @@
     .card-create-order{
         width: 100% !important;
     }
+    .card-message{
+        width: 70% !important;
+    }
 }
 @media (min-width: 1024px){
     .card{
@@ -98,5 +108,8 @@
     .card-create-order{
         width: 80% !important;
         margin: 0 auto !important;
+    }
+    .card-message{
+        width: 50% !important;
     }
 }

@@ -83,6 +83,10 @@ class Order(models.Model):
     def get_total(self):
         return sum([ detail.price_rate for detail in self.detail_set.all() ])
 
+    def canceled(self):
+        self.status = Order.OrderStatus.CANCELED
+        self.save()
+
     @property
     def get_first_detail(self):
         return self.detail_set.first()

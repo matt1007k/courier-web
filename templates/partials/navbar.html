@@ -27,17 +27,17 @@
                 {% if request.user.client %}
                     <a href="{% url 'clients:detail' request.user.client.slug %}?next={{ request.path }}" class="dropdown-item">
                         <i class='bx bx-user-circle bx-sm'></i>
-                        <span>Pefil</span>
+                        <span>Perfil</span>
                     </a>
                 {% elif request.user.driver %}
                     <a href="{% url 'drivers:detail' request.user.driver.slug %}?next={{ request.path }}" class="dropdown-item">
                         <i class='bx bx-user-circle bx-sm'></i>
-                        <span>Pefil</span>
+                        <span>Perfil</span>
                     </a>
                 {% else  %}
                     <a href="" class="dropdown-item">
                         <i class='bx bx-user-circle bx-sm'></i>
-                        <span>Pefil</span>
+                        <span>Perfil</span>
                     </a>
                 {% endif %}
                 <a href="{% url 'auth:logout' %}" class="dropdown-item">

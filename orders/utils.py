@@ -24,10 +24,10 @@ def get_or_create_order(request):
 
 def delete_order(request):
     order_id = request.session.get('order_id')
-    print('orderId', order_id)
     if order_id:
-        Order.objects.get(pk=order_id).delete()
-        print('delete')
+        # Order.objects.get(pk=order_id).delete()
+        order = Order.objects.get(pk=order_id)
+        order.canceled()
         request.session['order_id'] = None
         
 def fields_origin_form(detail):
