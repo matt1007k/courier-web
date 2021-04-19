@@ -1,15 +1,17 @@
 from typing import Any, Dict
-from django.http import request
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http.response import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Q
+from django.views.generic.base import View
 
-from drivers.forms import DriverModelForm, VehicleModelForm
+from drivers.forms import DriverModelForm, PaymentAccountModelForm, VehicleModelForm
 
-from .models import Driver, Vehicle
+from .models import Driver, PaymentAccount, Vehicle
 
 from .utils import generate_driver_code
 
@@ -52,9 +54,17 @@ class DriverCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = DriverModelForm
     permission_required = 'drivers.add_driver'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Registrar motorizado'
+
+        return context
+
     def get_success_url(self) -> str:
-        messages.success(self.request, "Registro realizado con éxito")
-        return reverse('drivers:index')
+        # messages.success(self.request, "Registro realizado con éxito")
+        return reverse('drivers:payment-account', kwargs={
+            'slug': Driver.objects.last().slug
+        })
 
     def form_valid(self, form: DriverModelForm) -> HttpResponse:
         form.instance.code = generate_driver_code()
@@ -66,13 +76,27 @@ class DriverUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Driver
     permission_required = 'drivers.change_driver'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Editar motorizado'
+
+        return context
+
     def get_success_url(self) -> str:
-        messages.success(self.request, "Registro editado con éxito")
-        return reverse('drivers:index')
+        # messages.success(self.request, "Registro editado con éxito")
+        return reverse('drivers:payment-account.update', kwargs={
+            'slug': self.object.slug
+        })
 
 class DriverDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'drivers/delete.html'
     permission_required = 'drivers.delete_driver'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Eliminar motorizado'
+
+        return context
 
     def get_success_url(self) -> str:
         messages.success(self.request, "Registro eliminado con éxito")
@@ -110,7 +134,50 @@ class VehicleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         context = super().get_context_data(**kwargs)
         context['title'] = 'Editar moto'
         return context
+
     def get_success_url(self) -> str:
         messages.success(self.request, "Moto editado con éxito")
         return self.request.GET.get('next', reverse('drivers:detail', kwargs={'slug': self.request.user.driver.slug}))
+    
+
+@login_required()
+@permission_required('drivers.add_paymentaccount', login_url='/drivers/create')
+def payment_account_create_view(request, slug):
+    template_name = 'payment_accounts/create.html'
+    driver = Driver.objects.get(slug=slug)
+
+    form_class = PaymentAccountModelForm(request.POST or None)
+    title = 'Registrar cuenta de pago'
+
+    if request.method == 'POST' and form_class.is_valid():
+        form = form_class.save(commit=False)
+        form.driver = driver
+        form.save()
+        messages.success(request, "Motorizado registrado con éxito")
+        return redirect('drivers:index')
+
+    return render(request, template_name, context={
+        'title': title,
+        'form': form_class
+    })
+
+@login_required()
+@permission_required('drivers.change_paymentaccount', login_url='/drivers')
+def payment_account_update_view(request, slug):
+    template_name = 'payment_accounts/edit.html'
+    driver = Driver.objects.get(slug=slug)
+
+    form_class = PaymentAccountModelForm(request.POST or None, instance=driver.paymentaccount or None)
+    title = 'Editar cuenta de pago'
+
+    if request.method == 'POST' and form_class.is_valid():
+        form_class.save()
+        messages.success(request, "Motorizado editado con éxito")
+        return redirect('drivers:index')
+
+    return render(request, template_name, context={
+        'title': title,
+        'form': form_class
+    })
+    
     

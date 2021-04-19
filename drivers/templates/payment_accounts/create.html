@@ -1,0 +1,16 @@
+{% extends "layouts/admin.html" %}
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% block content_head %}
+<div class="content-head">
+  <div class="left">
+      <h4>{{ title }}</h4>
+  </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+<div class="card card-form mb-10">
+  {% include "payment_accounts/snippets/form.html" with btnText='Guardar' %}
+</div>
+{% endblock content %}

@@ -48,7 +48,7 @@ def create_detail_view(request):
         'origin_form': origin_form,
         'destiny_form': destiny_form,
         'my_addressess_list': my_addressess_list,
-        'title': 'Dirección de envió'
+        'title': '¿Qué estas enviando?'
     })
 
 @login_required()
@@ -82,7 +82,7 @@ def update_detail_view(request, pk):
         'origin_form': origin_form,
         'destiny_form': destiny_form,
         'my_addressess_list': my_addressess_list,
-        'title': 'Editar dirección de envió'
+        'title': '¿Qué estas enviando?'
     })
 
 class DeleteDetailView(LoginRequiredMixin, DeleteView):

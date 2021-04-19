@@ -15,7 +15,7 @@ def menu_items(request):
         {
             'title': 'Pedidos',
             'icon': None,
-            'img': '{}img/icon/order-icon.svg'.format(static_url),
+            'img': '{}icon/order-icon.svg'.format(static_url),
             'path': reverse('orders:index'),
             'permission': request.user.has_perm('orders.view_order'),
         },

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CompleteInfoClientView, login_view, logout_view, register_view, UserCreateView, CompleteAddressClientView
+from .views import CompleteInfoClientView, login_view, logout_view, register_view, UserCreateView, CompleteAddressClientView, user_create_view
 
 app_name = 'auth'
 
@@ -9,5 +9,6 @@ urlpatterns = [
     path('register/complete-address/', CompleteAddressClientView.as_view(), name='complete-address'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
-    path('create/', UserCreateView.as_view(), name='create')
+    # path('create/', UserCreateView.as_view(), name='create')
+    path('create/', user_create_view, name='create')
 ]

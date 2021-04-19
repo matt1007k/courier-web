@@ -21,7 +21,6 @@ class Driver(models.Model):
     references = models.TextField(max_length=200, verbose_name='referencias')
     district = models.CharField(max_length=100, verbose_name='distrito')
     address_gps = models.JSONField(null=True, blank=True, max_length=100, verbose_name='dirección actual')
-    payment_account = models.CharField(max_length=14, verbose_name='número de cuenta')
 
     def __str__(self) -> str:
         return self.full_name()
@@ -52,7 +51,7 @@ class Driver(models.Model):
 
     def valorations_count(self):
         return self.valoration_set.count()
-    
+
     class Meta:
         verbose_name = "motorizado"
         verbose_name_plural = "motorizados"
@@ -83,3 +82,18 @@ class Vehicle(models.Model):
     class Meta:
         verbose_name = "vehiculo"
         verbose_name_plural = "vehiculos"
+
+class PaymentAccount(models.Model):
+    driver = models.OneToOneField(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
+    bank = models.CharField(max_length=150, verbose_name='banco')
+    account_number = models.CharField(max_length=14, verbose_name='número de cuenta')
+    bank_account_number = models.CharField(max_length=20, verbose_name='número de cuenta interbancaria')
+    owners = models.CharField(max_length=150, verbose_name='nombre completo del titular')
+    dni = models.CharField(max_length=8, verbose_name='DNI del titular')
+
+    def __str__(self) -> str:
+        return self.owners
+
+    class Meta:
+        verbose_name = "cuenta de pago"
+        verbose_name_plural = "cuentas de pago"

@@ -29,7 +29,6 @@ class Migration(migrations.Migration):
                 ('references', models.TextField(max_length=200, verbose_name='referencias')),
                 ('district', models.CharField(max_length=100, verbose_name='distrito')),
                 ('address_gps', models.JSONField(blank=True, max_length=100, null=True, verbose_name='dirección actual')),
-                ('payment_account', models.CharField(max_length=14, verbose_name='número de cuenta')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='usuario')),
             ],
             options={

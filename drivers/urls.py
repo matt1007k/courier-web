@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import DriverCreateView, DriverDetailView, DriverListView, DriverUpdateView, DriverDeleteView, VehicleCreateView, VehicleUpdateView
+from .views import DriverCreateView, DriverDetailView, DriverListView, DriverUpdateView, DriverDeleteView, VehicleCreateView, VehicleUpdateView, payment_account_create_view, payment_account_update_view
 from valorations.views import create_valoration_view
 
 app_name='drivers'
@@ -14,4 +14,6 @@ urlpatterns = [
     path('<slug:slug>/update/', DriverUpdateView.as_view(), name='update'),
     path('<slug:slug>/delete/', DriverDeleteView.as_view(), name='delete'),
     path('<slug:slug>/valoration/', create_valoration_view, name='valoration'),
+    path('<slug:slug>/payment-account/create', payment_account_create_view, name='payment-account'),
+    path('<slug:slug>/payment-account/edit', payment_account_update_view, name='payment-account.update'),
 ]

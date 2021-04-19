@@ -33,7 +33,7 @@
     font-weight: 600;
 }
 .page-admin .tabbar li a img{
-    filter: var(--filter-primary-color) opacity(60%);
+    filter: var(--filter-secondary-color);
     margin-bottom: 8px;
 }
 .page-admin .tabbar li.active a img{
