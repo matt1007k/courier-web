@@ -5,10 +5,13 @@ from django.urls import reverse
 from clients.models import Client
 
 class AddressManager(models.Manager):
-    def create_or_update(self, client, address, district, city, reference):
+    def create_or_update(self, client, full_name, email, cell_phone, address, district, city, reference):
         object, created = self.get_or_create(client=client, address=address)
 
         if not created:
+            object.full_name = full_name
+            object.email = email
+            object.cell_phone = cell_phone
             object.address = address
             object.district = district
             object.city = city
@@ -20,6 +23,9 @@ class AddressManager(models.Manager):
     def update_or_create_address_origin(self, client, form_cleaned_data: Dict):
         address_origin = self.update_or_create(
                 client = client,
+                full_name = form_cleaned_data['origin_full_name'],
+                email = form_cleaned_data['origin_email'],
+                cell_phone = form_cleaned_data['origin_cell_phone'],
                 address = form_cleaned_data['origin_address'],
                 district = form_cleaned_data['origin_district'],
                 city = form_cleaned_data['origin_city'],
@@ -30,6 +36,9 @@ class AddressManager(models.Manager):
     def update_or_create_address_destiny(self, client, form_cleaned_data):
         address_destiny = self.update_or_create(
                 client = client,
+                full_name = form_cleaned_data['destiny_full_name'],
+                email = form_cleaned_data['destiny_email'],
+                cell_phone = form_cleaned_data['destiny_cell_phone'],
                 address = form_cleaned_data['destiny_address'],
                 district = form_cleaned_data['destiny_district'],
                 city = form_cleaned_data['destiny_city'],
@@ -40,6 +49,9 @@ class AddressManager(models.Manager):
 
 class Address(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='cliente')
+    full_name = models.CharField(max_length=100, verbose_name='nombre completo')
+    email = models.CharField(max_length=150, verbose_name='correo electrónico')
+    cell_phone = models.CharField(max_length=9, verbose_name='num. de celular')
     address = models.CharField(max_length=150, verbose_name='dirección')
     district = models.CharField(max_length=100, verbose_name='distrito')
     city = models.CharField(max_length=150, verbose_name='ciudad')

@@ -1,15 +1,16 @@
+import json
 from typing import Any, Dict
-from django.contrib.auth.models import Group
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls.base import reverse
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
 
 from django.contrib import messages
 
+from django.contrib.auth.models import Group
 from .forms import CustomUserForm, RegisterForm
 from clients.forms import ClientRegisterForm
 from addresses.forms import AddressModelForm
@@ -69,6 +70,10 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
     template_name = 'auth/complete-address.html'
     form_class = AddressModelForm
 
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        return context
+
     def get_success_url(self) -> str:
         messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))
         return reverse('dash')
@@ -76,6 +81,7 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
     def form_valid(self, form: AddressModelForm) -> HttpResponse:
         form.instance.client = self.request.user.client
         form.instance.default = True
+        form.instance.address_gps = json.loads(self.request.POST.get('position'))
         return super().form_valid(form)
 
 class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):

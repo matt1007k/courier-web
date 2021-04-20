@@ -10,12 +10,11 @@ from django.dispatch import receiver
 
 class Detail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='pedido')
-    first_name = models.CharField(max_length=100, verbose_name='nombre')
-    last_name = models.CharField(max_length=100, verbose_name='apellidos')
-    email = models.CharField(max_length=150, verbose_name='correo electrónico')
-    cell_phone = models.CharField(max_length=9, verbose_name='num. de celular')
+    size = models.CharField(max_length=150, verbose_name='tamaño')
+    contain = models.CharField(max_length=100, verbose_name='¿Qué contiene?')
+    value = models.CharField(max_length=150, verbose_name='valor del paquete')
     image = models.ImageField(upload_to="details-order/%Y/%m/%d/", null=True, blank=True, verbose_name='imagen del paquete')
-    description = models.TextField(max_length=150, null=True, blank=True, verbose_name='descripción del paquete')
+    description = models.TextField(max_length=200, null=True, blank=True, verbose_name='nota')
     address_origin = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='address_origin', verbose_name='dirección de recojo')
     address_destiny = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='address_destiny',verbose_name='dirección de destino')
     distance = models.DecimalField(max_digits=10, decimal_places=1, verbose_name='distancia', default=0)
@@ -31,6 +30,7 @@ class Detail(models.Model):
         self.address_origin = self.update_or_create_address_origin(client=client, form_cleaned_data=origin_form)
         self.address_destiny = self.update_or_create_address_destiny(client=client, form_cleaned_data=destiny_form)
         self.save()
+
     def update_information(self, order, instance):
         self.order = order
         self.first_name = instance.first_name
