@@ -48,7 +48,9 @@ INSTALLED_APPS = [
     'addresses',
     'details',
     'valorations',
-    'promo_codes'
+    'promo_codes',
+    'service_prices',
+    'driver_payments'
 ]
 
 MIDDLEWARE = [

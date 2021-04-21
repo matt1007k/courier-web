@@ -48,7 +48,6 @@ class Order(models.Model):
 
     def apply_promo_code(self, promo_code):
         if self.promo_code is None:
-            print('aplly code')
             self.promo_code = promo_code
             self.save()
 

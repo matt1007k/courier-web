@@ -32,6 +32,7 @@ urlpatterns = [
     path('orders/', include('orders.urls', namespace='orders')),
     path('details/', include('details.urls', namespace='details')),
     path('promo-codes/', include('promo_codes.urls', namespace='promo_codes')),
+    path('service-prices/', include('service_prices.urls', namespace='service_prices')),
     path('admin/', admin.site.urls),
 ] 
 

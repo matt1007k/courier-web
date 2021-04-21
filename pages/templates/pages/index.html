@@ -58,6 +58,7 @@
 <script>
     (function () {
         loadScript();
+        getRatePrices();
     })()
     function loadScript() {
         // Create the script tag, set the appropriate attributes
@@ -169,31 +170,21 @@
         document.getElementById('in_kilo').innerHTML = "Distancia en kilometros: <span class='badge badge-pill badge-secondary'>" + distance_in_kilo.toFixed(2) + "</span>";
         document.getElementById('duration_text').innerHTML = "Tiempo de duracion: <span class='badge badge-pill badge-success'>" + duration_text + "</span>";
         let price = 0.0;
-        getRatePrices().forEach(function(rate){
-            if(distance_in_kilo >= rate.min & (distance_in_kilo <= rate.max | distance_in_kilo >= rate.max)){
-                price = rate.price;
+        service_prices.forEach(function(rate){
+            if(distance_in_kilo >= rate.fields.min & (distance_in_kilo <= rate.fields.max | distance_in_kilo >= rate.fields.max)){
+                price = rate.fields.price;
             }
         });
         document.getElementById('price_text').innerHTML = '<h5>Precio de tarifa: S/.'+price+'</h5>';
     }
     function getRatePrices() {
-        return [
-            {
-                min: 0,
-                max: 15,
-                price: 10
-            },
-            {
-                min: 15,
-                max: 35,
-                price: 12
-            },
-            {
-                min: 35,
-                max: 100,
-                price: 15
-            },
-        ];
+        var service_prices = [];
+        var url = '/service-prices/get-service-prices/'; 
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                window.service_prices = data;
+            });
     }
 </script>
 <style>

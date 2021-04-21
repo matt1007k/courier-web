@@ -1,0 +1,29 @@
+[
+{
+    "model": "service_prices.serviceprice",
+    "pk": 1,
+    "fields": {
+        "min": 0,
+        "max": 15,
+        "price": "10.00"
+    }
+},
+{
+    "model": "service_prices.serviceprice",
+    "pk": 2,
+    "fields": {
+        "min": 15,
+        "max": 35,
+        "price": "12.00"
+    }
+},
+{
+    "model": "service_prices.serviceprice",
+    "pk": 3,
+    "fields": {
+        "min": 35,
+        "max": 35,
+        "price": "15.00"
+    }
+}
+]
