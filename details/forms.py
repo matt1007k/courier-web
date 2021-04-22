@@ -9,7 +9,7 @@ class DetailForm(forms.Form):
     contain = forms.CharField(max_length=100, label='¿Qué contiene?', widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    value = forms.CharField(max_length=150, label='Valor del paquete' ,widget=forms.EmailInput(attrs={
+    value = forms.CharField(max_length=150, label='Valor del paquete' ,widget=forms.TextInput(attrs={
         'class': 'input'
     }))
     image = forms.ImageField(required=False, label='Imagen del paquete (opcional)', widget=forms.FileInput(attrs={

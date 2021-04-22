@@ -1,3 +1,4 @@
+import json
 from typing import Dict
 from django.db import models
 from django.urls import reverse
@@ -5,7 +6,7 @@ from django.urls import reverse
 from clients.models import Client
 
 class AddressManager(models.Manager):
-    def create_or_update(self, client, full_name, email, cell_phone, address, district, city, reference):
+    def create_or_update(self, client, full_name, email, cell_phone, address, district, city, reference, address_gps):
         object, created = self.get_or_create(client=client, address=address)
 
         if not created:
@@ -16,11 +17,12 @@ class AddressManager(models.Manager):
             object.district = district
             object.city = city
             object.reference = reference
+            object.address_gps = json.loads(address_gps)
             object.save()
         
         return object
         
-    def update_or_create_address_origin(self, client, form_cleaned_data: Dict):
+    def update_or_create_address_origin(self, client, form_cleaned_data: Dict, position):
         address_origin = self.update_or_create(
                 client = client,
                 full_name = form_cleaned_data['origin_full_name'],
@@ -30,10 +32,11 @@ class AddressManager(models.Manager):
                 district = form_cleaned_data['origin_district'],
                 city = form_cleaned_data['origin_city'],
                 reference = form_cleaned_data['origin_reference'],
+                address_gps = position
             )
         return address_origin[0]
 
-    def update_or_create_address_destiny(self, client, form_cleaned_data):
+    def update_or_create_address_destiny(self, client, form_cleaned_data, position):
         address_destiny = self.update_or_create(
                 client = client,
                 full_name = form_cleaned_data['destiny_full_name'],
@@ -43,6 +46,7 @@ class AddressManager(models.Manager):
                 district = form_cleaned_data['destiny_district'],
                 city = form_cleaned_data['destiny_city'],
                 reference = form_cleaned_data['destiny_reference'],
+                address_gps = position
             )
         return address_destiny[0]
         

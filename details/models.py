@@ -24,40 +24,43 @@ class Detail(models.Model):
         return self.full_name()
 
     def full_name(self):
-        return "%s %s" % (self.first_name, self.last_name)
+        return "%s %s" % (self.order.tracking_code, self.contain)
 
-    def update_addressess(self, client, origin_form, destiny_form):
-        self.address_origin = self.update_or_create_address_origin(client=client, form_cleaned_data=origin_form)
-        self.address_destiny = self.update_or_create_address_destiny(client=client, form_cleaned_data=destiny_form)
+    def update_addressess(self, client, origin_form, destiny_form, origin_position, destiny_position):
+        self.address_origin = self.update_or_create_address_origin(client=client, form_cleaned_data=origin_form, location=origin_position)
+        self.address_destiny = self.update_or_create_address_destiny(client=client, form_cleaned_data=destiny_form, location=destiny_position)
         self.save()
 
-    def update_information(self, order, instance):
+    def update_information(self, order, instance, distance, price):
         self.order = order
-        self.first_name = instance.first_name
-        self.last_name = instance.last_name
-        self.email = instance.email
-        self.cell_phone = instance.cell_phone
+        self.size = instance.size
+        self.contain = instance.contain
+        self.value = instance.value
         self.description = instance.description
         self.image = instance.image
+        self.distance = decimal.Decimal(distance)
+        self.price_rate = decimal.Decimal(price)
         self.save()
 
-    def update_or_create_address_origin(self, client, form_cleaned_data: Dict):
+    def update_or_create_address_origin(self, client, form_cleaned_data: Dict, location):
         address_origin = Address.objects.update_or_create(
                 client = client,
                 address = form_cleaned_data['origin_address'],
                 district = form_cleaned_data['origin_district'],
                 city = form_cleaned_data['origin_city'],
                 reference = form_cleaned_data['origin_reference'],
+                address_gps = location
             )
         return address_origin[0]
 
-    def update_or_create_address_destiny(self, client, form_cleaned_data):
+    def update_or_create_address_destiny(self, client, form_cleaned_data, location):
         address_destiny = Address.objects.update_or_create(
                 client = client,
                 address = form_cleaned_data['destiny_address'],
                 district = form_cleaned_data['destiny_district'],
                 city = form_cleaned_data['destiny_city'],
                 reference = form_cleaned_data['destiny_reference'],
+                address_gps = location
             )
         return address_destiny[0]
 
@@ -66,14 +69,15 @@ class Detail(models.Model):
         verbose_name_plural = "detalles"
 
 def set_price_rate(sender, instance, *args, **kargs):
-    if instance.address_origin and instance.address_destiny:
-        distance = 1
-        instance.distance = distance
-        if distance > 0 and distance < 15:
-            price = 10
-        else:
-            price = 0
-        instance.price_rate = decimal.Decimal(price)
+    pass
+    # if instance.address_origin and instance.address_destiny:
+    #     distance = 1
+    #     instance.distance = distance
+    #     if distance > 0 and distance < 15:
+    #         price = 10
+    #     else:
+    #         price = 0
+    #     instance.price_rate = decimal.Decimal(price)
 
 
 @receiver(post_save, sender=Detail)

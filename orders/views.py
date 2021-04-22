@@ -119,7 +119,7 @@ def payment_view(request):
             order.image_payed = image_payed
             order.type_ticket = request.POST.get('type_ticket')
             order.save()
-            Mail.send_complete_order(order, request.user)
+            # Mail.send_complete_order(order, request.user)
             return redirect('orders:payment-success') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')

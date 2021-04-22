@@ -1,3 +1,4 @@
+import decimal
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
@@ -23,19 +24,19 @@ def create_detail_view(request):
     client = order.client 
     my_addressess_list = Address.objects.filter(client=client).order_by('-id')
     if request.method == 'POST' and info_form.is_valid() and origin_form.is_valid()  and destiny_form.is_valid():
-        address_origin = Address.objects.update_or_create_address_origin(client, origin_form.cleaned_data)
-        address_destiny = Address.objects.update_or_create_address_destiny(client, destiny_form.cleaned_data)
+        address_origin = Address.objects.update_or_create_address_origin(client, origin_form.cleaned_data, request.POST.get('origin_position'))
+        address_destiny = Address.objects.update_or_create_address_destiny(client, destiny_form.cleaned_data, request.POST.get('destiny_position'))
         detail = Detail.objects.create(
             order=order, 
-            first_name = request.POST.get('first_name'),
-            last_name = request.POST.get('last_name'),
-            email = request.POST.get('email'),
-            cell_phone = request.POST.get('cell_phone'),
+            size = request.POST.get('size'),
+            contain = request.POST.get('contain'),
+            value = request.POST.get('value'),
             image = request.FILES['image'] if 'image' in request.FILES else None,
             description = request.POST.get('description'),
             address_origin=address_origin,
             address_destiny=address_destiny,
-            distance=12,
+            distance=decimal.Decimal(request.POST.get('distance')),
+            price_rate=decimal.Decimal(request.POST.get('price')),
         )
         if not detail is None:
             messages.success(request, 'La dirección de envío fue agregado con éxito.')
@@ -66,8 +67,8 @@ def update_detail_view(request, pk):
     if request.method == 'POST' and info_form.is_valid() and origin_form.is_valid()  and destiny_form.is_valid():
         # detail_obj.distance=12.00,
         # detail_obj.sub_total=10.00
-        detail_obj.update_information(order, info_form.instance)
-        detail_obj.update_addressess(client, origin_form.cleaned_data, destiny_form.cleaned_data)
+        detail_obj.update_information(order, info_form.instance, request.POST.get('distance'), request.POST.get('price'))
+        detail_obj.update_addressess(client, origin_form.cleaned_data, destiny_form.cleaned_data, request.POST.get('origin_position'), request.POST.get('destiny_position'))
         if 'image' in request.FILES:
             finfo = info_form.save(commit=False)
             finfo.image = request.FILES['image']
