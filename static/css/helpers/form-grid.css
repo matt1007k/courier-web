@@ -11,13 +11,17 @@
 }
 .form-grid-3.detail-address{
     grid-template-columns: 1fr;
-    place-items: center;
     grid-gap: 20px 0;
 }
 .form-grid-3.detail-address i{
     color: var(--text-color);
     transform: rotate(90deg);
+    align-self: center;
+    justify-self: center;
 }
+.form-grid-3.detail-address > div{
+    width: 100%;
+}                
 
 @media (min-width: 768px){
     .form-grid-2{
@@ -27,7 +31,7 @@
         grid-template-columns: repeat(3, 1fr);
     }
     .form-grid-3.detail-address{
-        grid-template-columns: 1fr 5em 1fr;
+        grid-template-columns: 1fr 8em 1fr;
     }
     .form-grid-3.detail-address i{
         transform: rotate(0deg);

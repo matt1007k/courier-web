@@ -4,6 +4,7 @@
 body{
     --primary-color: 33, 0, 136;
     --secondary-color: 255, 94, 0;
+    --primary-page-color: 25, 95, 181;
     --accent-color: 255, 158, 0;
     --danger-color: 232, 92, 92;
     --success-color: 30, 222, 156;

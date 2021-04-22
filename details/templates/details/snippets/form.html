@@ -1,175 +1,477 @@
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
+{% load env_extras %}
+<form method="post" enctype="multipart/form-data" id="form-detail">
+    {% csrf_token %}
     <div class="card mb-4">
         <div class="form-grid-2 mb-4">
             <div>
-                <h5 class="mb-2">Información de la persona a enviar</h5>
-                <p>El paquete no debe superar los <span class="h6">5kg</span> y las dimensiones de <span class="h6">30x30x30cm</span>.</p>
+                <h5 class="mb-2">Información del paquete</h5>
+                <p>El paquete no debe superar los <span class="h6">5kg</span> y las dimensiones de <span
+                        class="h6">30x30x30cm</span>.</p>
             </div>
-            <div>
+            <!-- <div>
                 <a class="btn btn-default" id="complete-info-me">Completar con {% if request.user.is_client %}mi información{% else %} la información del cliente {% endif %}</a>
-            </div>
+            </div> -->
         </div>
         <div class="form-grid-2">
-        {% for field in info_form %}
-        <div class="form-group">
-            {{ field.label_tag }} 
-            {{ field }} 
-            {% if field.errors %}
+            {% for field in info_form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
                 {% for error in field.errors %}
                 <div class="text-invalid">
                     {{ error }}
                 </div>
                 {% endfor %}
-            {% endif %}
-        </div>
-        {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
     </div>
     <div class="card mb-10">
         <div class="form-grid-3 detail-address">
             <div>
-                
                 <h5 class="mb-4">Dirección de recojo</h5>
-                <div class="mb-4 w-full">
-                    <div class="form-group">
-                        {% if my_addressess_list %}
-                        <select name="origin_addressess" id="origin_addressess" class="input">
-                            <option value="">Selección dirección anterior</option> 
-                            {% for address in my_addressess_list %}
-                                {% if detail_obj %}
-                                <option value="{{ address.id }}" {% if detail_obj.address_origin.id == address.id%}selected{% endif %}>{{ address.address_complete }}</option>                                
-                                {% else %}
-                                <option value="{{ address.id }}">{{ address.address_complete }}</option>                                
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                        {% endif %}
-                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la sección de <a href="{% url 'addresses:index' %}">Mis direcciones</a> </p>
-                        <a href="#" onClick="clearFieldsOrigin()" class="link mt-2">Limpiar campos</a>
-                    </div> 
-                    <h6 class="text-center">O completa los campos</h6>
+                <div class="address__wrapper mb-4 container-modal" x-data="stateMapOrigin()" x-init="initMapOrigin()">
+                    <div class="mb-4">
+                        <div class="form-group-search m-0">
+                            <input type="search" class="input input-outline" id="origin_search" placeholder="Buscar mi dirección">
+                            <i class="input-icon bx bx-search bx-sm"></i>
+                        </div>
+                        <input type="hidden" id="origin_search_text">
+                    </div>
+
+                    <div class="mb-4">O</div>
+                    <div>
+                        <a class="btn btn-link btn-small btn-full" @click="isOpen = true">Elegir mi dirección en el mapa</a>
+                    </div>
+
+                    <div 
+                        x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                        class="modal">
+                        <div 
+                            class="modal-content card" style="width: 800px;" 
+                            @click.away="isOpen = false" 
+                        >
+                            <div class="head" style="height: 50px;">
+                                <h6>Elegir mi dirección</h6>
+                                <div class="close">
+                                    <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                        <i class='bx bx-x bx-sm' style="margin-right: 0;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-modal">
+                            <div id="map-origin"></div>
+                                <div class="actions right">
+                                    <a @click="isOpen = false" class="btn btn-default">Cancelar</a>
+                                    <button class="btn btn-primary" @click.prevent="selectPositionOrigin()">Elegir</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
                 {% for field in origin_form %}
                 <div class="form-group">
-                    {{ field.label_tag }} 
-                    {{ field }} 
+                    {{ field.label_tag }}
+                    {{ field }}
                     {% if field.errors %}
-                        {% for error in field.errors %}
-                        <div class="text-invalid">
-                            {{ error }}
-                        </div>
-                        {% endfor %}
+                    {% for error in field.errors %}
+                    <div class="text-invalid">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
                     {% endif %}
                 </div>
                 {% endfor %}
             </div>
-            <i class='icon bx bx-right-arrow-alt bx-md text-title'></i> 
+            <i class='icon bx bx-right-arrow-alt bx-md text-title'></i>
             <div>
-                <h5 class="mb-4">Dirección de destino</h5>
-                <div class="mb-4 w-full">
-                    <div class="form-group">
-                        {% if my_addressess_list %}
-                        <select name="destiny_addressess" id="destiny_addressess" class="input">
-                            <option value="">Selección dirección anterior</option> 
-                            {% for address in my_addressess_list %}
-                                {% if detail_obj %}
-                                <option value="{{ address.id }}" {% if detail_obj.address_destiny.id == address.id%}selected{% endif %}>{{ address.address_complete }}</option>                                
-                                {% else %}
-                                <option value="{{ address.id }}">{{ address.address_complete }}</option>                                
-                                {% endif %}                               
-                            {% endfor %}
-                        </select>
-                        {% endif %}
-                        <p class="text-small"><b>Recuerda: </b>Si cambias los campos de la dirección seleccionada, se generará otra dirección, te recomendamos editar la dirección en la sección de <a href="{% url 'addresses:index' %}">Mis direcciones</a> </p>
-                        <a href="#" onClick="clearFieldsDestiny()" class="link mt-2">Limpiar campos</a>
-                    </div> 
-                    <h6 class="text-center">O completa los campos</h6>
+                <h5 class="mb-4">Dirección de envió</h5>
+                <div class="address__wrapper mb-4 container-modal" x-data="stateMapDestiny()" x-init="initMapDestiny()">
+                    <div class="mb-4">
+                        <div class="form-group-search m-0">
+                            <input type="search" class="input input-outline" id="destiny_search" placeholder="Buscar mi dirección">
+                            <i class="input-icon bx bx-search bx-sm"></i>
+                        </div>
+                        <input type="hidden" id="destiny_search_text">
+                    </div>
+
+                    <div class="mb-4">O</div>
+                    <div>
+                        <a class="btn btn-link btn-small btn-full" @click="isOpen = true">Elegir mi dirección en el mapa</a>
+                    </div>
+
+                    <div 
+                        x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                        class="modal">
+                        <div 
+                            class="modal-content card" style="width: 800px;" 
+                            @click.away="isOpen = false" 
+                        >
+                            <div class="head" style="height: 50px;">
+                                <h6>Elegir mi dirección</h6>
+                                <div class="close">
+                                    <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                        <i class='bx bx-x bx-sm' style="margin-right: 0;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-modal">
+                            <div id="map-destiny"></div>
+                                <div class="actions right">
+                                    <a @click="isOpen = false" class="btn btn-default">Cancelar</a>
+                                    <button class="btn btn-primary" @click.prevent="selectPositionDestiny()">Elegir</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 {% for field in destiny_form %}
                 <div class="form-group">
-                    {{ field.label_tag }} 
-                    {{ field }} 
+                    {{ field.label_tag }}
+                    {{ field }}
                     {% if field.errors %}
-                        {% for error in field.errors %}
-                        <div class="text-invalid">
-                            {{ error }}
-                        </div>
-                        {% endfor %}
+                    {% for error in field.errors %}
+                    <div class="text-invalid">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
                     {% endif %}
                 </div>
                 {% endfor %}
             </div>
         </div>
-        
+
         <div class="actions right mt-5">
             <button type="submit" class="btn btn-primary">{{ btnText }}</button>
             <a href="{% url 'orders:add-addresses' %}" class="btn btn-default">Cancelar</a>
         </div>
     </div>
-  </form>
+</form>
 
+ <div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
 {% block scripts %}
-<script type="text/javascript" >
-    {% if request.user.is_authenticated %}
-        var btnCompleteInfoMe = document.getElementById('complete-info-me');
-        var selectOriginAddress = document.getElementById('origin_addressess');
-        var selectDestinyAddress = document.getElementById('destiny_addressess');
-        var form = document.querySelector('form');
-        btnCompleteInfoMe.addEventListener('click', function(ev){
-            form.first_name.value = "{{ order.client.first_name }}";
-            form.last_name.value = "{{ order.client.last_name }}";
-            form.email.value = "{{ order.client.user.email }}";
-            form.cell_phone.value = "{{ order.client.cell_phone }}";
-        })
-        var my_addressess_list =  [{% for address in my_addressess_list %} [{
-            id: parseInt("{{ address.id|escapejs }}"), 
-            address: "{{ address.address|escapejs }}",
-            district: "{{ address.district|escapejs }}",
-            city: "{{ address.city|escapejs }}",
-            reference: "{{ address.reference|escapejs }}",
-        }]        
-        {% if not forloop.last %},{% endif %}{% endfor %}];
-        
-        my_addressess_list = my_addressess_list.map(function(item) {
-            return item[0];
-        })
+<script>
+  (function(){
+    loadScript();
+  })()
+  var form = document.querySelector('#form-detail');
+  function stateMapOrigin(){
+    return{
+      isOpen: false,
+      address: {
+        address_info: '',
+        position: {
+          lat: 0,
+          lng: 0
+        }
+      },
+      selectPositionOrigin(){
+        changePositionAddressOrigin(this.address.position, this.address.address_info);
 
-        selectOriginAddress.addEventListener('change', function(ev){
-            var id = parseInt(ev.target.value);
-            var origin_address = my_addressess_list.find(function(item){
-                return item.id === id;
-            });
-            form.origin_address.value = origin_address.address;
-            form.origin_district.value = origin_address.district;
-            form.origin_city.value = origin_address.city;
-            form.origin_reference.value = origin_address.reference;
-
-        })
-        selectDestinyAddress.addEventListener('change', function(ev){
-            var id = parseInt(ev.target.value);
-            var destiny_address = my_addressess_list.find(function(item, index){
-                return item.id === id;
-            });
-            form.destiny_address.value = destiny_address.address;
-            form.destiny_district.value = destiny_address.district;
-            form.destiny_city.value = destiny_address.city;
-            form.destiny_reference.value = destiny_address.reference;
+        this.isOpen = false;
         
+      },
+      geocodeLatLngOrigin(geocoder, map, infowindow){
+        geocoder.geocode({ location: this.address.position }, (results, status) => {
+          if (status === "OK") {
+            if (results[0]) {
+              map.setZoom(18);
+              this.address.address_info = results[0].formatted_address;
+              const marker = new google.maps.Marker({
+                position: this.address.position,
+                map: map,
+              });
+              infowindow.setContent(results[0].formatted_address);
+              infowindow.open(map, marker);
+            } else {
+              window.alert("No results found");
+            }
+          } else {
+            window.alert("Geocoder failed due to: " + status);
+          }
         });
+      },
+      currentPositionOrigin(geocoder, infowindow){
+       if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                this.address = {
+                  position: {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                  }
+                };
+                map.setCenter(this.address.position);
+                window.address = this.address;
+                this.geocodeLatLngOrigin(geocoder, map, infowindow);
+              },
+              () => {
+                handleLocationError(true, infoWindow, map.getCenter());
+              }
+            );
+          } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter(), map);
+          } 
+      },
+      initMapOrigin(){
+          window.map = new google.maps.Map(document.getElementById('map-origin'), {
+            center: this.address.position,
+            zoom: 17
+          });
+          const geocoder = new google.maps.Geocoder();
+          const infowindow = new google.maps.InfoWindow();
+          this.currentPositionOrigin(geocoder, infowindow);
+          
+          setDestination();
+          map.addListener("click", (mapsMouseEvent) => {
+            this.address.position = mapsMouseEvent.latLng,
+            this.geocodeLatLngOrigin(geocoder, map, infowindow);
+          });
+      },
+    }
+  }
+  function stateMapDestiny(){
+    return{
+      isOpen: false,
+      address: {
+        address_info: '',
+        position: {
+          lat: 0,
+          lng: 0
+        }
+      },
+      selectPositionDestiny(){
+        changePositionAddressDestiny(this.address.position, this.address.address_info);
 
-        function clearFieldsOrigin(){
-            form.origin_address.value = '';
-            form.origin_district.value = '';
-            form.origin_city.value = '';
-            form.origin_reference.value = '';
+        this.isOpen = false;
+        
+      },
+      geocodeLatLngDestiny(geocoder, map, infowindow){
+        geocoder.geocode({ location: this.address.position }, (results, status) => {
+          if (status === "OK") {
+            if (results[0]) {
+              map.setZoom(18);
+              this.address.address_info = results[0].formatted_address;
+              const marker = new google.maps.Marker({
+                position: this.address.position,
+                map: map,
+              });
+              infowindow.setContent(results[0].formatted_address);
+              infowindow.open(map, marker);
+            } else {
+              window.alert("No results found");
+            }
+          } else {
+            window.alert("Geocoder failed due to: " + status);
+          }
+        });
+      },
+      currentPositionDestiny(geocoder, infowindow){
+       if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                this.address = {
+                  position: {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                  }
+                };
+                map.setCenter(this.address.position);
+                window.address = this.address;
+                this.geocodeLatLngDestiny(geocoder, map, infowindow);
+              },
+              () => {
+                handleLocationError(true, infoWindow, map.getCenter());
+              }
+            );
+          } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter(), map);
+          } 
+      },
+      initMapDestiny(){
+          window.map = new google.maps.Map(document.getElementById('map-destiny'), {
+            center: this.address.position,
+            zoom: 17
+          });
+          const geocoder = new google.maps.Geocoder();
+          const infowindow = new google.maps.InfoWindow();
+          this.currentPositionDestiny(geocoder, infowindow);
+          
+          map.addListener("click", (mapsMouseEvent) => {
+            this.address.position = mapsMouseEvent.latLng,
+            this.geocodeLatLngDestiny(geocoder, map, infowindow);
+          });
+      },
+    }
+  }
+  function setDestination() {
+    var origin_address_google = new google.maps.places.Autocomplete(document.getElementById('origin_search'));
+    var destiny_address_google = new google.maps.places.Autocomplete(document.getElementById('destiny_search'));
+
+    google.maps.event.addListener(origin_address_google, 'place_changed', function () {
+        var address = origin_address_google.getPlace();
+        var address_text = address.formatted_address;
+        document.querySelector('#origin_search_text').value = address_text;
+        changePositionAddressOrigin(address.geometry.location, address_text);
+    });
+    google.maps.event.addListener(destiny_address_google, 'place_changed', function () {
+        var address = destiny_address_google.getPlace();
+        var address_text = address.formatted_address;
+        document.querySelector('#destiny_search_text').value = address_text;
+        changePositionAddressDestiny(address.geometry.location, address_text);
+    });
+  }
+
+  function changePositionAddressOrigin(position, address_text){
+        var originPositionInput = document.getElementsByName('origin_position')[0];
+        if (typeof originPositionInput !== 'undefined'){
+            originPositionInput.remove();
         }
-        function clearFieldsDestiny(){
-            form.destiny_address.value = '';
-            form.destiny_district.value = '';
-            form.destiny_city.value = '';
-            form.destiny_reference.value = '';
+        window.origin_address_text = address_text;
+        var address = address_text.split(", ");
+        form.origin_address.value = address[0];
+        form.origin_district.value = address[1];
+        form.origin_city.value = address[2];
+        var inputPosition = document.createElement('input')
+        inputPosition.setAttribute("type", "hidden")
+        inputPosition.setAttribute("name", "origin_position")
+        inputPosition.value = JSON.stringify(position);
+        form.origin_reference.after(inputPosition);
+  }
+
+  function changePositionAddressDestiny(position, address_text){
+        var destinyPositionInput = document.getElementsByName('destiny_position')[0];
+        if (typeof destinyPositionInput !== 'undefined'){
+            destinyPositionInput.remove();
         }
-    {% endif %}
+        window.destiny_address_text = address_text;
+        var address = address_text.split(", ");
+        form.destiny_address.value = address[0];
+        form.destiny_district.value = address[1];
+        form.destiny_city.value = address[2];
+        var inputPosition = document.createElement('input')
+        inputPosition.setAttribute("type", "hidden")
+        inputPosition.setAttribute("name", "destiny_position")
+        inputPosition.value = JSON.stringify(position);
+        form.destiny_reference.after(inputPosition);
+
+        getDistanceMatrix();
+  }
+
+  function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(
+      browserHasGeolocation
+        ? "Error: The Geolocation service failed."
+        : "Error: Your browser doesn't support geolocation."
+    );
+    infoWindow.open(map);
+  }
+    function getDistanceMatrix(){
+        const travel_mode = 'DRIVING';
+        calculateDistance(travel_mode, window.origin_address_text, window.destiny_address_text);
+    }
+    function calculateDistance(travel_mode, origin_address, destiny_address){
+        var DistanceMatrixService = new google.maps.DistanceMatrixService();
+        DistanceMatrixService.getDistanceMatrix(
+            {
+                origins: [origin_address],
+                destinations: [destiny_address],
+                travelMode: google.maps.TravelMode[travel_mode],
+                unitSystem: google.maps.UnitSystem.IMPERIAL, // miles and feet.
+                // unitSystem: google.maps.UnitSystem.metric, // kilometers and meters.
+                avoidHighways: false,
+                avoidTolls: false
+            }, save_results);
+    }
+
+    // save distance results
+    function save_results(response, status) {
+
+        if (status != google.maps.DistanceMatrixStatus.OK) {
+            // result.innerHTML = response.err;
+            console.log(response.error)
+        } else {
+            var origin = response.originAddresses[0];
+            var destination = response.destinationAddresses[0];
+            if (response.rows[0].elements[0].status === "ZERO_RESULTS") {
+                result.innerHTML = "Sorry , not available to use this travel mode between " + origin + " and " + destination;
+            } else {
+                var distance = response.rows[0].elements[0].distance;
+                var duration = response.rows[0].elements[0].duration;
+                var distance_in_kilo = distance.value / 1000; // the kilo meter
+                var distance_in_mile = distance.value / 1609.34; // the mile
+                var duration_text = duration.text;
+                appendResults(distance_in_kilo, duration_text);
+            }
+        }
+    }
+    function appendResults(distance_in_kilo, duration_text){
+        let price = 0.0;
+        window.service_prices.forEach(function(rate){
+            if(distance_in_kilo >= rate.fields.min & (distance_in_kilo <= rate.fields.max | distance_in_kilo >= rate.fields.max)){
+                price = rate.fields.price;
+            }
+        });
+        inputDistance(price, distance_in_kilo);
+    }
+    function inputDistance(price, distance_in_kilo){
+        var priceInputBefore = document.getElementsByName('price')[0];
+        var distanceInputBefore = document.getElementsByName('distance')[0];
+        if (typeof priceInputBefore !== 'undefined' && typeof distanceInputBefore !== 'undefined'){
+            priceInputBefore.remove();
+            distanceInputBefore.remove();
+        }
+        var price_input = document.createElement('input');
+        price_input.setAttribute('type', 'hidden');
+        price_input.setAttribute('name', 'price');
+        price_input.value = price;
+        form.destiny_reference.after(price_input);
+
+        var distance_input = document.createElement('input');
+        distance_input.setAttribute('type', 'hidden');
+        distance_input.setAttribute('name', 'distance');
+        distance_input.value = distance_in_kilo.toFixed(1);
+        price_input.after(distance_input);
+    }
+  function loadScript(){
+        // Create the script tag, set the appropriate attributes
+        var key = document.querySelector('#key');
+        var keyValue = key.dataset.value;
+        var script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key='+ keyValue +'&callback=initMap';
+        script.async = true;
+
+        // Attach your callback function to the `window` object
+        window.initMap = function() {
+          // JS API is loaded and available
+            getRatePrices();
+        };
+
+        // Append the 'script' element to 'head'
+        document.head.appendChild(script);
+  }
+   function getRatePrices() {
+        var service_prices = [];
+        var url = '/service-prices/get-service-prices/'; 
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                window.service_prices = data;
+            });
+    }
 </script>
+<style>
+    #map-origin, #map-destiny{
+        width: 100%;
+        height: 400px;
+    }
+</style>
 {% endblock scripts %}

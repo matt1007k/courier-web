@@ -1,0 +1,47 @@
+{% load static %}
+<nav class="page__navbar" x-data="{ isOpen: false }">
+    <div class="container page__navbar-content">
+        <div class="page__navbar-left">
+            <a href="{% url 'pages:index' %}" class="page--logo">
+                <img src="{% static 'img/logo-light.png' %}" alt="CuyClick - Courier">
+            </a>
+        </div>
+        <a class="navbar__menu" @click="isOpen = true">
+            <i class="bx bx-menu bx-md"></i>
+        </a>
+        <div class="page__navbar-right" :class="{'active': isOpen }"
+            x-show.transition.in.origin.top.right.opacity.100ms.out.origin.right.opacity.100ms="isOpen"
+            @click.away="isOpen = false">
+            <div>
+                <p class="text-white text-center h6 mb-2">Contáctanos</p>
+                <div class="social__media">
+                    <a href="">
+                        <i class="bx bxl-facebook bx-sm"></i>
+                    </a>
+                    <a href="">
+                        <i class="bx bxl-instagram bx-sm"></i>
+                    </a>
+                    <a href="">
+                        <i class="bx bxl-whatsapp bx-sm"></i>
+                    </a>
+                </div>
+                <div class="menu__items">
+                    <a href="" class="menu__item-link">
+                        Servicios
+                    </a>
+                    <a href="" class="menu__item-link">
+                        Nosotros
+                    </a>
+                </div>
+            </div>
+            <div class="actions">
+                <a href="{% url 'auth:login' %}" class="btn btn-outline-light btn-small btn-rounded">
+                    Ingresar
+                </a>
+                <a href="{% url 'auth:register' %}" class="btn btn-secondary btn-small btn-rounded">
+                    Registrarse
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>

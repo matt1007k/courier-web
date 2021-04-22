@@ -93,6 +93,17 @@
 .content-head .right > .btn i{
     display: block;
 }
+.address__wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: center;
+}
+
+.address__wrapper > div{
+    width: 100%;
+    text-align: center;
+}
 @media (min-width: 760px){
     .content-head{
         flex-direction: row;

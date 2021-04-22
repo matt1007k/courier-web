@@ -1,0 +1,66 @@
+{% extends "layouts/pages.html" %}
+{% block title %}
+<title>Cuy Click Perú - Inicio</title>
+{% endblock title %}
+{% load static %}
+{% load env_extras %}
+{% block content %}
+<div class="content__tracking-search">
+    <div class="tracking__map" id="map">
+    </div>
+    <div class="content__form">
+        <form method="GET">
+            <h5 class="mb-6 font-bold">Dale seguimiento a tu pedido</h5>
+            <div class="form-group-search">
+                <input type="search" class="input input-outline" placeholder="Ingresa tu # tracking">
+                <i class="input-icon bx bx-search bx-sm"></i>
+            </div>
+            <div class="actions full">
+                <button class="btn btn-secondary btn-small btn-rounded">
+                    Buscar
+                </button>
+            </div>
+        </form>
+        <div class="card card-tracking">
+            <div class="card__tracking-content">
+                <h5 class="mb-5">Ingresa para realizar un pedido</h5>
+                <a href="{% url 'auth:login' %}" class="btn btn-secondary btn-small btn-rounded">
+                    Ingresar ahora
+                </a>
+            </div>
+            <div class="card__tracking-img">
+                <img src="{% static 'img/cuyclick-service.PNG' %}" alt="CuyClick - Service">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    (function () {
+        loadScript();
+    })()
+    function loadScript() {
+        // Create the script tag, set the appropriate attributes
+        var key = document.querySelector('#key');
+        var keyValue = key.dataset.value;
+        var script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key=' + keyValue + '&callback=initMap';
+        script.async = true;
+
+        // Attach your callback function to the `window` object
+        window.initMap = function () {
+            var myLatLng = {
+                lat: 52.520008,
+                lng: 13.404954
+            };
+            window.map = new google.maps.Map(document.getElementById('map'), { zoom: 16, center: myLatLng, });
+        };
+
+        // Append the 'script' element to 'head'
+        document.head.appendChild(script);
+    }
+</script>
+{% endblock %}

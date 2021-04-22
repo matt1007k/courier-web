@@ -1,4 +1,4 @@
-{% extends "layouts/auth.html" %}
+{% extends "layouts/pages.html" %}
 
 {% block title %}
     <title>Cuy Click Perú - Completa tu direccíon</title>
@@ -49,13 +49,19 @@
       </div>
     </div>
   </div>
-  <div class="container-auth medium" style="padding-top: 10px;">
-    {% include "partials/message.html" %}
-
-      <div x-data="stateMap()" x-init="initMap()" class="container-modal">
+  <div class="container">
+    <div x-data="stateMap()" x-init="initMap()" class="card-form x-space-2 flex items-center justify-center container-modal">
+          <div class="form-group">
+            <label for=""></label>
+            <input type="text" class="input" id="address_google" placeholder="Buscar mi dirección">
+            <input type="hidden" id="address_google_text" x-ref="address_google_text">
+          </div>
+        <span style="margin-right: 10px; margin-left: 10px;">O</span>
+        <div>
         <button @click="isOpen = true" class="btn btn-default btn-small">
             Elegir mi dirección en el mapa
         </button>
+        </div>
         <div 
             x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
             class="modal">
@@ -81,6 +87,9 @@
             </div>
         </div>
     </div>
+  </div>
+  <div class="container-auth medium" style="padding-top: 10px;">
+    {% include "partials/message.html" %}
     <form method="post" id="form-address">
         {% csrf_token %}
         {% for field in form %}
@@ -129,15 +138,7 @@
         }
       },
       selectPosition(){
-        var address = this.address.address_info.split(", ");
-        form.address.value = address[0];
-        form.district.value = address[1];
-        form.city.value = address[2];
-        var inputPosition = document.createElement('input')
-        inputPosition.setAttribute("type", "hidden")
-        inputPosition.setAttribute("name", "position")
-        inputPosition.value = JSON.stringify(this.address.position);
-        form.reference.after(inputPosition);
+        changePositionAddress(this.address.position, this.address.address_info);
 
         this.isOpen = false;
         
@@ -183,6 +184,7 @@
                 //   map,
                 //   title: 'Mi direccion'
                 // })
+                window.address = this.address;
                 this.geocodeLatLng(geocoder, map, infowindow);
               },
               () => {
@@ -203,6 +205,7 @@
           const infowindow = new google.maps.InfoWindow();
           this.currentPosition(geocoder, infowindow);
           
+          setDestination();
           map.addListener("click", (mapsMouseEvent) => {
             this.address.position = mapsMouseEvent.latLng,
             this.geocodeLatLng(geocoder, map, infowindow);
@@ -218,8 +221,30 @@
         // locationButton.addEventListener("click", () => {
         //   // Try HTML5 geolocation.
         // });
-      }
+      },
     }
+  }
+  function setDestination() {
+    var address_google = new google.maps.places.Autocomplete(document.getElementById('address_google'));
+
+    google.maps.event.addListener(address_google, 'place_changed', function () {
+        var address = address_google.getPlace();
+        var address_text = address.formatted_address;
+        document.querySelector('#address_google_text').value = address_text;
+        changePositionAddress(address.geometry.location, address_text);
+    });
+  }
+
+  function changePositionAddress(position, address_text){
+        var address = address_text.split(", ");
+        form.address.value = address[0];
+        form.district.value = address[1];
+        form.city.value = address[2];
+        var inputPosition = document.createElement('input')
+        inputPosition.setAttribute("type", "hidden")
+        inputPosition.setAttribute("name", "position")
+        inputPosition.value = JSON.stringify(position);
+        form.reference.after(inputPosition);
   }
 
   function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
@@ -236,7 +261,7 @@
         var key = document.querySelector('#key');
         var keyValue = key.dataset.value;
         var script = document.createElement('script');
-        script.src = 'https://maps.googleapis.com/maps/api/js?key='+ keyValue +'&callback=initMap';
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key='+ keyValue +'&callback=initMap';
         script.async = true;
 
         // Attach your callback function to the `window` object

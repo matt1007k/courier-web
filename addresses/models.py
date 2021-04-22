@@ -54,7 +54,7 @@ class Address(models.Model):
     cell_phone = models.CharField(max_length=9, verbose_name='num. de celular')
     address = models.CharField(max_length=150, verbose_name='dirección')
     district = models.CharField(max_length=100, verbose_name='distrito')
-    city = models.CharField(max_length=150, verbose_name='ciudad')
+    city = models.CharField(max_length=150, verbose_name='ciudad o País')
     reference = models.TextField(max_length=200, verbose_name='referencia')
     address_gps = models.JSONField(null=True, blank=True, max_length=100, verbose_name='dirección gps')
     default = models.BooleanField(default=False)

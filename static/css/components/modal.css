@@ -8,6 +8,7 @@
     justify-content: stretch;
     align-items: stretch;
     background:rgba(0,0,0, .2);
+    z-index: 1;
 }
 .modal-content.card{
     border-radius: 0;
@@ -19,6 +20,7 @@
 }
 .modal-content .head h6{
     flex: auto;
+    text-align: left;
 }
 .modal-content .head .close{
     flex: 0 auto;

@@ -31,7 +31,7 @@ class OriginAddressForm(forms.Form):
     origin_district = forms.CharField(label='Distrito', max_length=100, widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    origin_city = forms.CharField(label='Ciudad', max_length=100, widget=forms.TextInput(attrs={
+    origin_city = forms.CharField(label='Ciudad o País', max_length=100, widget=forms.TextInput(attrs={
         'class': 'input'
     }))
     origin_reference = forms.CharField(label='Referencia', max_length=100, widget=forms.Textarea(attrs={
@@ -54,7 +54,7 @@ class DestinyAddressForm(forms.Form):
     destiny_district = forms.CharField(label='Distrito', max_length=100, widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    destiny_city = forms.CharField(label='Ciudad', max_length=100, widget=forms.TextInput(attrs={
+    destiny_city = forms.CharField(label='Ciudad o País', max_length=100, widget=forms.TextInput(attrs={
         'class': 'input'
     }))
     destiny_reference = forms.CharField(label='Referencia', max_length=100, widget=forms.Textarea(attrs={

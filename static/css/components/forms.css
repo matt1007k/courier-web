@@ -26,7 +26,7 @@
     width: 100%;
     border-radius: 7px;
     border: 2px solid var(--btn-default-color);
-    font-weight: 400;
+    font-weight: 500;
     outline: none;
     padding: 18px 20px;
     background: var(--btn-default-color);
@@ -56,4 +56,22 @@
 .form-group .text-invalid{
     color: rgb(var(--danger-color));
     margin-top: 5px;
+}
+.form-group-search{
+    position: relative;
+    margin-bottom: 30px;
+    max-width: 100%;
+}
+.form-group-search .input-icon {
+    position: absolute;
+    color: var(--text-color);
+    top: 14px;
+    left: 14px;
+}
+
+.form-group-search input[type="search"]{
+    padding: 14px 18px 14px 40px !important;
+}
+.input-outline{
+    background-color: transparent;
 }
