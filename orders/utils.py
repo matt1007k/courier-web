@@ -32,6 +32,9 @@ def delete_order(request):
         
 def fields_origin_form(detail):
     fields = {
+        'origin_full_name': detail.address_origin.full_name,
+        'origin_email': detail.address_origin.email,
+        'origin_cell_phone': detail.address_origin.cell_phone,
         'origin_address': detail.address_origin.address,
         'origin_district': detail.address_origin.district,
         'origin_city': detail.address_origin.city,
@@ -41,6 +44,9 @@ def fields_origin_form(detail):
 
 def fields_destiny_form(detail):
     fields = {
+        'destiny_full_name': detail.address_destiny.full_name,
+        'destiny_email': detail.address_destiny.email,
+        'destiny_cell_phone': detail.address_destiny.cell_phone,
         'destiny_address': detail.address_destiny.address,
         'destiny_district': detail.address_destiny.district,
         'destiny_city': detail.address_destiny.city,

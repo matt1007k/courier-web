@@ -122,12 +122,12 @@
                                 <div class="client-info">
                                     <h6 class="mb-2 subheading text-muted">Enviar a</h6>
                                     <div>
-                                        <h6>{{ detail.full_name }}</h6>
-                                        <p>{{ detail.email }}</p>
+                                        <h6>{{ detail.address_destiny.full_name }}</h6>
+                                        <p>{{ detail.address_destiny.email }}</p>
                                     </div>
                                     <div class="mt-2">
                                         <h6>Celular</h6>
-                                        <p>{{ detail.cell_phone }}</p>
+                                        <p>{{ detail.address_destiny.cell_phone }}</p>
                                     </div>
                                 </div>
                                 <div class="footer-details mt-4">
@@ -167,6 +167,7 @@
                                         {% endif %}
                                         <div class="package-details">
                                             <h6>Descripción</h6>
+                                            <p>{{ detail.size }} - {{ detail.contain }} - {{ detail.value }}</p>
                                             <p>{{ detail.description }}</p>
                                         </div>
                                     </div>
@@ -177,7 +178,7 @@
                 </div> 
                 <div class="address-order-summary">
                     <div class="distance">
-                        <h5 class="m-0">{{ detail.distance|unlocalize }}</h5>
+                        <h5 class="m-0">{{ detail.distance|unlocalize }} {% if detail.distance >= 1 %}KM{% else %}M{% endif %}</h5>
                         <p class="text-small">Distancia</p>
                     </div>
                     <div class="rate">
