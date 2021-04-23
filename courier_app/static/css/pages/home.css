@@ -1,0 +1,197 @@
+.page__wrapper{
+    width: 100%;
+    overflow-x: hidden;
+}
+.page__navbar{
+    background-color: rgb(var(--primary-page-color));
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+.page__navbar-content{
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+.page__navbar-left{
+    display: flex;
+    margin-right: auto;
+}
+.page__navbar-right.active{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.page__navbar-right{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(var(--primary-page-color));
+    box-shadow: 0 3px 16px rgb(var(--primary-color), .5);
+    z-index: 1;
+    margin-left: auto;
+    width: 300px;
+    padding: 20px;
+}
+.page__navbar-right > .actions{
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 0;
+}
+.page__navbar-right > :not(template) ~ :not(template) {
+    --space-x-reverse: 0;
+    margin-right: calc(.8rem * var(--space-x-reverse));
+    margin-left: calc(.8rem * (1 - var(--space-x-reverse)));
+}
+.navbar__menu{
+    color: white;
+    margin-left: auto;
+}
+.menu__items{
+    display: flex;
+    flex-direction: column;
+}
+.menu__item-link{
+    color:white !important;
+    text-decoration: none;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 8px;
+    transition: all cubic-bezier(0.075, 0.82, 0.165, 1) .3s;
+}
+.menu__item-link:hover{
+    /* opacity: .8; */
+    background: rgb(var(--secondary-color));
+    font-size: 20px;
+}
+.social__media{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+.social__media a{
+    color: white !important;
+    text-decoration: none;
+    height: 38px;
+    width: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all cubic-bezier(0.075, 0.82, 0.165, 1) .3s;
+    transform: scale(1);
+}
+.social__media a:hover {
+    background: rgb(var(--primary-color), .5);
+    transform: scale(1.1);
+}
+.content__tracking-search{
+    display: flex;
+    flex-direction: column-reverse;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+.tracking__map{
+    background:rgb(209, 209, 209);
+    width: 100%;
+    height: 300px;
+    border-radius: 20px;
+}
+.content__form{
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+.content__form form{
+    width: 100%;
+}
+.card-tracking{
+    display: flex;
+    background-color: rgb(var(--primary-page-color));
+    color: white;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+.card__tracking-content{
+    width: 60%;
+    /* margin-right: 20px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.card__tracking-content h5{
+    color: white;
+    font-size: 16px;
+}
+.card__tracking-img{
+    width: 40%;
+    margin-top: -32px;
+    transform: translateX(32px);
+    margin-bottom: -32px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    overflow: hidden;
+}
+.card__tracking-img img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translateY(8px);
+    aspect-ratio: 4 / 3;
+}
+
+@media (min-width: 768px){
+    .navbar__menu{
+        display: inline-flex;
+        cursor: pointer;
+    }
+    .tracking__map{
+        width: 65%;
+        height: 500px;
+    }
+    .content__form{
+        width: 45%;
+        margin-left: 50px;
+        margin-bottom: 0;
+        flex-direction: column;
+    }
+    .content__form form{
+        width: 80%;
+    }
+    .card-tracking{
+        margin-top: 80px;
+        margin-bottom: 0px;
+    }
+    .content__tracking-search{
+        flex-direction: row;
+    }
+    .card__tracking-content{
+        width: 50%;
+        margin-right: 20px;
+    }
+    .card__tracking-content h5{
+        font-size: 20px;
+    }
+    .card__tracking-img{
+        width: 50%;
+        margin-top: -32px;
+        transform: translateX(32px);
+        margin-bottom: -32px;
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+        overflow: hidden;
+    }
+    .card__tracking-img img{
+        transform: translateY(0);
+        aspect-ratio: 16 / 9;
+    }
+}
+@media (min-width: 1024px){
+
+}

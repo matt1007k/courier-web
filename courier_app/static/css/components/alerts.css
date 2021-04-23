@@ -1,0 +1,49 @@
+.alert{
+    /* padding: 20px 25px; */
+    padding: 15px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+.alert.alert-primary{
+    background: rgba(var(--primary-color), 0.1);
+    border: 1px solid rgb(var(--primary-color));
+    color: rgb(var(--primary-color));
+}
+.alert.alert-success{
+    background: rgba(var(--success-color), 0.1);
+    border: 1px solid rgb(var(--success-color));
+    color: rgb(var(--success-color));
+}
+.alert.alert-danger{
+    background: rgba(var(--danger-color), 0.1);
+    border: 1px solid rgb(var(--danger-color));
+    color: rgb(var(--danger-color));
+}
+.alert.alert-success .message p, .alert.alert-success .message h6{
+    color: rgb(var(--success-color));
+}
+.alert.alert-success > svg path, .alert.alert-success .close > svg path{
+    fill: rgb(var(--success-color));
+}
+.alert.alert-danger .message p, .alert.alert-danger .message h6{
+    color: rgb(var(--danger-color));
+}
+.alert.alert-warning{
+    background: rgba(var(--accent-color), 0.1);
+    border: 1px solid rgb(var(--accent-color));
+    color: rgb(var(--accent-color));
+}
+.alert.alert-warning .message p, .alert.alert-warning .message h6{
+    color: rgb(var(--accent-color));
+}
+.alert .message{
+    flex: 1;
+    margin: 0 20px;
+}
+.alert .message p{
+    margin: 0;
+}
+.alert .close{
+    cursor: pointer;
+}
