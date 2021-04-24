@@ -97,7 +97,7 @@
           }
         });
       },
-      currentPosition(geocoder, infowindow){
+      currentPosition(geocoder, infoWindow){
        if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
               (position) => {
@@ -109,7 +109,7 @@
                 };
                 map.setCenter(this.address.position);
                 window.address = this.address;
-                this.geocodeLatLng(geocoder, map, infowindow);
+                this.geocodeLatLng(geocoder, map, infoWindow);
               },
               () => {
                 handleLocationError(true, infoWindow, map.getCenter());
@@ -184,7 +184,6 @@
         // Attach your callback function to the `window` object
         window.initMap = function() {
           // JS API is loaded and available
-            getRatePrices();
         };
 
         // Append the 'script' element to 'head'
