@@ -1,3 +1,6 @@
+import json
+from django.http.response import HttpResponse, JsonResponse
+from django.core.serializers import serialize
 from orders.mails import Mail
 from clients.models import Client
 from typing import Any, Dict
@@ -136,3 +139,31 @@ def payment_success_view(request):
     return render(request, template_name, context={
         'order': order
     })
+
+def tracking_order_view(request):
+    if request.method == 'GET':
+        tracking_code = request.GET.get('tracking_code')
+        order = Order.objects.filter(tracking_code=tracking_code).first()
+        if order is None:
+            return JsonResponse({
+                'status': False,
+            }, status=404)
+        post_json = serialize('json', [order])
+        detail_list = [{ 
+                'address_origin_full_name': detail.address_origin.full_name, 
+                'address_origin_cell_phone': detail.address_origin.cell_phone, 
+                'address_origin_text': detail.address_origin.address_complete(), 
+                'address_origin_reference': detail.address_origin.reference, 
+                'address_origin_position': json.loads(detail.address_origin.address_gps), 
+                'address_destiny_full_name': detail.address_destiny.full_name, 
+                'address_destiny_cell_phone': detail.address_destiny.cell_phone, 
+                'address_destiny_text': detail.address_destiny.address_complete(), 
+                'address_destiny_reference': detail.address_destiny.reference, 
+                'address_destiny_position': json.loads(detail.address_destiny.address_gps), 
+            } for detail in order.detail_set.all()]
+        order_json = json.dumps({
+            'status': True,
+            'order': json.loads(post_json)[0],
+            'details': json.loads(json.dumps(detail_list))
+        })
+        return HttpResponse(order_json, content_type="application/json")

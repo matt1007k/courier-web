@@ -9,12 +9,13 @@
     <div class="tracking__map" id="map">
     </div>
     <div class="content__form">
-        <form method="GET">
+        <form id="tracking-form">
             <h5 class="mb-6 font-bold">Dale seguimiento a tu pedido</h5>
             <div class="form-group-search">
-                <input type="search" class="input input-outline" placeholder="Ingresa tu # tracking">
+                <input type="search" class="input input-outline" name="tracking_code" placeholder="Ingresa tu # tracking">
                 <i class="input-icon bx bx-search bx-sm"></i>
             </div>
+            <div class="font-medium" id="message" style="margin-top: -20px;display: none;"></div>
             <div class="actions full">
                 <button class="btn btn-secondary btn-small btn-rounded">
                     Buscar
@@ -41,7 +42,72 @@
 <script>
     (function () {
         loadScript();
+
+        var form = document.querySelector('#tracking-form');
+        form.addEventListener('submit', queryTrackingOrder)
+
+        function queryTrackingOrder(ev){
+            ev.preventDefault();
+
+            var tracking_code = form.tracking_code;
+            var textMessage = document.querySelector('#message');
+
+            if (tracking_code.value == ''){
+                textMessage.innerHTML = 'El número de seguimiento es requerido';
+                textMessage.classList.add('text-danger');
+                textMessage.style.display = 'block';
+            } else {
+                textMessage.style.display = 'none';
+                getOrderFetch(tracking_code.value);
+            }
+        }
+
+        function getOrderFetch(tracking_code){
+            var textMessage = document.querySelector('#message');
+            var orders = [];
+            var directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': false });
+            var directionsService = new google.maps.DirectionsService();
+
+            fetch('orders/tracking-order?tracking_code='+ tracking_code)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status){
+                        textMessage.style.display = 'none';
+                        data.details.forEach(detail => {
+                            displayRoute(
+                                detail.address_origin_text, 
+                                detail.address_destiny_text, 
+                                directionsService, 
+                                directionsDisplay
+                            );
+                        });
+
+                    }else{
+                        textMessage.innerHTML = 'El número de seguimiento no existe';
+                        textMessage.classList.add('text-danger');
+                        textMessage.style.display = 'block';
+                    }
+                })
+        }
     })()
+    function displayRoute(origin_address, destiny_address, directionsService, directionsDisplay) {
+        directionsService.route({
+            origin: origin_address,
+            destination: destiny_address,
+            travelMode: 'DRIVING',
+            avoidTolls: true
+        }, function (response, status) {
+            if (status === 'OK') {
+                directionsDisplay.setMap(map);
+                directionsDisplay.setDirections(response);
+            } else {
+                directionsDisplay.setMap(null);
+                directionsDisplay.setDirections(null);
+                alert('Could not display directions due to: ' + status);
+            }
+        });
+    }
+
     function loadScript() {
         // Create the script tag, set the appropriate attributes
         var key = document.querySelector('#key');
