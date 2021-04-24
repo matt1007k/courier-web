@@ -19,25 +19,6 @@
 {% block content %}
 
 <div class="card card-form mb-10">
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="form-group">
-        {{ field.label_tag }} 
-        {{ field }} 
-        {% if field.errors %}
-          {% for error in field.errors %}
-          <div class="text-invalid">
-            {{ error }}
-          </div>
-          {% endfor %}
-        {% endif %}
-      </div>
-      {% endfor %}
-    <div class="actions right mt-5">
-      <a href="{% url 'drivers:index' %}" class="btn btn-default">Cancelar</a>
-      <button type="submit" class="btn btn-primary">Continuar</button>
-    </div>
-  </form>
+  {% include "drivers/snippets/form.html" with btnText='Guardar' %} 
 </div>
 {% endblock content %}

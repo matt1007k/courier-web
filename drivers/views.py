@@ -1,3 +1,4 @@
+import json
 from typing import Any, Dict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http.response import HttpResponse
@@ -68,6 +69,8 @@ class DriverCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form: DriverModelForm) -> HttpResponse:
         form.instance.code = generate_driver_code()
+        if 'position' in self.request.POST:
+            form.instance.address_gps = json.loads(self.request.POST.get('position')) 
         return super().form_valid(form)
     
 class DriverUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
@@ -81,6 +84,11 @@ class DriverUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         context['title'] = 'Editar motorizado'
 
         return context
+
+    def form_valid(self, form: DriverModelForm) -> HttpResponse:
+        if 'position' in self.request.POST:
+            form.instance.address_gps = json.loads(self.request.POST.get('position')) 
+        return super().form_valid(form)
 
     def get_success_url(self) -> str:
         # messages.success(self.request, "Registro editado con éxito")
