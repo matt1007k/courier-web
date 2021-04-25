@@ -1,3 +1,4 @@
+import json
 from typing import Any, Dict
 from django.db.models.query import QuerySet
 from django.db.models import Q
@@ -6,18 +7,19 @@ from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from django.views.generic import ListView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import DeleteView, UpdateView
 
 from .models import Address
 from .forms import AddressModelForm
 
-class AddressListView(LoginRequiredMixin, ListView):
+class AddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'addresses/index.html'
+    permission_required = 'addresses.view_address'
     paginate_by = 10
     model = Address
 
@@ -42,10 +44,11 @@ class AddressListView(LoginRequiredMixin, ListView):
             object_list = self.model.objects.all()
         return object_list 
 
-class AddressCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class AddressCreateView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     template_name = 'addresses/create.html'
     form_class = AddressModelForm
     success_message = 'Registro creado con éxito'
+    permission_required = 'addresses.add_address'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -58,12 +61,15 @@ class AddressCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form: AddressModelForm) -> HttpResponse:
         form.instance.client = self.request.user.client 
+        if 'position' in self.request.POST:
+            form.instance.address_gps = json.loads(self.request.POST.get('position'))
         return super().form_valid(form)
 
-class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     template_name = 'addresses/edit.html'
     form_class = AddressModelForm
     model = Address
+    permission_required = 'addresses.change_address'
     success_message = 'Registro editado con éxito'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
@@ -71,6 +77,11 @@ class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         context['title'] = 'Editar dirección'
 
         return context
+
+    def form_valid(self, form: AddressModelForm) -> HttpResponse:
+        if 'position' in self.request.POST:
+            form.instance.address_gps = json.loads(self.request.POST.get('position'))
+        return super().form_valid(form)
 
     def get_success_url(self) -> str:
         return reverse('addresses:index')
@@ -80,9 +91,10 @@ class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
             return redirect('addresses:index')
         return super(AddressUpdateView, self).dispatch(request, *args, **kwargs)
 
-class AddressDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+class AddressDeleteView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'addresses/delete.html'
     model = Address
+    permission_required = 'addresses.delete_address'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context =  super().get_context_data(**kwargs)

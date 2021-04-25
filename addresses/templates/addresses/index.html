@@ -54,10 +54,12 @@
             </div>
         </div>
 
+        {% if perms.addresses.add_address %}
         <a href="{% url 'addresses:create' %}" class="btn btn-link btn-small text-primary">
             <i class='bx bx-plus bx-sm' ></i>
             <span>Nueva dirección</span> 
         </a>
+        {% endif %}
     </div>
 </div>
 {% endblock content_head %}
@@ -73,6 +75,7 @@
                     <i class='bx bx-current-location bx-sm  '></i>
                 </div>
                 <div class="content">
+                    <div class="text-small flex items-center"><i style="margin-right: 5px;" class="bx bx-user bx-xs"></i> {{ address.full_name }}</div>
                     <h6>{{ address.address }}</h6>
                     <p>{{ address.address_city }}</p>
                     {% if address.default %}
@@ -90,8 +93,12 @@
                 {% endif %}
             </div>
             <div class="actions">
+                {% if perms.addresses.change_address %}
                 <a href="{{ address.get_update_path }}" class="btn btn-link btn-small">Editar</a>
+                {% endif %}
+                {% if perms.addresses.delete_address %}
                 <a href="{{ address.get_delete_path }}" class="btn btn-link danger btn-small">Eliminar</a>
+                {% endif %}
             </div>
         </div>
         

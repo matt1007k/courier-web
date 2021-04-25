@@ -1,3 +1,45 @@
+{% load env_extras %}
+<div class="address__wrapper mb-4 container-modal" x-data="stateMap()" x-init="initMap()">
+    <div class="mb-4">
+        <div class="form-group-search m-0">
+            <input type="search" class="input input-outline" id="address_search" placeholder="Buscar mi dirección">
+            <i class="input-icon bx bx-search bx-sm"></i>
+        </div>
+        <input type="hidden" id="address_search_text">
+    </div>
+
+    <div class="mb-4">O</div>
+    <div>
+        <a class="btn btn-link btn-small btn-full" @click="isOpen = true">Elegir mi dirección en el mapa</a>
+    </div>
+
+    <div 
+        x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+        class="modal">
+        <div 
+            class="modal-content card" style="width: 800px;" 
+            @click.away="isOpen = false" 
+        >
+            <div class="head" style="height: 50px;">
+                <h6>Elegir mi dirección</h6>
+                <div class="close">
+                    <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                        <i class='bx bx-x bx-sm' style="margin-right: 0;"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="form-modal">
+            <div id="map"></div>
+                <div class="actions right">
+                    <a @click="isOpen = false" class="btn btn-default">Cancelar</a>
+                    <button class="btn btn-primary" @click.prevent="selectPosition()">Elegir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<form method="post" enctype="multipart/form-data" id="form-address">
 {% csrf_token %}
 {% for field in form %}
     <div class="form-group">
@@ -16,3 +58,149 @@
     <a href="{% url 'addresses:index' %}" class="btn btn-default">Cancelar</a>
     <button type="submit" class="btn btn-primary">{{ btnText }}</button>
 </div>
+</form>
+
+<div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
+{% block scripts %}
+<script>
+    (function(){
+        loadScript();
+    })()
+  var form = document.querySelector('#form-address');
+  function stateMap(){
+    return{
+      isOpen: false,
+      address: {
+        address_info: '',
+        position: {
+          lat: 0,
+          lng: 0
+        }
+      },
+      selectPosition(){
+        changePositionAddress(this.address.position, this.address.address_info);
+
+        this.isOpen = false;
+        
+      },
+      geocodeLatLng(geocoder, map, infowindow){
+        geocoder.geocode({ location: this.address.position }, (results, status) => {
+          if (status === "OK") {
+            if (results[0]) {
+              map.setZoom(18);
+              this.address.address_info = results[0].formatted_address;
+              const marker = new google.maps.Marker({
+                position: this.address.position,
+                map: map,
+              });
+              infowindow.setContent(results[0].formatted_address);
+              infowindow.open(map, marker);
+            } else {
+              window.alert("No results found");
+            }
+          } else {
+            window.alert("Geocoder failed due to: " + status);
+          }
+        });
+      },
+      currentPosition(geocoder, infoWindow){
+       if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                this.address = {
+                  position: {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                  }
+                };
+                map.setCenter(this.address.position);
+                window.address = this.address;
+                this.geocodeLatLng(geocoder, map, infoWindow);
+              },
+              () => {
+                handleLocationError(true, infoWindow, map.getCenter());
+              }
+            );
+          } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter(), map);
+          } 
+      },
+      initMap(){
+          window.map = new google.maps.Map(document.getElementById('map'), {
+            center: this.address.position,
+            zoom: 17
+          });
+          const geocoder = new google.maps.Geocoder();
+          const infowindow = new google.maps.InfoWindow();
+          this.currentPosition(geocoder, infowindow);
+          
+          setDestination();
+          map.addListener("click", (mapsMouseEvent) => {
+            this.address.position = mapsMouseEvent.latLng,
+            this.geocodeLatLng(geocoder, map, infowindow);
+          });
+      },
+    }
+  }
+    function setDestination() {
+        var address_google = new google.maps.places.Autocomplete(document.getElementById('address_search'));
+
+        google.maps.event.addListener(address_google, 'place_changed', function () {
+            var address = address_google.getPlace();
+            var address_text = address.formatted_address;
+            document.querySelector('#address_search_text').value = address_text;
+            changePositionAddress(address.geometry.location, address_text);
+        });
+    }
+
+    function changePositionAddress(position, address_text){
+            var originPositionInput = document.getElementsByName('position')[0];
+            if (typeof originPositionInput !== 'undefined'){
+                originPositionInput.remove();
+            }
+            var origin_address_text = address_text;
+            var address = address_text.split(", ");
+            form.address.value = address[0];
+            form.district.value = address[1];
+            form.city.value = address[2];
+            var inputPosition = document.createElement('input')
+            inputPosition.setAttribute("type", "hidden")
+            inputPosition.setAttribute("name", "position")
+            inputPosition.value = JSON.stringify(position);
+            form.reference.after(inputPosition);
+    }
+
+  function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(
+      browserHasGeolocation
+        ? "Error: The Geolocation service failed."
+        : "Error: Your browser doesn't support geolocation."
+    );
+    infoWindow.open(map);
+  }
+  function loadScript(){
+        // Create the script tag, set the appropriate attributes
+        var key = document.querySelector('#key');
+        var keyValue = key.dataset.value;
+        var script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key='+ keyValue +'&callback=initMap';
+        script.async = true;
+
+        // Attach your callback function to the `window` object
+        window.initMap = function() {
+          // JS API is loaded and available
+        };
+
+        // Append the 'script' element to 'head'
+        document.head.appendChild(script);
+  } 
+</script>
+<style>
+    #map{
+        width: 100%;
+        height: 400px;
+    }
+</style>
+{% endblock scripts %}

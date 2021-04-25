@@ -50,11 +50,12 @@
                 </div>
             </div>
         </div>
-
+        {% if perms.clients.view_client %}
         <a href="{% url 'clients:create' %}" class="btn btn-link btn-small text-primary">
             <i class='bx bx-plus bx-sm' ></i>
             <span>Nuevo cliente</span> 
         </a>
+        {% endif %}
     </div>
 </div>
 {% endblock content_head %}
@@ -113,9 +114,15 @@
                 {% endif %}
             </div>
             <div class="client-list-col actions">
+                {% if perms.clients.view_client %}
                 <a href="{{ client.get_detail_path }}?next={{ request.path }}" class="btn btn-link btn-small">Ver</a>
+                {% endif %}
+                {% if perms.clients.change_client %}
                 <a href="{{ client.get_update_path }}" class="btn btn-link btn-small">Editar</a>
+                {% endif %}
+                {% if perms.clients.delete_client %}
                 <a href="{{ client.get_delete_path }}" class="btn btn-link danger btn-small">Eliminar</a>
+                {% endif %}
             </div>
             <div 
                 x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
@@ -134,24 +141,30 @@
                     </div>
                     <div class="form-modal">
                         <div class="options">
-                            <a href="#" class="option-item">
+                            {% if perms.clients.view_client %}
+                            <a href="{{ client.get_detail_path }}?next={{ request.path }}" class="option-item">
                                 <span>Ver detalle</span>
                                 <div class="icon ">
                                     <i class='bx bx-chevron-right bx-sm'></i>
                                 </div>
                             </a>
-                            <a href="#" class="option-item">
+                            {% endif %}
+                            {% if perms.clients.change_client %}
+                            <a href="{{ client.get_update_path }}" class="option-item">
                                 <span>Editar</span>
                                 <div class="icon ">
                                     <i class='bx bx-edit bx-sm'></i>
                                 </div>
                             </a>
-                            <a href="#" class="option-item danger">
+                            {% endif %}
+                            {% if perms.clients.delete_client %}
+                            <a href="{{ client.get_delete_path }}" class="option-item danger">
                                 <span>Eliminar</span>
                                 <div class="icon ">
                                     <i class='bx bx-trash bx-sm'></i>
                                 </div>
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
