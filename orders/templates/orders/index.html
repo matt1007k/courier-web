@@ -52,9 +52,11 @@
                             <label for="status">Estado</label>
                             <select name="status" id="status" class="input">
                                 <option value="">Seleccionar el estado</option>
-                                <option value="{{ statuses.PENDING }}" {% if status == 'PENDING'%}selected{% endif %}>Pendiente</option>
+                                <option value="{{ statuses.REGISTERED }}" {% if status == 'REGISTERED'%}selected{% endif %}>Entregado</option>
+                                <option value="{{ statuses.ON_ROUTE }}" {% if status == 'ON_ROUTE'%}selected{% endif %}>En Ruta</option>
                                 <option value="{{ statuses.DELIVERED }}" {% if status == 'DELIVERED'%}selected{% endif %}>Entregado</option>
-                                <option value="{{ statuses.CANCELED }}" {% if status == 'CANCELED'%}selected{% endif %}>Cancelado</option>
+                                <option value="{{ statuses.UNDELIVERED }}" {% if status == 'UNDELIVERED'%}selected{% endif %}>No Entregado</option>
+                                <option value="{{ statuses.REPROGRAMMED }}" {% if status == 'REPROGRAMMED'%}selected{% endif %}>Reprogramado</option>
                             </select>
                         </div>
                         
@@ -120,9 +122,11 @@
 {% endblock content_head %}
 {% block content %}
  <div class="filter-list space-x-2">
-    <a href="{% url 'orders:index' %}?status={{ statuses.PENDING }}" class="btn btn-{% if status == statuses.PENDING %}primary{% else %}link{% endif %} btn-small">Pendiente</a>
+    <a href="{% url 'orders:index' %}?status={{ statuses.REGISTERED }}" class="btn btn-{% if status == statuses.REGISTERED %}primary{% else %}link{% endif %} btn-small">Registrado</a>
+    <a href="{% url 'orders:index' %}?status={{ statuses.ON_ROUTE }}" class="btn btn-{% if status == statuses.ON_ROUTE %}primary{% else %}link{% endif %} btn-small">En Ruta</a>
     <a href="{% url 'orders:index' %}?status={{ statuses.DELIVERED }}" class="btn btn-{% if status == statuses.DELIVERED %}primary{% else %}link{% endif %} btn-small">Entregado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.CANCELED }}" class="btn btn-{% if status == statuses.CANCELED %}primary{% else %}link{% endif %} btn-small">Cancelado</a>
+    <a href="{% url 'orders:index' %}?status={{ statuses.UNDELIVERED }}" class="btn btn-{% if status == statuses.UNDELIVERED %}primary{% else %}link{% endif %} btn-small">No Entregado</a>
+    <a href="{% url 'orders:index' %}?status={{ statuses.REPROGRAMMED }}" class="btn btn-{% if status == statuses.REPROGRAMMED %}primary{% else %}link{% endif %} btn-small">Reprogramado</a>
 </div>
  <div class="mb-10 order-list-grid">  
     <div class="order-list-head">
@@ -144,7 +148,7 @@
     
     {% for order in object_list %}
     
-    <div class="card order-list-row">
+    <div class="card card-normal order-list-row">
         <div class="order-list-col">
             <div class="icon icon-warning-default rounded rounded-md">
                 <img src="{% static 'icon/order-icon.svg' %}"/>

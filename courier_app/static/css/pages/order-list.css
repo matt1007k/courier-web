@@ -1,13 +1,13 @@
 .filter-list{
-    display: flex;
-    justify-items: center;
+    /* display: flex;
+    justify-items: center; */
     overflow-y: none;
     overflow-x: auto;
     margin-bottom: 34px;
     min-width: 100%;
 }
 .filter-list a{
-    flex: 0 1;
+    min-width: 90px;
 }
 .order-list-grid .order-list-head{
     display: none;

@@ -148,6 +148,8 @@ MEDIA_ROOT = BASE_DIR.joinpath('media')
 
 AUTH_USER_MODEL = 'authentication.User'
 
+AUTHENTICATION_BACKENDS = ['authentication.backends.EmailBackend']
+
 # LOGIN_REDIRECT_URL = '/auth/login'
 LOGIN_URL = '/auth/login'
 

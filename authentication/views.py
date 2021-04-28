@@ -17,9 +17,9 @@ from addresses.forms import AddressModelForm
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=email, password=password)
         if user:
             login(request, user)
             messages.success(request, 'Bienvenido {}'.format(user.username))

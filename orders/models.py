@@ -1,5 +1,6 @@
 import decimal
 from promo_codes.models import PromoCode
+from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 from django.db.models.signals import pre_save
@@ -10,10 +11,13 @@ from drivers.models import Driver
 
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
-        PENDING = 'PENDING'
-        IN_PROCESS = 'IN_PROCESS'
-        DELIVERED = 'DELIVERED'
-        CANCELED = 'CANCELED'
+        REGISTERED = 'RT', _('Registrado')
+        RECEIVED = 'RC', _('Recepcionado')
+        ON_ROUTE = 'OR', _('En Ruta')
+        DELIVERED = 'DL', _('Entregado')
+        UNDELIVERED = 'UDL', _('No Entregado')
+        REPROGRAMMED = 'RPR', _('Reprogramado')
+        CANCELED = 'CN', _('Cancelado')
 
     class TypeTicket(models.TextChoices):
         FACTURA = 'FACTURA'
@@ -21,8 +25,8 @@ class Order(models.Model):
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Motorizado')
-    tracking_code = models.CharField(max_length=8, unique=True, verbose_name="Código de seguimiento")
-    status = models.CharField(max_length=50, choices=OrderStatus.choices, default=OrderStatus.PENDING, verbose_name='Estado')
+    tracking_code = models.CharField(max_length=8, unique=True, null=True, blank=True, verbose_name="Código de seguimiento")
+    status = models.CharField(max_length=50, choices=OrderStatus.choices, default=OrderStatus.REGISTERED, verbose_name='Estado')
     total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     type_ticket = models.CharField(max_length=10, choices=TypeTicket.choices, default=TypeTicket.FACTURA, verbose_name="Comprobante electrónico")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')

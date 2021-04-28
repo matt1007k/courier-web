@@ -41,6 +41,20 @@ def menu_items(request):
             'permission': request.user.has_perm('addresses.view_address'),
         },
         {
+            'title': 'Recojo de pedidos',
+            'icon': 'bxs-direction-right',
+            'img': None,
+            'path': '#',
+            'permission': request.user.has_perm('orders.view_order'),
+        },
+        {
+            'title': 'Entrega de pedidos',
+            'icon': 'bx-cycling',
+            'img': None,
+            'path': '#',
+            'permission': request.user.has_perm('orders.view_order'),
+        },
+        {
             'title': 'Reporte',
             'icon': 'bx-library',
             'img': None,

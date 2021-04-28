@@ -9,15 +9,12 @@ def get_or_create_order(request):
     if order_id:
         order = Order.objects.get(pk=order_id)
     else:
-        tracking_code = get_generate_tracking_code()
-        
         if user.is_client:
             client = user.client
         else:
             client = Client.objects.get(pk=request.POST.get('client_id'))
         order = Order.objects.create(
                                 client=client, 
-                                tracking_code=tracking_code
                                 )
     request.session['order_id'] = order.id
     return order
@@ -25,9 +22,9 @@ def get_or_create_order(request):
 def delete_order(request):
     order_id = request.session.get('order_id')
     if order_id:
-        # Order.objects.get(pk=order_id).delete()
-        order = Order.objects.get(pk=order_id)
-        order.canceled()
+        Order.objects.get(pk=order_id).delete()
+        # order = Order.objects.get(pk=order_id)
+        # order.canceled()
         request.session['order_id'] = None
         
 def fields_origin_form(detail):

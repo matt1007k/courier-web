@@ -1,5 +1,6 @@
 import json
 from typing import Any, Dict
+from django.core.serializers import serialize
 from django.db.models.query import QuerySet
 from django.db.models import Q
 from django.http.request import HttpRequest
@@ -124,3 +125,13 @@ def default_view(request, pk):
 
     messages.success(request, 'Dirección principal actualizada')
     return redirect('addresses:index')
+
+def get_address_view(request):
+    if request.method == 'GET':
+        q = request.GET.get('q')
+        filters = Q(address__icontains=q) | Q(district__icontains=q) | Q(city__icontains=q)
+        if request.user.is_client and request.user.is_authenticated:
+            client = request.user.client
+        qs = Address.objects.filter(client=client).filter(filters)[:5]
+        data = serialize('json', qs)
+        return HttpResponse(data, content_type='application/json')

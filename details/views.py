@@ -1,8 +1,8 @@
 import decimal
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import DeleteView
 from django.urls import reverse 
 
@@ -15,6 +15,7 @@ from addresses.forms import OriginAddressForm, DestinyAddressForm
 from orders.utils import fields_destiny_form, get_or_create_order, fields_origin_form
 
 @login_required()
+@permission_required('details.add_detail', login_url='/orders/')
 def create_detail_view(request):
     template = 'details/create.html'
     info_form = DetailForm(request.POST or None)
@@ -53,6 +54,7 @@ def create_detail_view(request):
     })
 
 @login_required()
+@permission_required('details.change_detail', login_url='/orders/')
 def update_detail_view(request, pk):
     template = 'details/update-client.html'    
     detail_obj = get_object_or_404(Detail, pk=pk)
@@ -86,8 +88,9 @@ def update_detail_view(request, pk):
         'title': '¿Qué estas enviando?'
     })
 
-class DeleteDetailView(LoginRequiredMixin, DeleteView):
+class DeleteDetailView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'details/delete.html'
+    permission_required = 'details.delete_detail'
 
     def get_success_url(self) -> str:
         messages.success(self.request, "La dirección de envío fue eliminado con éxito")

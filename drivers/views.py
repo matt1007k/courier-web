@@ -16,11 +16,11 @@ from .models import Driver, PaymentAccount, Vehicle
 
 from .utils import generate_driver_code
 
-class DriverListView(LoginRequiredMixin, ListView):
+class DriverListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'drivers/index.html'
     paginate_by = 10
     model = Driver
-    # permission_required = 'drivers.view_driver'
+    permission_required = 'drivers.view_driver'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

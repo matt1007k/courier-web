@@ -14,7 +14,7 @@ from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from .utils import delete_order, get_or_create_order
+from .utils import delete_order, get_generate_tracking_code, get_or_create_order
 from .models import Order
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -28,7 +28,7 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         context['title'] = 'Pedidos'
         context['statuses'] = Order.OrderStatus
         context['client_list'] = Client.objects.all()[:5]
-        context['status'] = self.query_status() or Order.OrderStatus.PENDING
+        context['status'] = self.query_status() or Order.OrderStatus.REGISTERED
         self.request.session['order_id'] = None
         return context
 
@@ -53,12 +53,12 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             # created_at__date='2021-3-25'
             # created_at__range=(start_date, end_date)
         if self.request.user.is_client:
-            object_list = self.request.user.client.order_set.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
+            object_list = self.request.user.client.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
         elif self.request.user.is_driver:
-            object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
+            object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
             print(self.request.user.driver.order_set.count())
         else:
-            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
+            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
         
         return object_list
 
@@ -83,6 +83,7 @@ def create_order_client_view(request):
     })
 
 @login_required()
+@permission_required('orders.add_order', login_url='/orders')
 def create_order_view(request):
     order = get_or_create_order(request) 
         
@@ -92,6 +93,7 @@ def create_order_view(request):
     })
 
 @login_required()
+@permission_required('orders.view_order', login_url='/orders')
 def cancel_order_view(request):
     if request.method == 'GET':
         delete_order(request) 
@@ -101,6 +103,7 @@ def cancel_order_view(request):
     return redirect('orders:index')
 
 @login_required()
+@permission_required('details.view_detail', login_url='/orders')
 def add_addresses_view(request):
     template_name = 'orders/add-addresses.html'
     order = get_or_create_order(request)
@@ -111,6 +114,7 @@ def add_addresses_view(request):
     })
 
 @login_required()
+@permission_required('orders.add_order', login_url='/orders')
 def payment_view(request):
     template_name = 'orders/payment.html'
     order = get_or_create_order(request)
@@ -120,6 +124,7 @@ def payment_view(request):
                 messages.error(request, 'El pedido no tiene ningún elemento de envió')
             image_payed = request.FILES['image_payed']
             order.image_payed = image_payed
+            order.tracking_code = get_generate_tracking_code()        
             order.type_ticket = request.POST.get('type_ticket')
             order.save()
             # Mail.send_complete_order(order, request.user)
@@ -133,6 +138,7 @@ def payment_view(request):
     })
 
 @login_required()
+@permission_required('orders.add_order', login_url='/orders')
 def payment_success_view(request):
     template_name = 'orders/payment-success.html'
     order = get_or_create_order(request)
