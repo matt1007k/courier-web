@@ -62,6 +62,34 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         
         return object_list
 
+class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'orders.view_order'
+    template_name = 'orders/origins.html'
+    paginate_by = 10
+    model = Order
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Recojo de paquetes'
+        context['status'] = self.query_status() or Order.OrderStatus.REGISTERED
+        self.request.session['order_id'] = None
+        return context
+
+    def query(self):
+        return self.request.GET.get('q')
+
+    def query_date(self):
+        return self.request.GET.get('date')
+
+    def query_status(self):
+        return self.request.GET.get('status')
+
+    def get_queryset(self):
+        if self.request.user.is_driver:
+            object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
+        
+        return object_list
+
 @login_required()
 @permission_required('orders.add_order', login_url='/orders')
 def create_order_client_view(request):

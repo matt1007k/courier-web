@@ -79,7 +79,6 @@ class Order(models.Model):
         self.save()
 
     def update_total(self):
-        print('discount: ', self.get_discount())
         self.total = self.get_total() - decimal.Decimal(self.get_discount())
         self.save()
 
@@ -99,8 +98,8 @@ class Order(models.Model):
         verbose_name_plural = "pedidos"
 
 def set_driver(sender, instance, *args, **kwargs):
-    if instance.client and instance.client.driver_code:
-        driver = Driver.objects.filter(code=instance.client.driver_code).first()
-        instance.driver = driver
+#     if instance.client and instance.client.driver_code:
+#         driver = Driver.objects.filter(code=instance.client.driver_code).first()
+#         instance.driver = driver
 
-pre_save.connect(set_driver, sender=Order)
+# pre_save.connect(set_driver, sender=Order)

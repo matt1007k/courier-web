@@ -29,7 +29,7 @@
     <div class="form-grid-3 detail-address">
       <div>
         <h5 class="mb-4">Dirección de recojo</h5>
-        <div class="address__wrapper mb-4 container-modal" x-data="addressState()">
+        <div class="address__wrapper mb-4 container-modal" x-data="addressState()" x-init="init()">
           <div class="mb-4">
             <div class="form-group-search m-0">
               <input type="search" class="input input-outline" id="origin_search"
@@ -46,22 +46,38 @@
               <div class="head">
                 <h6>Seleccionar un dirección anterior</h6>
                 <div class="close">
-                  <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                  <a @click="isOpen = false" class="btn btn-default btn-circle btn-small">
                     <i class='bx bx-x bx-sm m-0'></i>
-                  </button>
+                  </a>
                 </div>
               </div>
               <div class="form-modal">
                 <div class="form-group-search m-0">
-                  <input type="search" class="input input-outline"
+                  <input 
+                    type="search" 
+                    class="input input-outline"
+                    id="address_before" 
                     x-model="address_before"
-                   :keydown.enter="getAddressBefore()" id="address_before" placeholder="Buscar una dirección anterior">
+                    ref="address_before"
+                    placeholder="Buscar una dirección anterior"
+                  />
                   <i class="input-icon bx bx-search bx-sm"></i>
                 </div>
-                <div x-ref="results" class="radio-group mt-2"></div>
+                <div class="options-2 mt-4">
+                  <template x-if="address_list.length || address_select" x-for="(address, index) in address_list" :key="index">
+                    <div class="option-item" style="transition: all 1s;" :class="{'active': address_select.pk === address.pk}" @click="selectAddress(index)" >
+                      <i class="bx bx-check-circle bx-md"></i>
+                      <div>
+                        <p class="text-muted text-small text-left" x-text="address.fields.full_name"></p>
+                        <p class="text-primary text-left" x-text="getAddressText(address.fields)"></p>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <div x-show="!address_list.length" class="alert text-muted" x-text="emptyMessageText"></div>
                 <div class="actions right">
                   <a @click="isOpen = false" class="btn btn-default">Cancelar</a>
-                  <a class="btn btn-primary">Elegir</a>
+                  <button type="button" :disabled="btnDisabled" class="btn btn-primary" @click="setChangeOriginAddress()">Elegir<button/>
                 </div>
               </div>
             </div>
@@ -274,45 +290,57 @@
   }
   function addressState() {
     return {
-      isOpen: true,
+      isOpen: false,
       address_before: '',
       address_list: [],
-      getAddressBefore() {
-        console.log(this.address_before)
-          var results = '';
-          fetch('/addresses/get-address/?q=' + this.address_list)
-            .then(res => res.json())
-            .then(data => {
-              this.address_list = data;
-            });
-
-          if(this.address_list.length < 0){
-              this.$refs.results.innerHTML = `
-                <span class="alert text-muted">Sin resultados</span>
-              `;
-          }
-          console.log(this.address_list);
-          this.address_list.forEach((address) => {
-            results += `
-                <div class="radio-input">
-                  <input type="radio" name="address_before" id="${address.id}" value="${this.getAddressBefore(address.fields)}" required>
-                  <label for="${address.id}">
-                    <i class='bx bx-radio-circle bx-sm'></i>
-                    <i class='active bx bx-radio-circle-marked bx-sm' ></i>
-                    <span>
-                      <p class="text-muted text-small text-left">${address.fields.full_name}</p>
-                      <p class="text-primary">${this.getAddressText(address.fields)}</p>
-                    </span>
-                  </label>
-                </div>
-              `;
+      address_select: {},
+      emptyMessageText: 'Ingrese la dirección, distrito o ciudad',
+      btnDisabled: true,
+      getAddressBefore(value) {
+        fetch('/addresses/get-address/?q=' + value)
+          .then(res => res.json())
+          .then(data => {
+            if (!data.length) {
+                this.emptyMessageText = 'Sin resultados';
+                this.address_list = [];
+                return;
+            }
+            this.address_list = data;
           });
-          this.$refs.results.innerHTML = results;
       },
       getAddressText(address){
         return `${address.address}, ${address.district}, ${address.city}`;
+      },
+      selectAddress(index){
+        this.address_select  = this.address_list[index];
+        this.btnDisabled = false;
+      },
+      setChangeOriginAddress(){
+        this.isOpen = false;
+        this.btnDisabled = true;
+        this.address_before = '';
+        this.address_list.push(this.address_select);
+        var jsonPosition = JSON.parse(this.address_select.fields.address_gps);
+        changePositionAddressOrigin(jsonPosition, this.getAddressText(this.address_select.fields));
+        changeInfoAddressOrigin(this.address_select.fields);
+      },
+      init(){
+        this.$watch('address_before', (value) => {
+          if (!value) {
+              this.emptyMessageText = 'Ingrese la dirección, distrito o ciudad';
+              this.address_list = [];
+              return;
+          }
+          this.getAddressBefore(value);
+        });
       }
     }
+  }
+  function changeInfoAddressOrigin(address_selected){
+    form.origin_full_name.value = address_selected.full_name;
+    form.origin_email.value = address_selected.email;
+    form.origin_cell_phone.value = address_selected.cell_phone;
+    form.origin_reference.value = address_selected.reference;
   }
 </script>
 {% endblock scripts %}

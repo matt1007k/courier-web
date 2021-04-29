@@ -35,10 +35,9 @@ class ClienteCreateView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequi
         return context
 
 
-class ClientDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+class ClientDetailView(LoginRequiredMixin, DetailView):
     template_name = 'clients/detail.html'
     model = Client
-    permission_required = 'clients.view_client'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)

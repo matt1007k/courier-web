@@ -13,7 +13,7 @@
     grid-template-columns: 1fr;
     grid-gap: 20px 0;
 }
-.form-grid-3.detail-address i{
+.form-grid-3.detail-address > i{
     color: var(--text-color);
     transform: rotate(90deg);
     align-self: center;
@@ -33,7 +33,7 @@
     .form-grid-3.detail-address{
         grid-template-columns: 1fr 8em 1fr;
     }
-    .form-grid-3.detail-address i{
+    .form-grid-3.detail-address > i{
         transform: rotate(0deg);
     }
 
