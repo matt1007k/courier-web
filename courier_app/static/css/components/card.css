@@ -98,9 +98,6 @@
     }
 }
 @media (min-width: 1024px){
-    .card{
-        padding: 32px;
-    }
     .card-form{
         width: 60% !important;
         margin: 0 auto !important;

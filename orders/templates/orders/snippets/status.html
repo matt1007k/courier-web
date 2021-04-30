@@ -1,18 +1,17 @@
-<span class="color-container">
-    {% if order.status == 'PENDING' %}
-    <div class="color color-warning color-sm"></div>
-    <span class="text-body">Pendiente</span>
-    {% elif order.status == 'IN PROCCESS' %}
-    <div class="color color-secondary color-sm"></div>
-    <span class="text-body">En Proceso</span>
-    {% elif order.status == 'DELIVERED' %}
-    <div class="color color-success color-sm"></div>
-    <span class="text-body">Entregado</span>
-    {% elif order.status == 'CANCELED' %}
-    <div class="color color-danger color-sm"></div>
-    <span class="text-body">Cancelado</span>
-    {% else %}
-    <div class="color color-warning color-sm"></div>
-    <span class="text-body">Pendiente</span>
-    {% endif %}
-</span>
+{% if order.status == 'RT' %}
+<span class="badge badge-primary">Registrado</span>
+{% elif order.status == 'RC' %}
+<span class="badge badge-success">Recepcionado</span>
+{% elif order.status == 'OR' %}
+<span class="badge badge-secondary">En Ruta</span>
+{% elif order.status == 'DL' %}
+<span class="badge badge-success">Entregado</span>
+{% elif order.status == 'UDL'
+<span class="badge badge-danger">No Entregado</span>
+{% elif order.status == 'CN' %}
+<span class="badge badge-danger">Cancelado</span>
+{% elif order.status == 'RPR' %}
+<span class="badge badge-success">Reprogramado</span>
+{% else %}
+<span class="badge badge-warning">Pendiente</span>
+{% endif %}

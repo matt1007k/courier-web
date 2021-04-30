@@ -140,6 +140,8 @@
             Dirección de envió
         </div>
         <div class="order-list-head-item">
+        </div>
+        <div class="order-list-head-item" style="justify-self: end;">
             Acciones 
         </div>
     </div>
@@ -148,7 +150,7 @@
     
     {% for order in object_list %}
     
-    <div class="card card-normal order-list-row">
+    <div class="card card-normal order-list-row" x-data="{ isOpenSm: false, isOpenMd: false }">
         <div class="order-list-col">
             <div class="icon icon-warning-default rounded rounded-md">
                 <img src="{% static 'icon/order-icon.svg' %}"/>
@@ -157,44 +159,84 @@
                 <p class="text-small text-muted font-normal"># TRACKING {{ order.tracking_code }}</p>
                 <h6>{{ order.client.full_name }}</h6>
                 <div class="order-detail">
-                    {% include "orders/snippets/status.html" %}
-                    <p>&middot;</p>
-                    {% comment %} <p>Hace {{ order.created_at|timesince }}</p> {% endcomment %}
                     <p>{{ order.created_at|naturaltime }}</p>
                 </div>
             </div>
-            {% if perms.orders.view_order %}
-            <a href="#" class="icon-view h6">
-                <i class='bx bxs-chevron-right bx-sm' ></i>
-            </a>
-            {% endif %}
+            <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">
+                <i class='bx bx-dots-horizontal-rounded bx-sm'></i>
+            </div>
         </div>
         <div class="order-list-col">
-            {% if order.get_first_detail.address_origin %}
-            <h6>{{ order.get_first_detail.address_origin.address }}</h6>
-            <p>{{ order.get_first_detail.address_origin.address_city }}</p>
-            {% else %}
-            <p class="text-small">Dirección no disponible</p>
-            {% endif %}
+            <div class="text-small">{{ order.get_first_detail.address_origin.address_complete }}</div>
+            <h6>{{ order.get_first_detail.address_origin.full_name }}</h6>
+            <p class="flex items-center">
+                <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
+                <span>{{ order.get_first_detail.address_origin.cell_phone }}</span>
+            </p>
         </div>
         <div class="order-list-col">
-            {% if order.get_first_detail.address_destiny %}
-            <h6>{{ order.get_first_detail.address_destiny.address }}</h6>
-            <p>{{ order.get_first_detail.address_destiny.address_city }}</p>
-            {% else %}
-            <p class="text-small">Dirección no disponible</p>
-            {% endif %}
+            <div class="text-small">{{ order.get_first_detail.address_destiny.address_complete }}</div>
+            <h6>{{ order.get_first_detail.address_destiny.full_name }}</h6>
+            <p class="flex items-center">
+                <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
+                <span>{{ order.get_first_detail.address_destiny.cell_phone }}</span>
+            </p>
         </div>
-        <div class="order-list-col actions">
-            {% if perms.orders.view_order %}
-            <a href="#" class="btn btn-link btn-small">Ver</a>
-            {% endif %}
-            {% if perms.orders.change_order %}
-            <a href="#" class="btn btn-link btn-small">Editar</a>
-            {% endif %}
-            {% if perms.orders.delete_order %}
-            <a href="#" class="btn btn-link danger btn-small">Eliminar</a>
-            {% endif %}
+        <div class="order-list-col">
+            {% include "orders/snippets/status.html" %}
+        </div>
+        <div class="order-list-col dropdown" style="justify-self: end;">
+            <div class="cursor-pointer h6" @click="isOpenMd = !isOpenMd">
+                <i class='bx bx-dots-horizontal-rounded bx-sm'></i>
+            </div>
+            <div class="dropdown-menu right"
+                x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
+                @click.away="isOpenMd = false">
+                {% if perms.orders.view_order %}
+                <a href="{{ order.get_detail_path }}" class="dropdown-item-2">
+                    <span>Ver detalles</span>
+                    <i class='bx bx-map-pin bx-sm'></i>
+                </a>
+                {% endif %}
+                {% if perms.orders.add_assignorder %}
+                <a href="{% url 'orders:assign' order.pk %}" class="dropdown-item-2">
+                    <span>Asignar motorizado</span>
+                    <i class='bx bx-check-circle bx-sm'></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpenSm" class="modal modal-sheet">
+            <div class="modal-content card" style="width: 100%" @click.away="isOpenSm = false">
+                <div class="head">
+                    <h6>Acciones</h6>
+                    <div class="close">
+                        <button @click="isOpenSm = false" class="btn btn-default btn-circle btn-small">
+                            <i class='bx bx-x bx-sm'></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-modal">
+                    <div class="options">
+                        {% if perms.orders.view_order %}
+                        <a href="{{ order.get_detail_path }}" class="option-item">
+                            <span>Ver detalles</span>
+                            <div class="icon ">
+                                <i class='bx bx-map-pin bx-sm'></i>
+                            </div>
+                        </a>
+                        {% endif %}
+                        {% if perms.orders.add_assignorder %}
+                        <a href="{% url 'orders:assign' order.pk %}" class="option-item">
+                            <span>Asignar motorizado</span>
+                            <div class="icon ">
+                                <i class='bx bx-check-circle bx-sm'></i>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     {% endfor %}

@@ -15,12 +15,13 @@
     justify-content: center;
     align-items: center;
 }
-.btn:disabled{
-    opacity: .8;
-    cursor: not-allowed;
-}
-.btn i{
+/* .btn i{
     margin-right: 5px;
+} */
+.btn > :not(template) ~ :not(template){
+    --space-x-reversed: 0;
+    margin-left: calc(.4rem * var(--space-x-reversed));
+    margin-right: calc(.4rem * (1 - var(--space-x-reversed)));
 }
 .btn:hover, .btn-circle:hover {
     opacity: .8;
@@ -102,7 +103,7 @@
 .btn-outline-light{
     background-color: transparent;
     border: 2px solid white;
-    color: white; 
+    color: white;
 }
 .btn-rounded{
     border-radius: 28px;

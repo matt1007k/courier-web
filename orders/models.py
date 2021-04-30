@@ -8,6 +8,7 @@ from django.db.models.signals import pre_save
 from django.urls.base import reverse
 from clients.models import Client
 from drivers.models import Driver
+from authentication.models import User
 
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
@@ -24,7 +25,6 @@ class Order(models.Model):
         BOLETA = 'BOLETA'
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Motorizado')
     tracking_code = models.CharField(max_length=8, unique=True, null=True, blank=True, verbose_name="Código de seguimiento")
     status = models.CharField(max_length=50, choices=OrderStatus.choices, default=OrderStatus.REGISTERED, verbose_name='Estado')
     total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
@@ -36,19 +36,19 @@ class Order(models.Model):
     promo_code = models.OneToOneField(PromoCode, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return self.tracking_code 
+        return str(self.tracking_code)
 
     def get_index_path(self):
         return reverse('orders:index')
 
     def get_detail_path(self):
-        return reverse('orders:detail', kwargs={'id': self.pk})
+        return reverse('orders:detail', kwargs={'pk': self.pk})
 
     def get_update_path(self):
-        return reverse('orders:update', kwargs={'id': self.pk})
+        return reverse('orders:update', kwargs={'pk': self.pk})
 
     def get_delete_path(self):
-        return reverse('orders:delete', kwargs={'id': self.pk})
+        return reverse('orders:delete', kwargs={'pk': self.pk})
 
     def apply_promo_code(self, promo_code):
         if self.promo_code is None:
@@ -89,6 +89,10 @@ class Order(models.Model):
         self.status = Order.OrderStatus.CANCELED
         self.save()
 
+    def delivered(self):
+        self.status = Order.OrderStatus.DELIVERED
+        self.save()
+
     @property
     def get_first_detail(self):
         return self.detail_set.first()
@@ -97,7 +101,25 @@ class Order(models.Model):
         verbose_name = "pedido"
         verbose_name_plural = "pedidos"
 
-def set_driver(sender, instance, *args, **kwargs):
+class AssignOrder(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='pedido')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
+    admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
+    image = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 1')
+    image2 = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 2')
+    description = models.TextField(max_length=250, null=True, blank=True, verbose_name='nota (opcional)')
+
+    def __str__(self) -> str:
+        return self.order.tracking_code
+
+    def marked_delivered(self):
+        self.order.delivered()
+
+    class Meta:
+        verbose_name = 'asignar pedido'
+        verbose_name_plural = 'asignar pedidos'
+
+# def set_driver(sender, instance, *args, **kwargs):
 #     if instance.client and instance.client.driver_code:
 #         driver = Driver.objects.filter(code=instance.client.driver_code).first()
 #         instance.driver = driver

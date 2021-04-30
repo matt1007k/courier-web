@@ -3,19 +3,20 @@ from django.http.response import HttpResponse, JsonResponse
 from django.core.serializers import serialize
 from orders.mails import Mail
 from clients.models import Client
+from drivers.models import Driver
 from typing import Any, Dict
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from datetime import datetime
 
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .utils import delete_order, get_generate_tracking_code, get_or_create_order
-from .models import Order
+from .models import AssignOrder, Order
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'orders.view_order'
@@ -55,8 +56,7 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         if self.request.user.is_client:
             object_list = self.request.user.client.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
         elif self.request.user.is_driver:
-            object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
-            print(self.request.user.driver.order_set.count())
+            object_list = self.request.user.driver.assignorder_set
         else:
             object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
         
@@ -66,7 +66,7 @@ class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView)
     permission_required = 'orders.view_order'
     template_name = 'orders/origins.html'
     paginate_by = 10
-    model = Order
+    model = AssignOrder
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -86,8 +86,8 @@ class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView)
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
-        
+            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
+            object_list = self.request.user.driver.assignorder_set.all()
         return object_list
 
 @login_required()
@@ -201,3 +201,35 @@ def tracking_order_view(request):
             'details': json.loads(json.dumps(detail_list))
         })
         return HttpResponse(order_json, content_type="application/json")
+
+class DetailOrderView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    template_name = 'orders/detail.html'
+    model = Order 
+    permission_required = 'orders.view_order'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Detalles del pedido'
+        return context
+
+login_required()
+permission_required('orders.add_assign_order', login_url='/orders/')
+def assign_order_view(request, pk):
+    template_name = 'orders/assign/create.html'
+    title = 'Asignar pedido'
+    order = Order.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        driver = Driver.objects.filter(pk=request.POST.get('driver_id')).first()
+        AssignOrder.objects.create(
+            order=order,
+            driver=driver,
+            admin=request.user if request.user.is_administrator else None
+        )
+        messages.success(request, 'Pedido asignado con éxito')
+        return redirect('orders:index')
+
+    return render(request, template_name, context={
+        'order': order,
+        'title': title
+    })

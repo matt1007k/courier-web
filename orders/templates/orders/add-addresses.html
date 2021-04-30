@@ -117,7 +117,7 @@
                     <div class="address-order-detail">
                         <div class="collapse" x-data="{ isOpen: false }">
                             <div class="collapse-title cursor-pointer" @click="isOpen = !isOpen">
-                                <h6>Detalles del paquete</h6>
+                                <h6>Detalles del pedido</h6>
                                 <i class='bx bx-chevron-down bx-sm' :class="{ 'bx-bx-rotate-180': isOpen }" ></i>
                             </div>
                             <div class="collapse-content" x-show.transition.in.scale.opacity.400ms.out.origin.top.scale.opacity.200ms="isOpen">
@@ -139,7 +139,7 @@
                                     </div>
                                 </div>
                                 <div class="footer-details mt-4">
-                                    <h6 class="mb-2 subheading text-muted">Detalles</h6>
+                                    <h6 class="mb-2 subheading text-muted">Detalles adicionales</h6>
                                     <div class="package">
                                         {% if detail.image %}
                                         <div class="package-picture modal-container" x-data="{ isOpen: false }">

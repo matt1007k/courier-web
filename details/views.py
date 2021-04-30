@@ -98,3 +98,27 @@ class DeleteDetailView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Detail.objects.all()
+
+@login_required()
+def origin_map_view(request, pk):
+    title = 'Ver mapa de dirección de recojo'
+    template_name = 'details/origin-map.html'
+    detail = Detail.objects.get(pk=pk) 
+
+    return render(request, template_name, context={
+        'title': title,
+        'detail': detail
+    })
+
+@login_required()
+def destiny_map_view(request, pk):
+    title = 'Ver mapa de dirección de entrega'
+    template_name = 'details/destiny-map.html'
+    detail = Detail.objects.get(pk=pk) 
+
+    return render(request, template_name, context={
+        'title': title,
+        'detail': detail
+    })
+
+

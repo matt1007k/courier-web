@@ -1,7 +1,7 @@
-{% extends "layouts/admin.html" %} 
+{% extends "layouts/admin.html" %}
 {% block title %}
 <title>Cuy Click Perú - {{ title }}</title>
-{% endblock title %} 
+{% endblock title %}
 {% load static %}
 {% load humanize %}
 {% block content_head %}
@@ -71,14 +71,14 @@
 </div>
 {% endblock content_head %}
 {% block content %}
- <!-- <div class="filter-list space-x-2">
+<!-- <div class="filter-list space-x-2">
     <a href="{% url 'orders:index' %}?status={{ statuses.REGISTERED }}" class="btn btn-{% if status == statuses.REGISTERED %}primary{% else %}link{% endif %} btn-small">Registrado</a>
     <a href="{% url 'orders:index' %}?status={{ statuses.ON_ROUTE }}" class="btn btn-{% if status == statuses.ON_ROUTE %}primary{% else %}link{% endif %} btn-small">En Ruta</a>
     <a href="{% url 'orders:index' %}?status={{ statuses.DELIVERED }}" class="btn btn-{% if status == statuses.DELIVERED %}primary{% else %}link{% endif %} btn-small">Entregado</a>
     <a href="{% url 'orders:index' %}?status={{ statuses.UNDELIVERED }}" class="btn btn-{% if status == statuses.UNDELIVERED %}primary{% else %}link{% endif %} btn-small">No Entregado</a>
     <a href="{% url 'orders:index' %}?status={{ statuses.REPROGRAMMED }}" class="btn btn-{% if status == statuses.REPROGRAMMED %}primary{% else %}link{% endif %} btn-small">Reprogramado</a>
 </div> -->
- <div class="mb-10 order-list-grid">  
+<div class="mb-10 order-list-grid">
     <div class="order-list-head">
         <div class="order-list-head-item">
             Detalles del pedido
@@ -87,50 +87,100 @@
             Dirección de recojo
         </div>
         <div class="order-list-head-item">
-            Acciones 
+          ¿Quién te atenderá? 
+        </div>
+        <div class="order-list-head-item" style="justify-self: end;">
+            Acciones
         </div>
     </div>
 
     {% if object_list.count > 0 %}
-    
-    {% for order in object_list %}
-    
-    <div class="card card-normal order-list-row">
+
+    {% for object in object_list %}
+    {% for detail in object.order.detail_set.all %}
+
+    <div class="card card-normal order-list-row" x-data="{ isOpenSm: false, isOpenMd: false }">
         <div class="order-list-col">
             <div class="icon icon-warning-default rounded rounded-md">
-                <img src="{% static 'icon/order-icon.svg' %}"/>
+                <img src="{% static 'icon/order-icon.svg' %}" />
             </div>
             <div class="content" style="align-items: flex-start;">
-                <p class="text-small text-muted font-normal"># TRACKING {{ order.tracking_code }}</p>
-                <h6>{{ order.client.full_name }}</h6>
+                <p class="text-small text-muted font-normal"># TRACKING {{ detail.order.tracking_code }}</p>
+                <h6>{{ detail.order.client.full_name }}</h6>
                 <div class="order-detail">
                     {% include "orders/snippets/status.html" %}
                     <p>&middot;</p>
-                    {% comment %} <p>Hace {{ order.created_at|timesince }}</p> {% endcomment %}
-                    <p>{{ order.created_at|naturaltime }}</p>
+                    <p>{{ detail.order.created_at|naturaltime }}</p>
                 </div>
             </div>
-            {% if perms.orders.view_order %}
-            <a href="#" class="icon-view h6">
-                <i class='bx bxs-chevron-right bx-sm' ></i>
-            </a>
-            {% endif %}
+            <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">
+                <i class='bx bx-dots-horizontal-rounded bx-sm'></i>
+            </div>
         </div>
         <div class="order-list-col">
-            {% if order.get_first_detail.address_origin %}
-            <h6>{{ order.get_first_detail.address_origin.address }}</h6>
-            <p>{{ order.get_first_detail.address_origin.address_city }}</p>
+            {% if detail.address_origin %}
+            <h6>{{ detail.address_origin.address }}</h6>
+            <p>{{ detail.address_origin.address_city }}</p>
             {% else %}
             <p class="text-small">Dirección no disponible</p>
             {% endif %}
         </div>
+        <div class="order-list-col">
+            <h6>{{ detail.address_origin.full_name }}</h6>
+            <p class="flex items-center">
+                <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
+                <span>{{ detail.address_origin.cell_phone }}</span>
+            </p>
+        </div>
+        <div class="order-list-col">
+            <span class="badge badge-secondary">Pendiente</span>
+        </div>
 
-        <div class="order-list-col actions">
-            {% if perms.orders.view_order %}
-            <a href="#" class="btn btn-link btn-small">Ver</a>
-            {% endif %}
+        <div class="order-list-col dropdown" style="justify-self: end;">
+            <div class="cursor-pointer h6" @click="isOpenMd = !isOpenMd">
+                <i class='bx bx-dots-horizontal-rounded bx-sm'></i>
+            </div>
+            <div class="dropdown-menu right"
+                x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
+                @click.away="isOpenMd = false">
+                <a href="{{ detail.origin_map_path }}"
+                    class="dropdown-item-2">
+                    <span>Ver mapa</span>
+                    <i class='bx bx-map-pin bx-sm'></i>
+                </a>
+                <a href="#" class="dropdown-item-2 text-primary">
+                    <span>Recibido</span>
+                    <i class='bx bx-check-circle bx-sm'></i>
+                </a>
+            </div>
+        </div>
+        <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpenSm" class="modal modal-sheet">
+            <div class="modal-content card" style="width: 100%" @click.away="isOpenSm = false">
+                <div class="head">
+                    <h6>Acciones</h6>
+                    <div class="close">
+                        <button @click="isOpenSm = false" class="btn btn-default btn-circle btn-small">
+                            <i class='bx bx-x bx-sm'></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-modal">
+                    <div class="options">
+                        {% if perms.details.view_detail %}
+                        <a href="#" class="option-item">
+                            <span>Ver mapa</span>
+                            <div class="icon ">
+                                <i class='bx bx-map-pin bx-sm'></i>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    {% endfor %}
     {% endfor %}
 
     <div class="mb-10 table-list-bottom">
@@ -147,25 +197,25 @@
             </p>
         </div>
         <div class="pagination space-x">
-          {% if page_obj.has_previous %}
+            {% if page_obj.has_previous %}
             <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Anterior</a>
-          {% else %}
-            <a class="pagination-item disable">Anterior</a>
-          {% endif %}
-
-          {% for i in page_obj.paginator.page_range %} 
-            {% if page_obj.number == i %}
-              <a class="pagination-item page-number active">{{ i }}</a>
             {% else %}
-              <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            <a class="pagination-item disable">Anterior</a>
             {% endif %}
-          {% endfor %}
 
-          {% if page_obj.has_next %}
+            {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+            <a class="pagination-item page-number active">{{ i }}</a>
+            {% else %}
+            <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Siguiente</a>
-          {% else %}
+            {% else %}
             <a class="pagination-item disable">Siguiente</a>
-          {% endif %}
+            {% endif %}
         </div>
     </div>
 

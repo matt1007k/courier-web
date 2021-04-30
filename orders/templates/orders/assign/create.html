@@ -1,0 +1,101 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <a href="{% url 'orders:index' %}" class="btn btn-link btn-small">
+            <i class='bx bx-left-arrow-alt bx-sm'></i>
+        </a>
+        <h4>{{ title }}</h4>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="mb-10">
+    <div class="card card-form" x-data="assignState()" x-init="init()">
+        <h5 class="mb-4"># TRACKING {{ order.tracking_code }}</h5>
+        <form method="POST" id="assign-form">
+            {% csrf_token %}
+            <div class="form-group-search m-0">
+                <input type="search" class="input input-outline" id="driver_search" x-model="search" ref="search"
+                    placeholder="Buscar un motorizado" />
+                <i class="input-icon bx bx-search bx-sm"></i>
+            </div>
+            <div class="options-2 mt-4">
+                <template x-if="driver_list.length || driver_select" x-for="(driver, index) in driver_list"
+                    :key="index">
+                    <div class="option-item" style="transition: all 1s;"
+                        :class="{'active': driver_select.pk === driver.pk}" @click="selectDriver(index)">
+                        <i class="bx bx-check-circle bx-md"></i>
+                        <div>
+                            <p class="text-muted text-small text-left" x-text="getDni(driver.fields)"></p>
+                            <p class="text-primary text-left" x-text="getFullName(driver.fields)"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div x-show="!driver_list.length" class="alert text-muted" x-text="emptyMessageText"></div>
+            <input type="hidden" name="driver_id">
+
+            <div class="mt-8 actions reverse right">
+                <a href="{% url 'orders:index' %}" class="btn btn-default">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Asignar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
+{% block scripts %}
+<script>
+    var form = document.getElementById('assign-form')
+    function assignState() {
+        return {
+            search: '',
+            driver_list: [],
+            driver_select: {},
+            emptyMessageText: 'Ingrese la nombre completo o dni',
+            btnDisabled: true,
+            getDrivers(value) {
+                fetch('/drivers/get-drivers/?q=' + value)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.length) {
+                            this.emptyMessageText = 'Sin resultados';
+                            this.driver_list = [];
+                            return;
+                        }
+                        this.driver_list = data;
+                    });
+            },
+            getFullName(driver) {
+                return `${driver.first_name} ${driver.last_name}`;
+            },
+            getDni(driver){
+                return `DNI ${driver.dni}`;
+            },
+            selectDriver(index) {
+                this.driver_select = this.driver_list[index];
+                this.btnDisabled = false;
+                setFormField(this.driver_select);
+            },
+            init() {
+                this.$watch('search', (value) => {
+                    if (!value) {
+                        this.emptyMessageText = 'Ingrese la dirección, distrito o ciudad';
+                        this.driver_list = [];
+                        return;
+                    }
+                    this.getDrivers(value);
+                });
+            }
+        }
+    }
+    function setFormField(driver) {
+        form.driver_id.value = driver.pk;
+    }
+</script>
+{% endblock scripts %}

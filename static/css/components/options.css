@@ -19,3 +19,26 @@
 .options .option-item.danger{
     color: rgb(var(--danger-color));
 }
+.options-2 .option-item{
+    cursor: pointer;
+    display: flex;
+    padding: 10px 12px;
+    margin-bottom: 5px;
+    border: 1.5px solid var(--btn-default-color);
+    border-radius: 16px;
+    text-decoration: none;
+    font-weight: 500;
+}
+.options-2 .option-item i{
+    margin-right: 10px;
+}
+.options-2 .option-item.active{
+    border: 2px solid rgb(var(--primary-page-color));
+}
+.options-2 :not(.option-item.active) i{
+    display: none;
+}
+.options-2 .option-item.active i{
+    display: flex;
+    color: rgb(var(--primary-page-color));
+}

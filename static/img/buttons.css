@@ -15,8 +15,13 @@
     justify-content: center;
     align-items: center;
 }
-.btn i{
+/* .btn i{
     margin-right: 5px;
+} */
+.btn > :not(template) ~ :not(template){
+    --space-x-reversed: 0;
+    margin-left: calc(.4rem * var(--space-x-reversed));
+    margin-right: calc(.4rem * (1 - var(--space-x-reversed)));
 }
 .btn:hover, .btn-circle:hover {
     opacity: .8;

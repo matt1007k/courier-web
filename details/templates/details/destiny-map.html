@@ -1,0 +1,145 @@
+{% extends "layouts/admin.html" %}
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% load static %}
+{% load env_extras %}
+{% load jsonify %}
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <a href="{% url 'orders:origins' %}" class="btn btn-link btn-small">
+            <i class='bx bx-left-arrow-alt bx-sm'></i>
+        </a>
+        <h4>{{ title }}</h4>
+    </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+<div class="content__tracking-search">
+    <div class="tracking__map" id="map">
+    </div>
+    <div class="content__form">
+        <div>
+            <div class="icon icon-warning-default rounded rounded-md">
+                <img src="{% static 'icon/order-icon.svg' %}" />
+            </div>
+            <h5 class="mt-2 mb-2 font-bold">Detalles del paquete</h5>
+            <div class="list__group">
+                <p class="list__item">
+                    <i class="bx bx-check bx-sm text-success"></i>
+                    <span>{{ detail.size }}</span> 
+                </p>
+                <p class="list__item">
+                    <i class="bx bx-check bx-sm text-success"></i>
+                    <span>{{ detail.contain }}</span> 
+                </p>
+                <p class="list__item">
+                    <i class="bx bx-check bx-sm text-success"></i>
+                    <span>{{ detail.value }}</span> 
+                </p>
+            </div>
+            <div class="mt-4">
+                <h5 class="mb-2 font-bold">Dirección de entrega</h5>
+                <p># TRACKING {{ detail.order.tracking_code }}</p>
+                <h6>{{ detail.address_destiny.address_complete }}</h6>
+
+            </div>
+            <div class="mt-6">
+                <h5 class="mb-2 font-bold">¿Quién atenderá al motorizado?</h5>
+                <h6>{{ detail.address_detiny.full_name }}</h6>
+                <p class="flex items-center">
+                    <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
+                    <span>{{ detail.address_destiny.cell_phone }}</span>
+                </p>
+            </div>
+            <div class="actions full">
+                <button class="btn btn-secondary btn-small btn-rounded">
+                    <i class="bx bx-ckeck-circle bx-sm"></i>
+                    <span>Marcar como entregado</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    (function () {
+        loadScript();
+    })()
+
+    function loadScript() {
+        // Create the script tag, set the appropriate attributes
+        var key = document.querySelector('#key');
+        var keyValue = key.dataset.value;
+        var script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key=' + keyValue + '&callback=initMap';
+        script.async = true;
+
+        // Attach your callback function to the `window` object
+        window.initMap = function () {
+            var myLatLng = {
+                lat: 52.520008,
+                lng: 13.404954
+            };
+            window.map = new google.maps.Map(document.getElementById('map'), { zoom: 16, center: myLatLng, });
+            getDrawRoute();
+            setInterval(() => {
+                console.log(myLatLng.lat + addN())
+            }, 1000)
+        };
+
+        // Append the 'script' element to 'head'
+        document.head.appendChild(script);
+    }
+    function addN(){
+            return 0.2222 + Math.random(0.0002, 0.00055);
+    }
+
+    function getDrawRoute() {
+        var directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': false });
+        var directionsService = new google.maps.DirectionsService();
+        var address = {{ detail.address_origin| jsonify }}[0];
+        var driver = {{ request.user.driver| jsonify }}[0];
+        var address_origin_text = `${driver.fields.address}, ${driver.fields.district}`;
+        var address_destiny_text = `${address.fields.address}, ${address.fields.district}, ${address.fields.city}`;
+        var position_driver = driver.fields.address_gps;
+        var latLng = position_driver;
+        latLng = new google.maps.LatLng(position_driver.lat + 0.003424, position_driver.lng - 0.000052144411);
+        new google.maps.Marker({
+            position: latLng,
+            map,
+            title: "Driver direccion",
+            icon: "{% static 'icon/driver-icon.png' %}"
+        });
+
+        displayRoute(
+            address_origin_text,
+            address_destiny_text,
+            directionsService,
+            directionsDisplay
+        );
+    }
+    function displayRoute(origin_address, destiny_address, directionsService, directionsDisplay) {
+        directionsService.route({
+            origin: origin_address,
+            destination: destiny_address,
+            travelMode: 'DRIVING',
+            avoidTolls: true
+        }, function (response, status) {
+            if (status === 'OK') {
+                directionsDisplay.setMap(map);
+                directionsDisplay.setDirections(response);
+                // console.log(response.routes[0].legs[0].start_location().toFixed());
+            } else {
+                directionsDisplay.setMap(null);
+                directionsDisplay.setDirections(null);
+                alert('Could not display directions due to: ' + status);
+            }
+        });
+    }
+</script>
+{% endblock %}

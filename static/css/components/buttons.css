@@ -15,6 +15,10 @@
     justify-content: center;
     align-items: center;
 }
+.btn:disabled{
+    opacity: .8;
+    cursor: not-allowed;
+}
 .btn i{
     margin-right: 5px;
 }

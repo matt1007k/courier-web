@@ -45,14 +45,14 @@ def menu_items(request):
             'icon': 'bxs-direction-right',
             'img': None,
             'path': reverse('orders:origins'),
-            'permission': request.user.is_driver and request.user.has_perm('orders.view_order'),
+            'permission': request.user.has_perm('orders.view_order') and request.user.is_driver,
         },
         {
             'title': 'Entrega de pedidos',
             'icon': 'bx-cycling',
             'img': None,
             'path': '#',
-            'permission': request.user.is_driver and request.user.has_perm('orders.view_order'),
+            'permission': request.user.has_perm('orders.view_order') and request.user.is_driver,
         },
         {
             'title': 'Reporte',

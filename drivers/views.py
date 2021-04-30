@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Q
-from django.views.generic.base import View
+from django.core.serializers import serialize
 
 from drivers.forms import DriverModelForm, PaymentAccountModelForm, VehicleModelForm
 
@@ -187,5 +187,13 @@ def payment_account_update_view(request, slug):
         'title': title,
         'form': form_class
     })
-    
+
+
+def get_driver_view(request):
+    if request.method == 'GET':
+        q = request.GET.get('q')
+        filters = Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(dni__icontains=q)
+        qs = Driver.objects.filter(filters)[:5]
+        data = serialize('json', qs)
+        return HttpResponse(data, content_type='application/json')
     
