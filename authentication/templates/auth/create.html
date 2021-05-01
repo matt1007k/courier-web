@@ -4,7 +4,7 @@
 {% block content_head %}
 <div class="content-head">
   <div class="left">
-      <a href="{{ request.GET.next }}" class="btn btn-link btn-small text-primary">
+      <a href="{% url 'drivers:index' %}" class="btn btn-link btn-small text-primary">
         <i class='bx bx-left-arrow-alt bx-sm'></i>
       </a>
       <h4>Registrar usuario</h4>
@@ -28,7 +28,7 @@
     </div>
     {% endfor %}
     <div class="actions right mt-5">
-      <a href="{{ request.GET.next }}" class="btn btn-default">Cancelar</a>
+      <a href="{% url 'drivers:index' %}" class="btn btn-default">Cancelar</a>
       <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
   </form>

@@ -205,7 +205,6 @@
           const infowindow = new google.maps.InfoWindow();
           this.currentPosition(geocoder, infowindow);
           
-          setDestination();
           map.addListener("click", (mapsMouseEvent) => {
             this.address.position = mapsMouseEvent.latLng,
             this.geocodeLatLng(geocoder, map, infowindow);
@@ -267,6 +266,7 @@
         // Attach your callback function to the `window` object
         window.initMap = function() {
           // JS API is loaded and available
+          setDestination();
         };
 
         // Append the 'script' element to 'head'

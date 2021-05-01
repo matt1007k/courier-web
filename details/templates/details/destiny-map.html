@@ -47,7 +47,7 @@
             </div>
             <div class="mt-6">
                 <h5 class="mb-2 font-bold">¿Quién atenderá al motorizado?</h5>
-                <h6>{{ detail.address_detiny.full_name }}</h6>
+                <h6>{{ detail.address_destiny.full_name }}</h6>
                 <p class="flex items-center">
                     <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
                     <span>{{ detail.address_destiny.cell_phone }}</span>
@@ -102,7 +102,7 @@
     function getDrawRoute() {
         var directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': false });
         var directionsService = new google.maps.DirectionsService();
-        var address = {{ detail.address_origin| jsonify }}[0];
+        var address = {{ detail.address_destiny| jsonify }}[0];
         var driver = {{ request.user.driver| jsonify }}[0];
         var address_origin_text = `${driver.fields.address}, ${driver.fields.district}`;
         var address_destiny_text = `${address.fields.address}, ${address.fields.district}, ${address.fields.city}`;

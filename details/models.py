@@ -31,6 +31,9 @@ class Detail(models.Model):
     def origin_map_path(self):
         return reverse('details:origin-map', kwargs={'pk': self.pk})
 
+    def destiny_map_path(self):
+        return reverse('details:destiny-map', kwargs={'pk': self.pk})
+
     def update_addressess(self, client, origin_form, destiny_form, origin_position, destiny_position):
         self.address_origin = self.update_or_create_address_origin(client=client, form_cleaned_data=origin_form, location=origin_position)
         self.address_destiny = self.update_or_create_address_destiny(client=client, form_cleaned_data=destiny_form, location=destiny_position)

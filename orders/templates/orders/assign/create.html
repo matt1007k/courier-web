@@ -3,6 +3,7 @@
 {% block title %}
 <title>Cuy Click Perú - {{ title }}</title>
 {% endblock title %}
+{% load jsonify %}
 {% block content_head %}
 <div class="content-head">
     <div class="left">
@@ -42,7 +43,7 @@
 
             <div class="mt-8 actions reverse right">
                 <a href="{% url 'orders:index' %}" class="btn btn-default">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Asignar</button>
+                <button type="submit" class="btn btn-primary">{{ btnText }}</button>
             </div>
         </form>
     </div>
@@ -91,6 +92,10 @@
                     }
                     this.getDrivers(value);
                 });
+                {% if not assign_order is None %}
+                this.driver_select = {{ assign_order.driver|jsonify }}[0];
+                this.driver_list.push(this.driver_select);
+                {% endif %}
             }
         }
     }

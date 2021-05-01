@@ -41,6 +41,10 @@
                     <div class="form-group">
                         <input type='search' name='q' placeholder="¿Qué estás buscando?" value='{{ request.GET.q }}' class="input">
                     </div>
+                    <div class="form-group">
+                        <label for="date">Fecha de registro</label>
+                        <input type="date" class="input" name="date" id="date" value="{{ request.GET.date }}">
+                    </div>
                     <div class="actions right">
                     <button type='submit' class="btn btn-primary">Buscar</button>
                     </div>
@@ -48,7 +52,7 @@
             </div>
         </div>
     </div>
-    <a href="{% url 'drivers:create' %}" class="btn btn-link btn-small text-primary">
+    <a href="{% url 'auth:create' %}" class="btn btn-link btn-small text-primary">
       <i class='bx bx-plus bx-sm' ></i>
       <span>Nuevo motorizado</span>
     </a>

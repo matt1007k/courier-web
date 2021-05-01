@@ -51,7 +51,7 @@ def menu_items(request):
             'title': 'Entrega de pedidos',
             'icon': 'bx-cycling',
             'img': None,
-            'path': '#',
+            'path': reverse('orders:deliveries'),
             'permission': request.user.has_perm('orders.view_order') and request.user.is_driver,
         },
         {

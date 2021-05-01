@@ -92,7 +92,10 @@ class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     def get_success_url(self) -> str:
         self.model.set_driver()
         messages.success(self.request, 'Usuario registrado con éxito')
-        return self.request.GET.get('nex', reverse('drivers:create'))
+        print('user', self.model.pk)
+        return redirect('drivers:create', kwargs={
+            'pk': self.model.pk
+        })
 
     def form_invalid(self, form: CustomUserForm) -> HttpResponse:
         return super().form_invalid(form)
@@ -109,8 +112,8 @@ def user_create_view(request):
         if user:
             user.set_driver()
             messages.success(request, 'Usuario registrado con éxito')
-            return request.GET.get('nex', redirect('drivers:create'))
-        return reverse('drivers:create')
+            return redirect('drivers:create', pk=user.pk)
+        return reverse('auth:create')
 
     return render(request, template_name, context={
         'form': form_class

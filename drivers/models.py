@@ -21,6 +21,7 @@ class Driver(models.Model):
     references = models.TextField(max_length=200, verbose_name='referencias')
     district = models.CharField(max_length=100, verbose_name='distrito')
     address_gps = models.JSONField(null=True, blank=True, max_length=100, verbose_name='dirección actual')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
 
     def __str__(self) -> str:
         return self.full_name()

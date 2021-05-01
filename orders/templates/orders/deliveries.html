@@ -84,7 +84,7 @@
             Detalles del pedido
         </div>
         <div class="order-list-head-item">
-            Dirección de recojo
+            Dirección de envió
         </div>
         <div class="order-list-head-item">
           ¿Quién te atenderá? 
@@ -118,18 +118,18 @@
             </div>
         </div>
         <div class="order-list-col">
-            {% if detail.address_origin %}
-            <h6>{{ detail.address_origin.address }}</h6>
-            <p>{{ detail.address_origin.address_city }}</p>
+            {% if detail.address_destiny %}
+            <h6>{{ detail.address_destiny.address }}</h6>
+            <p>{{ detail.address_destiny.address_city }}</p>
             {% else %}
             <p class="text-small">Dirección no disponible</p>
             {% endif %}
         </div>
         <div class="order-list-col">
-            <h6>{{ detail.address_origin.full_name }}</h6>
+            <h6>{{ detail.address_destiny.full_name }}</h6>
             <p class="flex items-center">
                 <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
-                <span>{{ detail.address_origin.cell_phone }}</span>
+                <span>{{ detail.address_destiny.cell_phone }}</span>
             </p>
         </div>
         <div class="order-list-col">
@@ -143,13 +143,11 @@
             <div class="dropdown-menu right"
                 x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
                 @click.away="isOpenMd = false">
-                {% if perms.details.view_detail %}
-                <a href="{{ detail.origin_map_path }}"
+                <a href="{{ detail.destiny_map_path }}"
                     class="dropdown-item-2">
                     <span>Ver mapa</span>
                     <i class='bx bx-map-pin bx-sm'></i>
                 </a>
-                {% endif %}
                 <!-- <a href="#" class="dropdown-item-2 text-primary">
                     <span>Recibido</span>
                     <i class='bx bx-check-circle bx-sm'></i>
@@ -168,14 +166,12 @@
                 </div>
                 <div class="form-modal">
                     <div class="options">
-                        {% if perms.details.view_detail %}
-                        <a href="{{ detail.origin_map_path }}" class="option-item">
+                        <a href="{{ detail.destiny_map_path }}" class="option-item">
                             <span>Ver mapa</span>
                             <div class="icon ">
                                 <i class='bx bx-map-pin bx-sm'></i>
                             </div>
                         </a>
-                        {% endif %}
                     </div>
                 </div>
             </div>

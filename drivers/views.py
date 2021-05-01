@@ -1,6 +1,7 @@
+from authentication.models import User
 import json
 from typing import Any, Dict
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 from django.http.response import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -12,7 +13,7 @@ from django.core.serializers import serialize
 
 from drivers.forms import DriverModelForm, PaymentAccountModelForm, VehicleModelForm
 
-from .models import Driver, PaymentAccount, Vehicle
+from .models import Driver, Vehicle
 
 from .utils import generate_driver_code
 
@@ -30,11 +31,14 @@ class DriverListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
     def query(self):
         return self.request.GET.get('q')
+        
+    def query_date(self):
+        return self.request.GET.get('date')
 
     def get_queryset(self):
         if self.query():
             filters = Q(dni__icontains=self.query()) | Q(last_name__icontains=self.query()) | Q(first_name__icontains=self.query())
-            object_list = self.model.objects.filter(filters)
+            filters = filters | Q(created_at__date=self.query_date())
         else:
             object_list = self.model.objects.all().order_by('-id')
         return object_list
@@ -43,35 +47,45 @@ class DriverDetailView(DetailView):
     model = Driver
     template_name = 'drivers/detail.html'
 
-
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Perfil del motorizado'
         return context
 
 
-class DriverCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+@login_required()
+@permission_required('drivers.add_driver')
+def driver_create_view(request, pk):
+    title = 'Registrar motorizado'
     template_name = 'drivers/create.html'
-    form_class = DriverModelForm
-    permission_required = 'drivers.add_driver'
+    form_class = DriverModelForm(request.POST or None)
+    user = get_object_or_404(User, pk=pk)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Registrar motorizado'
 
-        return context
+    if request.method == 'POST' and form_class.is_valid():
+        code = generate_driver_code()
+        if 'position' in request.POST:
+            address_gps = json.loads(request.POST.get('position')) 
+        driver = Driver.objects.create(
+            code=code,
+            user=user,   
+            first_name = form_class.cleaned_data['first_name'],
+            last_name = form_class.cleaned_data['last_name'],
+            dni = form_class.cleaned_data['dni'],
+            cell_phone = form_class.cleaned_data['cell_phone'],
+            cell_phone2 = form_class.cleaned_data['cell_phone2'],
+            address = form_class.cleaned_data['address'],
+            district = form_class.cleaned_data['district'],
+            references = form_class.cleaned_data['references'],
+            address_gps=address_gps,
+        )
+        return redirect('drivers:payment-account', slug=str(driver.slug))
 
-    def get_success_url(self) -> str:
-        # messages.success(self.request, "Registro realizado con éxito")
-        return reverse('drivers:payment-account', kwargs={
-            'slug': Driver.objects.last().slug
-        })
-
-    def form_valid(self, form: DriverModelForm) -> HttpResponse:
-        form.instance.code = generate_driver_code()
-        if 'position' in self.request.POST:
-            form.instance.address_gps = json.loads(self.request.POST.get('position')) 
-        return super().form_valid(form)
+    return render(request, template_name, context={
+        'title': title,
+        'form': form_class,
+        'user': user
+    })
     
 class DriverUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     template_name = 'drivers/edit.html'

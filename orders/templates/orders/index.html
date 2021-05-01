@@ -228,7 +228,11 @@
                         {% endif %}
                         {% if perms.orders.add_assignorder %}
                         <a href="{% url 'orders:assign' order.pk %}" class="option-item">
-                            <span>Asignar motorizado</span>
+                            {% if order.is_assign %}
+                                <span>Reasignar motorizado</span>
+                            {% else %}
+                                <span>Asignar motorizado</span>
+                            {% endif %}
                             <div class="icon ">
                                 <i class='bx bx-check-circle bx-sm'></i>
                             </div>

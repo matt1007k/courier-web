@@ -5,7 +5,6 @@ class DriverModelForm(forms.ModelForm):
     class Meta:
         model = Driver
         fields = (
-            'user', 
             'first_name', 
             'last_name', 
             'dni', 

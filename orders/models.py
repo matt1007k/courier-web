@@ -92,6 +92,9 @@ class Order(models.Model):
     def delivered(self):
         self.status = Order.OrderStatus.DELIVERED
         self.save()
+    
+    def is_assign(self):
+        return AssignOrder.objects.filter(order=self).exists(); 
 
     @property
     def get_first_detail(self):
@@ -114,6 +117,11 @@ class AssignOrder(models.Model):
 
     def marked_delivered(self):
         self.order.delivered()
+    
+    def update_driver(self, driver, admin):
+        self.driver = driver
+        self.admin = admin
+        self.save()
 
     class Meta:
         verbose_name = 'asignar pedido'

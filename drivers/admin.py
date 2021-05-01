@@ -4,9 +4,9 @@ from .models import Driver, Vehicle, PaymentAccount
 from driver_payments.models import DriverPayment, DriverPaymentRate
 
 class DriverAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'dni', 'address', 'user')
+    list_display = ('__str__', 'dni', 'address', 'user', 'created_at')
     fields = (
-        'user', 'code', 'first_name', 'last_name', 'dni', 'address', 'cell_phone', 'cell_phone2', 'address_gps', 'references', 'district', 
+        'user', 'code', 'first_name', 'last_name', 'dni', 'address', 'cell_phone', 'cell_phone2', 'address_gps', 'references', 'district',
     )
 
 class PaymentAccountAdmin(admin.ModelAdmin):

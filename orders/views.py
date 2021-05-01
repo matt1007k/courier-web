@@ -90,6 +90,34 @@ class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView)
             object_list = self.request.user.driver.assignorder_set.all()
         return object_list
 
+class OrderDeliveryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'orders.view_assignorder'
+    template_name = 'orders/deliveries.html'
+    paginate_by = 10
+    model = AssignOrder
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Entrega de paquetes'
+        context['status'] = self.query_status() or Order.OrderStatus.REGISTERED
+        self.request.session['order_id'] = None
+        return context
+
+    def query(self):
+        return self.request.GET.get('q')
+
+    def query_date(self):
+        return self.request.GET.get('date')
+
+    def query_status(self):
+        return self.request.GET.get('status')
+
+    def get_queryset(self):
+        if self.request.user.is_driver:
+            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
+            object_list = self.request.user.driver.assignorder_set.all()
+        return object_list
+
 @login_required()
 @permission_required('orders.add_order', login_url='/orders')
 def create_order_client_view(request):
@@ -131,7 +159,7 @@ def cancel_order_view(request):
     return redirect('orders:index')
 
 @login_required()
-@permission_required('details.view_detail', login_url='/orders')
+# @permission_required('details.view_detail', login_url='/orders')
 def add_addresses_view(request):
     template_name = 'orders/add-addresses.html'
     order = get_or_create_order(request)
@@ -212,24 +240,40 @@ class DetailOrderView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
         context['title'] = 'Detalles del pedido'
         return context
 
-login_required()
-permission_required('orders.add_assign_order', login_url='/orders/')
+@login_required()
+@permission_required('orders.add_assignorder', login_url='/orders/')
 def assign_order_view(request, pk):
     template_name = 'orders/assign/create.html'
     title = 'Asignar pedido'
+    btnText = 'Asignar'
     order = Order.objects.get(pk=pk)
+    assign_order = AssignOrder.objects.filter(order=order).first()
+    if assign_order:
+        driver = assign_order.driver
+        title = 'Reasignar pedido'
+        btnText = 'Reasignar'
 
     if request.method == 'POST':
         driver = Driver.objects.filter(pk=request.POST.get('driver_id')).first()
-        AssignOrder.objects.create(
-            order=order,
-            driver=driver,
-            admin=request.user if request.user.is_administrator else None
-        )
-        messages.success(request, 'Pedido asignado con éxito')
-        return redirect('orders:index')
+        if assign_order:
+            assign_order.update_driver(
+                driver=driver,
+                admin=request.user if request.user.is_administrator else None
+            )
+            messages.success(request, 'Pedido reasignado con éxito')
+            return redirect('orders:index')
+        else:
+            AssignOrder.objects.create(
+                order=order,
+                driver=driver,
+                admin=request.user if request.user.is_administrator else None
+            )
+            messages.success(request, 'Pedido asignado con éxito')
+            return redirect('orders:index')
 
     return render(request, template_name, context={
         'order': order,
-        'title': title
+        'assign_order': assign_order,
+        'title': title,
+        'btnText': btnText,
     })
