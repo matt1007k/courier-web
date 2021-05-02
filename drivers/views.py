@@ -37,8 +37,17 @@ class DriverListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.query():
-            filters = Q(dni__icontains=self.query()) | Q(last_name__icontains=self.query()) | Q(first_name__icontains=self.query())
-            filters = filters | Q(created_at__date=self.query_date())
+            filters = Q(dni__icontains=self.query()) | Q(last_name__icontains=self.query()) | Q(first_name__icontains=self.query()) | Q(cell_phone__icontains=self.query()) 
+            object_list = self.model.objects.filter(filters)
+        elif self.query_date():
+            filters = Q(created_at__date=self.query_date())
+            object_list = self.model.objects.filter(filters)
+        # elif self.query():
+        #     filters = Q(dni__icontains=self.query()) | Q(last_name__icontains=self.query()) | Q(first_name__icontains=self.query()) | Q(cell_phone__icontains=self.query())
+        #     object_list = self.model.objects.filter(filters)
+        # elif self.query_date():
+        #     filters = Q(created_at__date=self.query_date())
+        #     object_list = self.model.objects.filter(filters)
         else:
             object_list = self.model.objects.all().order_by('-id')
         return object_list

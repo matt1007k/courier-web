@@ -25,8 +25,8 @@ def create_detail_view(request):
     client = order.client 
     my_addressess_list = Address.objects.filter(client=client).order_by('-id')
     if request.method == 'POST' and info_form.is_valid() and origin_form.is_valid()  and destiny_form.is_valid():
-        address_origin = Address.objects.update_or_create_address_origin(client, origin_form.cleaned_data, request.POST.get('origin_position'))
-        address_destiny = Address.objects.update_or_create_address_destiny(client, destiny_form.cleaned_data, request.POST.get('destiny_position'))
+        address_origin = Address.objects.update_or_create_address_origin(client, origin_form.cleaned_data)
+        address_destiny = Address.objects.update_or_create_address_destiny(client, destiny_form.cleaned_data)
         detail = Detail.objects.create(
             order=order, 
             size = request.POST.get('size'),
@@ -70,7 +70,7 @@ def update_detail_view(request, pk):
         # detail_obj.distance=12.00,
         # detail_obj.sub_total=10.00
         detail_obj.update_information(order, info_form.instance, request.POST.get('distance'), request.POST.get('price_rate'))
-        detail_obj.update_addressess(client, origin_form.cleaned_data, destiny_form.cleaned_data, request.POST.get('origin_position'), request.POST.get('destiny_position'))
+        detail_obj.update_addressess(client, origin_form.cleaned_data, destiny_form.cleaned_data)
         if 'image' in request.FILES:
             finfo = info_form.save(commit=False)
             finfo.image = request.FILES['image']

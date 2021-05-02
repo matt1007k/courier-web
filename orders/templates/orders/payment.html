@@ -288,7 +288,7 @@
                             sub_total.innerText = data.sub_total;
                             code.value = data.code;
                             code.readOnly = true;
-                            if (messagePromoCode.classList.includes('text-danger'))
+                            if (messagePromoCode.classList.contains('text-danger'))
                                 messagePromoCode.classList.remove('text-danger');
                             messagePromoCode.classList.add('text-success');
                             messagePromoCode.innerText = 'Cupón de promoción aplicado';

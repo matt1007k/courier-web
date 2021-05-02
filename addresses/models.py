@@ -25,7 +25,7 @@ class AddressManager(models.Manager):
         return object
         
     def update_or_create_address_origin(self, client, form_cleaned_data: Dict):
-        address_origin = self.create_or_update(
+        address_origin = self.update_or_create(
                 client = client,
                 full_name = form_cleaned_data['origin_full_name'],
                 email = form_cleaned_data['origin_email'],
@@ -40,7 +40,7 @@ class AddressManager(models.Manager):
         return address_origin[0]
 
     def update_or_create_address_destiny(self, client, form_cleaned_data):
-        address_destiny = self.create_or_update(
+        address_destiny = self.update_or_create(
                 client = client,
                 full_name = form_cleaned_data['destiny_full_name'],
                 email = form_cleaned_data['destiny_email'],

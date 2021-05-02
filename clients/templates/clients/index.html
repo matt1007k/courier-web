@@ -50,7 +50,7 @@
                 </div>
             </div>
         </div>
-        {% if perms.clients.view_client %}
+        {% if perms.clients.add_client %}
         <a href="{% url 'clients:create' %}" class="btn btn-link btn-small text-primary">
             <i class='bx bx-plus bx-sm' ></i>
             <span>Nuevo cliente</span> 
@@ -74,6 +74,7 @@
             </div>
         </div>
         
+        {% if object_list.count > 0 %}
         {% for client in object_list %} 
         <div class="card client-list-row" x-data="{ isOpen: false }">
             <div class="client-list-col">
@@ -171,7 +172,13 @@
             </div>
         </div>
         {% endfor %} 
+        {% else %}
+        <div class="card">
+            <p class="text-muted">0 clientes</p>
+        </div>
+        {% endif%}
     </div>
+    {% if object_list.count > 0 %}
     <div class="mb-10 table-list-bottom">
         <div class="table-list-details">
             <p>
@@ -207,4 +214,5 @@
           {% endif %}
         </div>
     </div>
+    {% endif %}
 {% endblock content %}

@@ -59,6 +59,9 @@ def fields_destiny_form(detail):
 
 def get_generate_tracking_code():
     orders_count = Order.objects.count()
+    if orders_count <= 1:
+        orders_count = 0
+
     zero = ''
     
     if orders_count < 10:

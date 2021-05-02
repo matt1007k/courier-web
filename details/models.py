@@ -58,8 +58,11 @@ class Detail(models.Model):
         self.save()
 
     def update_or_create_address_origin(self, client, form_cleaned_data: Dict):
-        address_origin = Address.objects.create_or_update(
+        address_origin = Address.objects.update_or_create(
                 client = client,
+                full_name = form_cleaned_data['origin_full_name'],
+                email = form_cleaned_data['origin_email'],
+                cell_phone = form_cleaned_data['origin_cell_phone'],
                 address = form_cleaned_data['origin_address'],
                 district = form_cleaned_data['origin_district'],
                 city = form_cleaned_data['origin_city'],
@@ -69,9 +72,12 @@ class Detail(models.Model):
             )
         return address_origin[0]
 
-    def update_or_create_address_destiny(self, client, form_cleaned_data, position):
-        address_destiny = Address.objects.create_or_update(
+    def update_or_create_address_destiny(self, client, form_cleaned_data):
+        address_destiny = Address.objects.update_or_create(
                 client = client,
+                full_name = form_cleaned_data['destiny_full_name'],
+                email = form_cleaned_data['destiny_email'],
+                cell_phone = form_cleaned_data['destiny_cell_phone'],
                 address = form_cleaned_data['destiny_address'],
                 district = form_cleaned_data['destiny_district'],
                 city = form_cleaned_data['destiny_city'],

@@ -80,6 +80,7 @@
                 Acciones 
             </div>
         </div>
+        {% if object_list.count > 0 %}
         {% for driver in object_list %}
         <div class="table-list-row">
             <div class="table-list-col">
@@ -120,8 +121,11 @@
             </div>
         </div>
         {% endfor %}
-        
+        {% else %} 
+        <p class="text-muted mt-2 mb-2">0 motorizados</p>
+        {% endif %}
     </div>
+    {% if object_list.count > 0 %}
     <div class="table-list-bottom">
         <div class="table-list-details">
             <p>
@@ -157,5 +161,6 @@
           {% endif %}
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock content %}
