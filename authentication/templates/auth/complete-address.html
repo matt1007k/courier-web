@@ -51,17 +51,21 @@
   </div>
   <div class="container">
     <div x-data="stateMap()" x-init="initMap()" class="card-form x-space-2 flex items-center justify-center container-modal">
+      <div class="address__wrapper">
+        <div>
           <div class="form-group">
             <label for=""></label>
             <input type="text" class="input" id="address_google" placeholder="Buscar mi dirección">
             <input type="hidden" id="address_google_text" x-ref="address_google_text">
           </div>
-        <span style="margin-right: 10px; margin-left: 10px;">O</span>
-        <div>
-        <button @click="isOpen = true" class="btn btn-default btn-small">
-            Elegir mi dirección en el mapa
-        </button>
         </div>
+        <div class="mt-2 mb-2">O</div>
+        <div>
+          <button type="button" @click="isOpen = true" class="btn btn-default btn-small">
+              Elegir mi dirección en el mapa
+          </button>
+        </div>
+      </div>
         <div 
             x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
             class="modal">

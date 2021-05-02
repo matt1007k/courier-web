@@ -1,10 +1,15 @@
 from typing import Any, Dict
+from django.http.response import HttpResponse
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import DeleteView, UpdateView
+
+from django.db.models import Q
+from django.core.serializers import serialize
+
 from .models import Client
 from .forms import ClientModelForm
 
@@ -72,3 +77,12 @@ class ClientDeleteView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequir
     def get_success_url(self) -> str:
         messages.success(self.request, 'Registro eliminado con éxito')
         return reverse('clients:index')
+
+def get_clients_view(request):
+    if request.method == 'GET':
+        q = request.GET.get('q')
+        filters = Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(cell_phone__icontains=q)
+        qs = Client.objects.filter(filters)[:5]
+        data = serialize('json', qs)
+        return HttpResponse(data, content_type='application/json')
+    

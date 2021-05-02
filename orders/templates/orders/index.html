@@ -75,7 +75,7 @@
                 <span>Nuevo pedido</span> 
             </a>
             {% else %}
-            <div x-data="{ isOpen: false }" class="container-modal">
+            <div x-data="clientState()" x-init="init()" class="container-modal">
                 <button @click="isOpen = true" class="btn btn-link btn-small">
                     Nuevo pedido
                 </button>
@@ -94,17 +94,28 @@
                                 </button>
                             </div>
                         </div>
-                        <form method='POST' action="{% url 'orders:create' %}" class="form-modal">
+                        <form method='POST' id="client-form" action="{% url 'orders:create' %}" class="form-modal">
                             {% csrf_token %}
-                            <div class="form-group">
-                                <label for="client_id">Cliente</label>
-                                <select name="client_id" id="client_id" class="input" required>
-                                    <option value="">Seleccionar el client</option>
-                                    {% for client in client_list %}
-                                    <option value="{{ client.id }}">{{ client.full_name }}</option> 
-                                    {% endfor %}
-                                </select>
+                            <div class="form-group-search m-0">
+                                <input type="search" class="input input-outline" id="client_search" x-model="search" ref="search"
+                                    placeholder="Buscar un cliente" />
+                                <i class="input-icon bx bx-search bx-sm"></i>
                             </div>
+                            <div class="options-2 mt-4">
+                                <template x-if="client_list.length || client_select" x-for="(client, index) in client_list"
+                                    :key="index">
+                                    <div class="option-item" style="transition: all 1s;"
+                                        :class="{'active': client_select.pk === client.pk}" @click="selectClient(index)">
+                                        <i class="bx bx-check-circle bx-md"></i>
+                                        <div>
+                                            <p class="text-muted text-small text-left flex align-items" x-html="getCellPhone(client.fields)"></p>
+                                            <p class="text-primary text-left" x-text="getFullName(client.fields)"></p>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <div x-show="!client_list.length" class="alert text-muted" x-text="emptyMessageText"></div>
+                            <input type="hidden" name="client_id">
                             
                             <div class="actions right">
                                 <a href="{% url 'orders:index' %}" class="btn btn-default">Cancelar</a>
@@ -290,3 +301,54 @@
     {% endif %}
 </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+    var form = document.getElementById('client-form')
+    function clientState() {
+        return {
+            search: '',
+            client_list: [],
+            client_select: {},
+            emptyMessageText: 'Ingrese la nombre completo o dni',
+            btnDisabled: true,
+            isOpen: false,
+            getClients(value) {
+                fetch('/clients/get-clients/?q=' + value)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.length) {
+                            this.emptyMessageText = 'Sin resultados';
+                            this.client_list = [];
+                            return;
+                        }
+                        this.client_list = data;
+                    });
+            },
+            getFullName(client) {
+                return `${client.first_name} ${client.last_name}`;
+            },
+            getCellPhone(client){
+                return ` <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i> <span>${client.cell_phone}</span>`;
+            },
+            selectClient(index) {
+                this.client_select = this.client_list[index];
+                this.btnDisabled = false;
+                setFormField(this.client_select);
+            },
+            init() {
+                this.$watch('search', (value) => {
+                    if (!value) {
+                        this.emptyMessageText = 'Ingrese la dirección, distrito o ciudad';
+                        this.client_list = [];
+                        return;
+                    }
+                    this.getClients(value);
+                });
+            }
+        }
+    }
+    function setFormField(client) {
+        form.client_id.value = client.pk;
+    }
+</script>
+{% endblock scripts %}

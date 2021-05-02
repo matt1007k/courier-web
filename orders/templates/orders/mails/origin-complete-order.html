@@ -1,0 +1,23 @@
+{% load inlinecss %}
+{% inline "css/style.css" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedido - {{ detail.order.tracking_code }}</title>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h4># TRACKING {{ detail.order.tracking_code }}</h4>
+      <div>Cliente: {{ detail.address_origin.full_name }}</div>
+      <div>Pedido #:{{ detail.order.tracking_code }}</div>
+      <div class="mt-5">
+        <button class="btn btn-secondary">Consultar pedido</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -60,7 +60,7 @@ class Order(models.Model):
 
     def get_discount(self):
         if self.promo_code:
-            discount = (self.get_total() * decimal.Decimal(self.promo_code.discount)) 
+            discount = (self.get_total() * decimal.Decimal((self.promo_code.discount / 100))) 
             return round(float(discount), 2)
 
         return 0
@@ -84,6 +84,12 @@ class Order(models.Model):
 
     def get_total(self):
         return sum([ detail.price_rate for detail in self.detail_set.all() ])
+
+    def payed_order(self, payed_image, tracking_code, type_ticket):
+        self.payed_image = payed_image
+        self.tracking_code = tracking_code        
+        self.type_ticket = type_ticket
+        self.save()
 
     def canceled(self):
         self.status = Order.OrderStatus.CANCELED

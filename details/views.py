@@ -36,8 +36,8 @@ def create_detail_view(request):
             description = request.POST.get('description'),
             address_origin=address_origin,
             address_destiny=address_destiny,
-            distance=decimal.Decimal(request.POST.get('distance')),
-            price_rate=decimal.Decimal(request.POST.get('price')),
+            distance=request.POST.get('distance'),
+            price_rate=request.POST.get('price_rate'),
         )
         if not detail is None:
             messages.success(request, 'La dirección de envío fue agregado con éxito.')
@@ -69,7 +69,7 @@ def update_detail_view(request, pk):
     if request.method == 'POST' and info_form.is_valid() and origin_form.is_valid()  and destiny_form.is_valid():
         # detail_obj.distance=12.00,
         # detail_obj.sub_total=10.00
-        detail_obj.update_information(order, info_form.instance, request.POST.get('distance'), request.POST.get('price'))
+        detail_obj.update_information(order, info_form.instance, request.POST.get('distance'), request.POST.get('price_rate'))
         detail_obj.update_addressess(client, origin_form.cleaned_data, destiny_form.cleaned_data, request.POST.get('origin_position'), request.POST.get('destiny_position'))
         if 'image' in request.FILES:
             finfo = info_form.save(commit=False)
@@ -80,6 +80,7 @@ def update_detail_view(request, pk):
         return redirect('orders:add-addresses')
 
     return render(request, template, context={
+        'order': order,
         'detail_obj': detail_obj,
         'info_form': info_form,
         'origin_form': origin_form,

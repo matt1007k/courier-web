@@ -16,6 +16,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import DeleteView, UpdateView
 
 from .models import Address
+from clients.models import Client
 from .forms import AddressModelForm
 
 class AddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -126,12 +127,11 @@ def default_view(request, pk):
     messages.success(request, 'Dirección principal actualizada')
     return redirect('addresses:index')
 
-def get_address_view(request):
+def get_address_client_view(request, slug):
     if request.method == 'GET':
         q = request.GET.get('q')
         filters = Q(address__icontains=q) | Q(district__icontains=q) | Q(city__icontains=q)
-        if request.user.is_client and request.user.is_authenticated:
-            client = request.user.client
+        client = Client.objects.get(slug=slug)
         qs = Address.objects.filter(client=client).filter(filters)[:5]
         data = serialize('json', qs)
         return HttpResponse(data, content_type='application/json')

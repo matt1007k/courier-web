@@ -1,7 +1,6 @@
-from authentication.models import User
 import json
 from typing import Any, Dict
-from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http.response import HttpResponse
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -14,6 +13,7 @@ from django.core.serializers import serialize
 from drivers.forms import DriverModelForm, PaymentAccountModelForm, VehicleModelForm
 
 from .models import Driver, Vehicle
+from authentication.models import User
 
 from .utils import generate_driver_code
 

@@ -154,7 +154,7 @@
                 </div> 
                 <div class="address-order-summary">
                     <div class="distance">
-                        <h5 class="m-0">{{ detail.distance|unlocalize }}</h5>
+                        <h5 class="m-0">{{ detail.distance|unlocalize }}{% if detail.distance >= 1 %}KM{% else %}M{% endif %}</h5>
                         <p class="text-small">Distancia</p>
                     </div>
                     <div class="rate">
@@ -228,7 +228,7 @@
                 {% endif %}
                 <div class="mt-5">
                     <h6>Imágenes del pago realizado</h6>
-                    <input type="file" class="input mt-2" name="image_payed" required>
+                    <input type="file" class="input mt-2" name="payed_image" required>
                 </div>
                 <div class="mt-5">
                     <h6>Tipo de comprobante</h6>
@@ -288,6 +288,8 @@
                             sub_total.innerText = data.sub_total;
                             code.value = data.code;
                             code.readOnly = true;
+                            if (messagePromoCode.classList.includes('text-danger'))
+                                messagePromoCode.classList.remove('text-danger');
                             messagePromoCode.classList.add('text-success');
                             messagePromoCode.innerText = 'Cupón de promoción aplicado';
                             btnAplyCode.style.display = 'none';

@@ -120,26 +120,6 @@ class OrderDeliveryListView(LoginRequiredMixin, PermissionRequiredMixin, ListVie
 
 @login_required()
 @permission_required('orders.add_order', login_url='/orders')
-def create_order_client_view(request):
-    order = get_or_create_order(request) 
-    if request.method == 'POST':
-        if 'image_payed' in request.FILES:
-            if order.detail_set.count() == 0:
-                messages.error(request, 'El pedido no tiene ningún elemento de envió')
-            image_payed = request.FILES['image_payed']
-            order.image_payed = image_payed
-            order.save()
-            messages.success(request, 'El pedido se ha realizado con éxito')
-            # return redirect('orders:index') 
-        else:
-            messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
-        
-    return render(request, 'orders/create-client.html', context={
-        'order': order
-    })
-
-@login_required()
-@permission_required('orders.add_order', login_url='/orders')
 def create_order_view(request):
     order = get_or_create_order(request) 
         
@@ -175,15 +155,16 @@ def payment_view(request):
     template_name = 'orders/payment.html'
     order = get_or_create_order(request)
     if request.method == 'POST':
-        if 'image_payed' in request.FILES and order.total > 0:
+        if 'payed_image' in request.FILES and order.total > 0:
             if order.detail_set.count() == 0:
-                messages.error(request, 'El pedido no tiene ningún elemento de envió')
-            image_payed = request.FILES['image_payed']
-            order.image_payed = image_payed
-            order.tracking_code = get_generate_tracking_code()        
-            order.type_ticket = request.POST.get('type_ticket')
-            order.save()
-            # Mail.send_complete_order(order, request.user)
+                messages.error(request, 'El pedido no tiene ninguna dirección de envió')
+            order.payed_order(
+                payed_image = request.FILES['payed_image'],
+                tracking_code = get_generate_tracking_code(),
+                type_ticket = request.POST.get('type_ticket')
+            )
+            for detail in order.detail_set.all():
+                Mail.send_origin_complete_order(detail, detail.address_origin.email)
             return redirect('orders:payment-success') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
@@ -277,3 +258,9 @@ def assign_order_view(request, pk):
         'title': title,
         'btnText': btnText,
     })
+
+@login_required()
+def get_client_view(request):
+    qs = get_or_create_order(request).client
+    data = serialize('json', [qs])
+    return HttpResponse(data, content_type="aplication/json")

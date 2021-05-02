@@ -1,10 +1,16 @@
 import string
 import random
-from django.core import validators
+from django.utils import timezone
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
+
+class PromoCodeManager(models.Manager):
+
+    def get_valid(self, code):
+        now = timezone.now()
+        return self.filter(code=code).filter(valid_from__lte=now).filter(valid_to__gte=now).first()
 
 class PromoCode(models.Model):
     code = models.CharField(max_length=50, unique=True, verbose_name='código')
@@ -13,6 +19,8 @@ class PromoCode(models.Model):
     valid_to = models.DateTimeField(verbose_name='fecha de vencimiento')
     used = models.BooleanField(default=False, verbose_name='usado')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='fecha de creación')
+
+    objects = PromoCodeManager()
 
     def __str__(self) -> str:
         return self.code

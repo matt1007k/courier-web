@@ -1,15 +1,15 @@
 from django.urls import path 
 
-from .views import DetailOrderView, OrderDeliveryListView, OrderListView, OrderOriginListView, add_addresses_view, assign_order_view, cancel_order_view, create_order_client_view, create_order_view, payment_success_view, payment_view, tracking_order_view
+from .views import DetailOrderView, OrderDeliveryListView, OrderListView, OrderOriginListView, add_addresses_view, assign_order_view, cancel_order_view, create_order_view, get_client_view, payment_success_view, payment_view, tracking_order_view
 from details.views import create_detail_view, update_detail_view
 
 app_name = 'orders'
 
 urlpatterns = [
     path('', OrderListView.as_view(), name='index'),
+    path('get-client/', get_client_view),
     path('origins/', OrderOriginListView.as_view(), name='origins'),
     path('deliveries/', OrderDeliveryListView.as_view(), name='deliveries'),
-    path('create-client/', create_order_client_view, name="create-client"),
     path('create/', create_order_view, name="create"),
     path('create/detail/create/', create_detail_view, name="create-detail"),
     path('create/detail/<int:pk>/update/', update_detail_view, name="update-detail"),

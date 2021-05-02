@@ -36,6 +36,8 @@ def fields_origin_form(detail):
         'origin_district': detail.address_origin.district,
         'origin_city': detail.address_origin.city,
         'origin_reference': detail.address_origin.reference,
+        'origin_position': detail.address_origin.address_gps,
+        'origin_address_detail': detail.address_origin.address_detail
     }
     return fields
 
@@ -48,6 +50,10 @@ def fields_destiny_form(detail):
         'destiny_district': detail.address_destiny.district,
         'destiny_city': detail.address_destiny.city,
         'destiny_reference': detail.address_destiny.reference,
+        'destiny_address_detail': detail.address_destiny.address_detail,
+        'destiny_position': detail.address_destiny.address_gps,
+        'price_rate': detail.price_rate,
+        'distance': detail.distance,
     }
     return fields
 

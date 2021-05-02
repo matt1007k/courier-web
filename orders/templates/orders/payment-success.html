@@ -14,7 +14,7 @@
     </div>
     <div class="text-center">
         <h5>Pedido realizado con éxito</h5>
-        <p>El detalle de tu pedido serán enviados al correo del destinatario, con el # TRACKING <b>{{ order.tracking_code }}</b>, podrás seguir la ubicación de tu pedido.</p>
+        <p>El detalle de tu pedido serán enviados al correo a las personas que registrados en la dirección de envió, con el # TRACKING <b>{{ order.tracking_code }}</b>, podrás seguir la ubicación de tu pedido.</p>
         <div class="actions right mt-6">
         <a href="{% url 'orders:index' %}" class="btn btn-primary">Ir a mis pedidos</a>
         <a href="#" class="btn btn-default">
