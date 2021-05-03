@@ -13,8 +13,8 @@ class Client(models.Model):
     last_name = models.CharField(max_length=150, verbose_name='Apellidos') 
     cell_phone = models.CharField(max_length=9, null=True, blank=True, verbose_name='Núm. de celular')
     driver_code = models.CharField(max_length=12, verbose_name='código de motorizado')
-    store_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre de tienda')
-    logo = models.ImageField(upload_to="clients/", null=True, blank=True, verbose_name='logo de la tienda')
+    store_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre de tienda (opcional)')
+    logo = models.ImageField(upload_to="clients/", null=True, blank=True, verbose_name='logo de la tienda (opcional)')
     social_media = models.JSONField(null=True, blank=True, verbose_name='redes sociales')
 
     def __str__(self) -> str:

@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from datetime import datetime
-from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail
+from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress, UnassignOriginAddress
 
 from django.views.generic import ListView, DetailView
 
@@ -63,8 +63,8 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         
         return object_list
 
-class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    permission_required = 'orders.view_assignoriginaddress'
+class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'details.view_assignoriginaddress'
     template_name = 'orders/assign/origins.html'
     paginate_by = 10
     model = AssignOriginAddress
@@ -91,8 +91,8 @@ class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView)
             object_list = self.request.user.driver.assignoriginaddress_set.all().order_by('-id')
         return object_list
 
-class OrderDeliveryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    permission_required = 'orders.view_assigndeliveryaddress'
+class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'details.view_assigndeliveryaddress'
     template_name = 'orders/assign/deliveries.html'
     paginate_by = 10
     model = AssignDeliveryAddress
@@ -117,6 +117,60 @@ class OrderDeliveryListView(LoginRequiredMixin, PermissionRequiredMixin, ListVie
         if self.request.user.is_driver:
             # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
             object_list = self.request.user.driver.assigndeliveryaddress_set.all().order_by('-id')
+        return object_list
+
+class UnassignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'details.view_unassignoriginaddress'
+    template_name = 'orders/assign/unassign-origins.html'
+    paginate_by = 10
+    model = UnassignOriginAddress
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Asignar recojos'
+        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
+        self.request.session['order_id'] = None
+        return context
+
+    def query(self):
+        return self.request.GET.get('q')
+
+    def query_date(self):
+        return self.request.GET.get('date')
+
+    def query_status(self):
+        return self.request.GET.get('status')
+
+    def get_queryset(self):
+            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
+        object_list = self.model.objects.all().order_by('-id')
+        return object_list
+
+class UnassignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'details.view_unassigndeliveryaddress'
+    template_name = 'orders/assign/unassign-deliveries.html'
+    paginate_by = 10
+    model = UnassignDeliveryAddress
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Asignar entregas'
+        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
+        self.request.session['order_id'] = None
+        return context
+
+    def query(self):
+        return self.request.GET.get('q')
+
+    def query_date(self):
+        return self.request.GET.get('date')
+
+    def query_status(self):
+        return self.request.GET.get('status')
+
+    def get_queryset(self):
+            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
+        object_list = self.model.objects.all().order_by('-id')
         return object_list
 
 @login_required()

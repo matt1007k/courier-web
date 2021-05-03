@@ -97,20 +97,16 @@
     {% if object_list.count > 0 %}
 
     {% for object in object_list %}
-    {% for detail in object.order.detail_set.all %}
-
     <div class="card card-normal order-list-row" x-data="{ isOpenSm: false, isOpenMd: false }">
         <div class="order-list-col">
             <div class="icon icon-warning-default rounded rounded-md">
                 <img src="{% static 'icon/order-icon.svg' %}" />
             </div>
             <div class="content" style="align-items: flex-start;">
-                <p class="text-small text-muted font-normal"># TRACKING {{ detail.order.tracking_code }}</p>
-                <h6>{{ detail.order.client.full_name }}</h6>
+                <p class="text-small text-muted font-normal"># TRACKING {{ object.detail.order.tracking_code }}</p>
+                <h6>{{ object.detail.order.client.full_name }}</h6>
                 <div class="order-detail">
-                    {% include "orders/snippets/status.html" with order=detail.order %}
-                    <p>&middot;</p>
-                    <p>{{ detail.order.created_at|naturaltime }}</p>
+                    <p>{{ object.detail.order.created_at|naturaltime }}</p>
                 </div>
             </div>
             <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">
@@ -118,22 +114,22 @@
             </div>
         </div>
         <div class="order-list-col">
-            {% if detail.address_destiny %}
-            <h6>{{ detail.address_destiny.address }}</h6>
-            <p>{{ detail.address_destiny.address_city }}</p>
+            {% if object.detail.address_destiny %}
+            <h6>{{ object.detail.address_destiny.address }}</h6>
+            <p>{{ object.detail.address_destiny.address_city }}</p>
             {% else %}
             <p class="text-small">Dirección no disponible</p>
             {% endif %}
         </div>
         <div class="order-list-col">
-            <h6>{{ detail.address_destiny.full_name }}</h6>
+            <h6>{{ object.detail.address_destiny.full_name }}</h6>
             <p class="flex items-center">
                 <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
-                <span>{{ detail.address_destiny.cell_phone }}</span>
+                <span>{{ object.detail.address_destiny.cell_phone }}</span>
             </p>
         </div>
         <div class="order-list-col">
-            <span class="badge badge-secondary">Pendiente</span>
+            {% include "details/snippets/status.html" with detail=object.detail %}
         </div>
 
         <div class="order-list-col dropdown" style="justify-self: end;">
@@ -143,7 +139,7 @@
             <div class="dropdown-menu right"
                 x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
                 @click.away="isOpenMd = false">
-                <a href="{{ detail.destiny_map_path }}"
+                <a href="{{ object.detail.destiny_map_path }}"
                     class="dropdown-item-2">
                     <span>Ver mapa</span>
                     <i class='bx bx-map-pin bx-sm'></i>
@@ -166,7 +162,7 @@
                 </div>
                 <div class="form-modal">
                     <div class="options">
-                        <a href="{{ detail.destiny_map_path }}" class="option-item">
+                        <a href="{{ object.detail.destiny_map_path }}" class="option-item">
                             <span>Ver mapa</span>
                             <div class="icon ">
                                 <i class='bx bx-map-pin bx-sm'></i>
@@ -178,7 +174,6 @@
         </div>
     </div>
 
-    {% endfor %}
     {% endfor %}
 
     <div class="mb-10 table-list-bottom">
