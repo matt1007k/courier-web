@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from datetime import datetime
+from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail
 
 from django.views.generic import ListView, DetailView
 
@@ -16,7 +17,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .utils import delete_order, get_generate_tracking_code, get_or_create_order
-from .models import AssignOrder, Order
+from .models import Order
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'orders.view_order'
@@ -63,15 +64,15 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return object_list
 
 class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    permission_required = 'orders.view_order'
-    template_name = 'orders/origins.html'
+    permission_required = 'orders.view_assignoriginaddress'
+    template_name = 'orders/assign/origins.html'
     paginate_by = 10
-    model = AssignOrder
+    model = AssignOriginAddress
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Recojo de paquetes'
-        context['status'] = self.query_status() or Order.OrderStatus.REGISTERED
+        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
         self.request.session['order_id'] = None
         return context
 
@@ -87,19 +88,19 @@ class OrderOriginListView(LoginRequiredMixin, PermissionRequiredMixin, ListView)
     def get_queryset(self):
         if self.request.user.is_driver:
             # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
-            object_list = self.request.user.driver.assignorder_set.all()
+            object_list = self.request.user.driver.assignoriginaddress_set.all().order_by('-id')
         return object_list
 
 class OrderDeliveryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    permission_required = 'orders.view_assignorder'
-    template_name = 'orders/deliveries.html'
+    permission_required = 'orders.view_assigndeliveryaddress'
+    template_name = 'orders/assign/deliveries.html'
     paginate_by = 10
-    model = AssignOrder
+    model = AssignDeliveryAddress
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Entrega de paquetes'
-        context['status'] = self.query_status() or Order.OrderStatus.REGISTERED
+        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
         self.request.session['order_id'] = None
         return context
 
@@ -115,7 +116,7 @@ class OrderDeliveryListView(LoginRequiredMixin, PermissionRequiredMixin, ListVie
     def get_queryset(self):
         if self.request.user.is_driver:
             # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
-            object_list = self.request.user.driver.assignorder_set.all()
+            object_list = self.request.user.driver.assigndeliveryaddress_set.all().order_by('-id')
         return object_list
 
 @login_required()
@@ -146,7 +147,7 @@ def add_addresses_view(request):
 
     return render(request, template_name, context={
         'order': order,
-        'title': 'Pedido - Direcciones de envió'
+        'title': 'Pedido - Direcciones de envío'
     })
 
 @login_required()
@@ -157,7 +158,7 @@ def payment_view(request):
     if request.method == 'POST':
         if 'payed_image' in request.FILES and order.total > 0:
             if order.detail_set.count() == 0:
-                messages.error(request, 'El pedido no tiene ninguna dirección de envió')
+                messages.error(request, 'El pedido no tiene ninguna dirección de envío')
             order.payed_order(
                 payed_image = request.FILES['payed_image'],
                 tracking_code = get_generate_tracking_code(),
@@ -222,30 +223,30 @@ class DetailOrderView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
         return context
 
 @login_required()
-@permission_required('orders.add_assignorder', login_url='/orders/')
+@permission_required('orders.add_assignoriginaddress', login_url='/orders/')
 def assign_order_view(request, pk):
     template_name = 'orders/assign/create.html'
     title = 'Asignar pedido'
     btnText = 'Asignar'
-    order = Order.objects.get(pk=pk)
-    assign_order = AssignOrder.objects.filter(order=order).first()
-    if assign_order:
-        driver = assign_order.driver
+    detail = Detail.objects.get(pk=pk)
+    assign_detail = AssignOriginAddress.objects.filter(detail=detail).first()
+    if assign_detail:
+        driver = assign_detail.driver
         title = 'Reasignar pedido'
         btnText = 'Reasignar'
 
     if request.method == 'POST':
         driver = Driver.objects.filter(pk=request.POST.get('driver_id')).first()
-        if assign_order:
-            assign_order.update_driver(
+        if assign_detail:
+            assign_detail.update_driver(
                 driver=driver,
                 admin=request.user if request.user.is_administrator else None
             )
             messages.success(request, 'Pedido reasignado con éxito')
-            return redirect('orders:index')
+            return redirect('details:index')
         else:
-            AssignOrder.objects.create(
-                order=order,
+            AssignOriginAddress.objects.create(
+                detail=detail,
                 driver=driver,
                 admin=request.user if request.user.is_administrator else None
             )
@@ -253,8 +254,8 @@ def assign_order_view(request, pk):
             return redirect('orders:index')
 
     return render(request, template_name, context={
-        'order': order,
-        'assign_order': assign_order,
+        'detail': detail,
+        'assign_detail': assign_detail,
         'title': title,
         'btnText': btnText,
     })

@@ -1,0 +1,17 @@
+{% if detail.status == 'PE' %}
+<span class="badge badge-warning">Pendiente</span>
+{% elif detail.status == 'RE' %}
+<span class="badge badge-success">Recepcionado</span>
+{% elif detail.status == 'AL' %}
+<span class="badge badge-primary">En Almacén</span>
+{% elif detail.status == 'ER' %}
+<span class="badge badge-secondary">En Ruta</span>
+{% elif detail.status == 'EN' %}
+<span class="badge badge-success">Entregado</span>
+{% elif detail.status == 'NEN'
+<span class="badge badge-warning">No Entregado</span>
+{% elif detail.status == 'REPR' %}
+<span class="badge badge-success">Reprogramado</span>
+{% else %}
+<span class="badge badge-warning">Pendiente</span>
+{% endif %}

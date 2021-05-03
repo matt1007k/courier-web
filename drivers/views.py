@@ -73,8 +73,8 @@ def driver_create_view(request, pk):
 
     if request.method == 'POST' and form_class.is_valid():
         code = generate_driver_code()
-        if 'position' in request.POST:
-            address_gps = json.loads(request.POST.get('position')) 
+        if 'address_gps' in request.POST:
+            address_gps = request.POST.get('address_gps') 
         driver = Driver.objects.create(
             code=code,
             user=user,   
@@ -109,8 +109,8 @@ class DriverUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         return context
 
     def form_valid(self, form: DriverModelForm) -> HttpResponse:
-        if 'position' in self.request.POST:
-            form.instance.address_gps = json.loads(self.request.POST.get('position')) 
+        if 'address_gps' in self.request.POST:
+            form.instance.address_gps = self.request.POST.get('address_gps')
         return super().form_valid(form)
 
     def get_success_url(self) -> str:

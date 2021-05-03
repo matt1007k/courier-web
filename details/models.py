@@ -1,10 +1,12 @@
+from authentication.models import User
 import decimal
 from typing import Dict
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
-from orders.models import Order
 from django.db import models
+from orders.models import Order
+from drivers.models import Driver
 from addresses.models import Address
 
 from django.db.models.signals import post_delete, post_save, pre_save
@@ -15,14 +17,22 @@ class Detail(models.Model):
         PENDING = 'PE', _('Pendiente')
         RECEIVED = 'RE', _('Recibido')
         WAREHOUSE = 'AL', _('En Almacén')
+        ON_ROUTE = 'ER', _('En Ruta')
         DELIVERED = 'EN', _('Entregado')
+        UNDELIVERED = 'NEN', _('No Entregado')
+        REPROGRAMMED = 'REPR', _('Reprogramado')
+
+    class PackageSize(models.TextChoices):
+        SMALL = 'SM', _('Pequeño')
+        MEDIUM = 'MD', _('Mediano')
+        LARGE = 'LG', _('Grande')
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='pedido')
-    size = models.CharField(max_length=150, verbose_name='tamaño')
+    size = models.CharField(max_length=100, choices=PackageSize.choices, default=PackageSize.SMALL, verbose_name='tamaño')
     contain = models.CharField(max_length=100, verbose_name='¿Qué contiene?')
     value = models.CharField(max_length=150, verbose_name='valor del paquete')
-    image = models.ImageField(upload_to="details-order/%Y/%m/%d/", null=True, blank=True, verbose_name='imagen del paquete')
-    description = models.TextField(max_length=200, null=True, blank=True, verbose_name='nota')
+    image = models.ImageField(upload_to="details-order/%Y/%m/%d/", null=True, blank=True, verbose_name='imagen del paquete (opcional)')
+    description = models.TextField(max_length=200, null=True, blank=True, verbose_name='nota (opcional)')
     address_origin = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='address_origin', verbose_name='dirección de recojo')
     address_destiny = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='address_destiny',verbose_name='dirección de destino')
     distance = models.DecimalField(max_digits=10, decimal_places=1, verbose_name='distancia', default=0)
@@ -87,17 +97,82 @@ class Detail(models.Model):
             )
         return address_destiny[0]
 
-    def is_received(self):
+    def received(self):
         self.status = Detail.PackageStatus.RECEIVED
         self.save()
 
-    def is_(self):
-        self.status = Detail.PackageStatus.RECEIVED
+    def delivered(self):
+        self.status = Detail.PackageStatus.DELIVERED
         self.save()
 
     class Meta:
         verbose_name = "detalle"
         verbose_name_plural = "detalles"
+
+class AssignOriginAddress(models.Model):
+    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del paquete')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
+    admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
+
+    def __str__(self) -> str:
+        return self.detail.order.tracking_code
+
+    def update_driver(self, driver, admin):
+        self.driver = driver
+        self.admin = admin
+        self.save()
+
+    class Meta:
+        verbose_name = 'asignar dirección de entrega'
+        verbose_name_plural = 'direcciones de entrega asignadas'
+
+class AssignDeliveryAddress(models.Model):
+    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del paquete')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
+    admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
+
+    def __str__(self) -> str:
+        return self.detail.order.tracking_code
+
+    
+    def update_driver(self, driver, admin):
+        self.driver = driver
+        self.admin = admin
+        self.save()
+
+    class Meta:
+        verbose_name = 'asignar dirección de envío'
+        verbose_name_plural = 'direcciones de envío asignadas'
+
+class UnassignOriginAddress(models.Model):
+    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del packete')
+        
+    def __str__(self) -> str:
+        return str(self.detail.order.tracking_code)
+
+    class Meta:
+        verbose_name = 'sin asignar dirección de recojo'
+        verbose_name_plural = 'direcciones de recojo sin asignar'
+
+class UnassignDeliveryAddress(models.Model):
+    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del packete')
+        
+    def __str__(self) -> str:
+        return str(self.detail.order.tracking_code)
+
+    class Meta:
+        verbose_name = 'sin asignar dirección de envío'
+        verbose_name_plural = 'direcciones de envío sin asignar '
+
+class PackageDelivered(models.Model):
+    detail = models.OneToOneField(Detail, on_delete=models.CASCADE, verbose_name='dirección de envío')
+    image = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 1')
+    image2 = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 2')
+    description = models.TextField(max_length=250, null=True, blank=True, verbose_name='nota (opcional)')
+
+    class Meta:
+        verbose_name = 'entrega de dirección de envío'
+        verbose_name_plural = 'entrega de direcciones de envío'
 
 def set_price_rate(sender, instance, *args, **kargs):
     pass

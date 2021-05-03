@@ -81,7 +81,7 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
     def form_valid(self, form: AddressModelForm) -> HttpResponse:
         form.instance.client = self.request.user.client
         form.instance.default = True
-        form.instance.address_gps = json.loads(self.request.POST.get('position'))
+        form.instance.address_gps = self.request.POST.get('address_gps')
         return super().form_valid(form)
 
 class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):

@@ -63,8 +63,8 @@ class AddressCreateView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequi
 
     def form_valid(self, form: AddressModelForm) -> HttpResponse:
         form.instance.client = self.request.user.client 
-        if 'position' in self.request.POST:
-            form.instance.address_gps = json.loads(self.request.POST.get('position'))
+        if 'address_gps' in self.request.POST:
+            form.instance.address_gps = self.request.POST.get('address_gps')
         return super().form_valid(form)
 
 class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
@@ -81,8 +81,8 @@ class AddressUpdateView(LoginRequiredMixin, SuccessMessageMixin, PermissionRequi
         return context
 
     def form_valid(self, form: AddressModelForm) -> HttpResponse:
-        if 'position' in self.request.POST:
-            form.instance.address_gps = json.loads(self.request.POST.get('position'))
+        if 'address_gps' in self.request.POST:
+            form.instance.address_gps = self.request.POST.get('address_gps')
         return super().form_valid(form)
 
     def get_success_url(self) -> str:

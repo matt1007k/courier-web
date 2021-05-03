@@ -1,6 +1,7 @@
 {% extends "layouts/admin.html" %} {% block title %}
 <title>Cuy Click Perú - {{ title }}</title>
 {% endblock title %} 
+{% load static %}
 {% block content_head %}
 <div class="content-head">
   <div class="left">
@@ -90,8 +91,17 @@
             <div class="table-list-col">
                 <div class="title">Nombre completo</div>
                 <div class="content">
+                  <div class="avatar avatar-md" style="margin-right: 10px;">
+                    {% if driver.user.avatar %}
+                    <img src="{{ driver.user.avatar.url }}" alt="{{ driver.full_name }}">
+                    {% else %}
+                    <img src="{% static 'img/avatar.png' %}" alt="{{ driver.full_name }}">
+                    {% endif %}
+                  </div>
+                  <div>
                     <h6>{{ driver.full_name }}</h6>
                     <p>DNI {{ driver.dni }}</p>
+                  </div>
                 </div>
             </div>
             <div class="table-list-col">

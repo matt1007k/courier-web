@@ -3,6 +3,7 @@ from django import forms
 from .models import Address
 
 class AddressModelForm(forms.ModelForm):
+    address_gps = forms.CharField(max_length=200, widget=forms.HiddenInput())
     class Meta:
         model = Address
         fields = (
@@ -13,7 +14,8 @@ class AddressModelForm(forms.ModelForm):
             'district',
             'city',
             'address_detail',
-            'reference'
+            'reference',
+            'address_gps'
         )
 
 class OriginAddressForm(forms.Form):

@@ -18,7 +18,7 @@ from orders.utils import fields_destiny_form, get_or_create_order, fields_origin
 @permission_required('details.add_detail', login_url='/orders/')
 def create_detail_view(request):
     template = 'details/create.html'
-    info_form = DetailForm(request.POST or None)
+    info_form = DetailModelForm(request.POST or None)
     origin_form = OriginAddressForm(request.POST or None)
     destiny_form = DestinyAddressForm(request.POST or None)
     order = get_or_create_order(request)

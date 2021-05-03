@@ -45,6 +45,9 @@
 </div>
 <form method="post" id="form-driver">
   {% csrf_token %} {% for field in form %}
+  {% if field.is_hidden %}
+  {{ field }}
+  {% else %}
   <div class="form-group">
     {{ field.label_tag }} {{ field }}
     {% if field.errors %}
@@ -55,6 +58,7 @@
     {% endfor %}
     {% endif %}
   </div>
+  {% endif %}
   {% endfor %}
   <div class="actions right">
     <a href="{% url 'drivers:index' %}" class="btn btn-default">Cancelar</a>
@@ -156,19 +160,10 @@
   }
 
   function changePositionAddress(position, address_text) {
-    var originPositionInput = document.getElementsByName('position')[0];
-    if (typeof originPositionInput !== 'undefined') {
-      originPositionInput.remove();
-    }
-    var origin_address_text = address_text;
     var address = address_text.split(", ");
     form.address.value = address[0];
     form.district.value = address[1] + ', ' + address[2];
-    var inputPosition = document.createElement('input')
-    inputPosition.setAttribute("type", "hidden")
-    inputPosition.setAttribute("name", "position")
-    inputPosition.value = JSON.stringify(position);
-    form.references.after(inputPosition);
+    form.address_gps.value = JSON.stringify(position);
   }
 
   function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {

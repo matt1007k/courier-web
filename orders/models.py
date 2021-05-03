@@ -7,18 +7,12 @@ from django.db.models.signals import pre_save
 
 from django.urls.base import reverse
 from clients.models import Client
-from drivers.models import Driver
-from authentication.models import User
 
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
-        REGISTERED = 'RT', _('Registrado')
-        RECEIVED = 'RC', _('Recepcionado')
-        ON_ROUTE = 'OR', _('En Ruta')
-        DELIVERED = 'DL', _('Entregado')
-        UNDELIVERED = 'UDL', _('No Entregado')
-        REPROGRAMMED = 'RPR', _('Reprogramado')
-        CANCELED = 'CN', _('Cancelado')
+        REGISTERED = 'RE', _('Registrado')
+        COMPLETED = 'CO', _('Completado')
+        CANCELED = 'CA', _('Cancelado')
 
     class TypeTicket(models.TextChoices):
         FACTURA = 'FACTURA'
@@ -95,13 +89,10 @@ class Order(models.Model):
         self.status = Order.OrderStatus.CANCELED
         self.save()
 
-    def delivered(self):
-        self.status = Order.OrderStatus.DELIVERED
+    def completed(self):
+        self.status = Order.OrderStatus.COMPLETED
         self.save()
     
-    def is_assign(self):
-        return AssignOrder.objects.filter(order=self).exists(); 
-
     @property
     def get_first_detail(self):
         return self.detail_set.first()
@@ -110,28 +101,6 @@ class Order(models.Model):
         verbose_name = "pedido"
         verbose_name_plural = "pedidos"
 
-class AssignOrder(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='pedido')
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
-    admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
-    image = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 1')
-    image2 = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 2')
-    description = models.TextField(max_length=250, null=True, blank=True, verbose_name='nota (opcional)')
-
-    def __str__(self) -> str:
-        return self.order.tracking_code
-
-    def marked_delivered(self):
-        self.order.delivered()
-    
-    def update_driver(self, driver, admin):
-        self.driver = driver
-        self.admin = admin
-        self.save()
-
-    class Meta:
-        verbose_name = 'asignar pedido'
-        verbose_name_plural = 'asignar pedidos'
 
 # def set_driver(sender, instance, *args, **kwargs):
 #     if instance.client and instance.client.driver_code:

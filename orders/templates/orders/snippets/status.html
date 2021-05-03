@@ -1,17 +1,9 @@
-{% if order.status == 'RT' %}
+{% if order.status == 'RE' %}
 <span class="badge badge-primary">Registrado</span>
-{% elif order.status == 'RC' %}
-<span class="badge badge-success">Recepcionado</span>
-{% elif order.status == 'OR' %}
-<span class="badge badge-secondary">En Ruta</span>
-{% elif order.status == 'DL' %}
-<span class="badge badge-success">Entregado</span>
-{% elif order.status == 'UDL'
-<span class="badge badge-danger">No Entregado</span>
-{% elif order.status == 'CN' %}
+{% elif order.status == 'CO' %}
+<span class="badge badge-success">No Entregado</span>
+{% elif order.status == 'CA' %}
 <span class="badge badge-danger">Cancelado</span>
-{% elif order.status == 'RPR' %}
-<span class="badge badge-success">Reprogramado</span>
 {% else %}
-<span class="badge badge-warning">Pendiente</span>
+<span class="badge badge-primary">Registrado</span>
 {% endif %}

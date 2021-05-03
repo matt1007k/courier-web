@@ -1,138 +1,137 @@
 {% extends "layouts/pages.html" %}
 
 {% block title %}
-    <title>Cuy Click Perú - Completa tu direccíon</title>
+<title>Cuy Click Perú - Completa tu direccíon</title>
 {% endblock title %}
 {% load env_extras %}
 
 {% block content %}
-  <div class="container mt-6">
-    <div class="step-wrapper">
-      <div class="step success">
-          <div class="step-icon-wrapper">
-              <div class="step-icon">
-                  <i class='bx bx-check bx-sm' ></i>
-              </div> 
-              <div class="step-progress-desktop"></div>
-          </div> 
-          <div class="step-content">
-              <div class="text-small caption">Paso 1</div>
-              <h6>Crear una cuenta</h6>
-          </div>
-          <div class="step-progress-mobile"></div>
+<div class="container mt-6">
+  <div class="step-wrapper">
+    <div class="step success">
+      <div class="step-icon-wrapper">
+        <div class="step-icon">
+          <i class='bx bx-check bx-sm'></i>
+        </div>
+        <div class="step-progress-desktop"></div>
       </div>
-      <div class="step success">
-          <div class="step-icon-wrapper">
-              <div class="step-icon">
-                  <i class='bx bx-check bx-sm' ></i>
-              </div> 
-              <div class="step-progress-desktop"></div>
-          </div> 
-          <div class="step-content">
-              <div class="text-small caption">Paso 2</div>
-              <h6>Completa tu información</h6>
-          </div>
-          <div class="step-progress-mobile"></div>
+      <div class="step-content">
+        <div class="text-small caption">Paso 1</div>
+        <h6>Crear una cuenta</h6>
       </div>
-      <div class="step active">
-          <div class="step-icon-wrapper">
-              <div class="step-icon">
-                  <i class='bx bx-current-location bx-sm' ></i>
-              </div> 
-              <div class="step-progress-desktop"></div>
-          </div> 
-          <div class="step-content">
-              <div class="text-small caption">Paso 3</div>
-              <h6>Completa tu dirección</h6>
-          </div>
-          <div class="step-progress-mobile"></div>
+      <div class="step-progress-mobile"></div>
+    </div>
+    <div class="step success">
+      <div class="step-icon-wrapper">
+        <div class="step-icon">
+          <i class='bx bx-check bx-sm'></i>
+        </div>
+        <div class="step-progress-desktop"></div>
       </div>
+      <div class="step-content">
+        <div class="text-small caption">Paso 2</div>
+        <h6>Completa tu información</h6>
+      </div>
+      <div class="step-progress-mobile"></div>
+    </div>
+    <div class="step active">
+      <div class="step-icon-wrapper">
+        <div class="step-icon">
+          <i class='bx bx-current-location bx-sm'></i>
+        </div>
+        <div class="step-progress-desktop"></div>
+      </div>
+      <div class="step-content">
+        <div class="text-small caption">Paso 3</div>
+        <h6>Completa tu dirección</h6>
+      </div>
+      <div class="step-progress-mobile"></div>
     </div>
   </div>
-  <div class="container">
-    <div x-data="stateMap()" x-init="initMap()" class="card-form x-space-2 flex items-center justify-center container-modal">
-      <div class="address__wrapper">
-        <div>
-          <div class="form-group">
-            <label for=""></label>
-            <input type="text" class="input" id="address_google" placeholder="Buscar mi dirección">
-            <input type="hidden" id="address_google_text" x-ref="address_google_text">
-          </div>
-        </div>
-        <div class="mt-2 mb-2">O</div>
-        <div>
-          <button type="button" @click="isOpen = true" class="btn btn-default btn-small">
-              Elegir mi dirección en el mapa
-          </button>
-        </div>
-      </div>
-        <div 
-            x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
-            class="modal">
-            <div 
-                class="modal-content card" style="width: 800px;" 
-                @click.away="isOpen = false" 
-            >
-                <div class="head" style="height: 50px;">
-                    <h6>Elegir mi dirección</h6>
-                    <div class="close">
-                        <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
-                            <i class='bx bx-x bx-sm' style="margin-right: 0;"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="form-modal">
-                  <div id="map"></div>
-                    <div class="actions right">
-                        <button @click="isOpen = false" class="btn btn-default">Cancelar</button>
-                        <button type='submit' class="btn btn-primary" @click="selectPosition()">Elegir</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
-  <div class="container-auth medium" style="padding-top: 10px;">
-    {% include "partials/message.html" %}
-    <form method="post" id="form-address">
-        {% csrf_token %}
-        {% for field in form %}
+</div>
+<div class="container card-message">
+  <div x-data="stateMap()" x-init="initMap()" class="card-form container-modal">
+    <div class="address__wrapper">
+      <div>
         <div class="form-group">
-          {{ field.label_tag }}
-          {{ field }}
-          {% if field.errors %}
-            {% for error in field.errors %}
-            <div class="text-invalid">
-              {{ error }}
-            </div>
-            {% endfor %}
-          {% endif %}
+          <label for=""></label>
+          <input type="text" class="input" id="address_google" placeholder="Buscar mi dirección">
+          <input type="hidden" id="address_google_text" x-ref="address_google_text">
         </div>
-        {% endfor %}
-        <button type="submit" class="btn btn-primary btn-full">Finalizar</button>
-    </form>
- </div>
- <div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
+      </div>
+      <div class="mt-2 mb-2">O</div>
+      <div>
+        <button type="button" @click="isOpen = true" class="btn btn-default btn-small">
+          Elegir mi dirección en el mapa
+        </button>
+      </div>
+    </div>
+    <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+      <div class="modal-content card" style="width: 800px;" @click.away="isOpen = false">
+        <div class="head" style="height: 50px;">
+          <h6>Elegir mi dirección</h6>
+          <div class="close">
+            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+              <i class='bx bx-x bx-sm' style="margin-right: 0;"></i>
+            </button>
+          </div>
+        </div>
+        <div class="form-modal">
+          <div id="map"></div>
+          <div class="actions right">
+            <button @click="isOpen = false" class="btn btn-default">Cancelar</button>
+            <button type='submit' class="btn btn-primary" @click="selectPosition()">Elegir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-auth medium" style="padding-top: 10px;">
+  {% include "partials/message.html" %}
+  <form method="post" id="form-address">
+    {% csrf_token %}
+    {% for field in form %}
+    {% if field.is_hidden %}
+    {{ field }}
+    {% else %}
+    <div class="form-group">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}
+      {% for error in field.errors %}
+      <div class="text-invalid">
+        {{ error }}
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+    <button type="submit" class="btn btn-primary btn-full">Finalizar</button>
+  </form>
+</div>
+<div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
 {% endblock content %}
 
 {% block scripts %}
 <script>
-  (function(){
+  (function () {
     loadScript();
   })()
   var form = document.querySelector('#form-address');
-  form.full_name.value = "{{ request.user.client.full_name }}"; 
-  form.email.value = "{{ request.user.email }}"; 
-  form.cell_phone.value = "{{ request.user.client.cell_phone }}"; 
+  form.full_name.value = "{{ request.user.client.full_name }}";
+  form.email.value = "{{ request.user.email }}";
+  form.cell_phone.value = "{{ request.user.client.cell_phone }}";
   fieldOnlyRead();
 
-  function fieldOnlyRead(){
+  function fieldOnlyRead() {
     form.full_name.readOnly = true;
     form.email.readOnly = true;
     form.cell_phone.readOnly = true;
   }
-  function stateMap(){
-    return{
+  function stateMap() {
+    return {
       isOpen: false,
       address: {
         address_info: '',
@@ -141,20 +140,18 @@
           lng: 0
         }
       },
-      selectPosition(){
+      selectPosition() {
         changePositionAddress(this.address.position, this.address.address_info);
 
         this.isOpen = false;
-        
+
       },
-      geocodeLatLng(geocoder, map, infowindow){
+      geocodeLatLng(geocoder, map, infowindow) {
         geocoder.geocode({ location: this.address.position }, (results, status) => {
           if (status === "OK") {
             if (results[0]) {
               map.setZoom(18);
               this.address.address_info = results[0].formatted_address;
-              // this.address.position.lat = results[0].geometry.viewport.Ua.g;
-              // this.address.position.lng = results[0].geometry.viewport.La.g;
               const marker = new google.maps.Marker({
                 position: this.address.position,
                 map: map,
@@ -169,61 +166,42 @@
           }
         });
       },
-      currentPosition(geocoder, infowindow){
-       if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                this.address = {
-                  position: {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                  }
-                };
-                // infoWindow.setPosition(pos);
-                // infoWindow.setContent("Localización actual");
-                // infoWindow.open(map);
-                map.setCenter(this.address.position);
-                // new google.maps.Marker({
-                //   position: this.address.position,
-                //   map,
-                //   title: 'Mi direccion'
-                // })
-                window.address = this.address;
-                this.geocodeLatLng(geocoder, map, infowindow);
-              },
-              () => {
-                handleLocationError(true, infoWindow, map.getCenter());
-              }
-            );
-          } else {
-            // Browser doesn't support Geolocation
-            handleLocationError(false, infoWindow, map.getCenter(), map);
-          } 
+      currentPosition(geocoder, infowindow) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              this.address = {
+                position: {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude,
+                }
+              };
+              map.setCenter(this.address.position);
+              window.address = this.address;
+              this.geocodeLatLng(geocoder, map, infowindow);
+            },
+            () => {
+              handleLocationError(true, infoWindow, map.getCenter());
+            }
+          );
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter(), map);
+        }
       },
-      initMap(){
-          window.map = new google.maps.Map(document.getElementById('map'), {
-            center: this.address.position,
-            zoom: 17
-          });
-          const geocoder = new google.maps.Geocoder();
-          const infowindow = new google.maps.InfoWindow();
-          this.currentPosition(geocoder, infowindow);
-          
-          map.addListener("click", (mapsMouseEvent) => {
-            this.address.position = mapsMouseEvent.latLng,
-            this.geocodeLatLng(geocoder, map, infowindow);
-          });
+      initMap() {
+        window.map = new google.maps.Map(document.getElementById('map'), {
+          center: this.address.position,
+          zoom: 17
+        });
+        const geocoder = new google.maps.Geocoder();
+        const infowindow = new google.maps.InfoWindow();
+        this.currentPosition(geocoder, infowindow);
 
-        // var infoWindow = new google.maps.InfoWindow();
-        // const locationButton = document.createElement("button");
-        // locationButton.textContent = "Obtener mi localización actual";
-        // locationButton.classList.add("btn");
-        // locationButton.classList.add("btn-primary");
-        // locationButton.classList.add("btn-xsmall");
-        // map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
-        // locationButton.addEventListener("click", () => {
-        //   // Try HTML5 geolocation.
-        // });
+        map.addListener("click", (mapsMouseEvent) => {
+          this.address.position = mapsMouseEvent.latLng,
+            this.geocodeLatLng(geocoder, map, infowindow);
+        });
       },
     }
   }
@@ -231,23 +209,19 @@
     var address_google = new google.maps.places.Autocomplete(document.getElementById('address_google'));
 
     google.maps.event.addListener(address_google, 'place_changed', function () {
-        var address = address_google.getPlace();
-        var address_text = address.formatted_address;
-        document.querySelector('#address_google_text').value = address_text;
-        changePositionAddress(address.geometry.location, address_text);
+      var address = address_google.getPlace();
+      var address_text = address.formatted_address;
+      document.querySelector('#address_google_text').value = address_text;
+      changePositionAddress(address.geometry.location, address_text);
     });
   }
 
-  function changePositionAddress(position, address_text){
-        var address = address_text.split(", ");
-        form.address.value = address[0];
-        form.district.value = address[1];
-        form.city.value = address[2];
-        var inputPosition = document.createElement('input')
-        inputPosition.setAttribute("type", "hidden")
-        inputPosition.setAttribute("name", "position")
-        inputPosition.value = JSON.stringify(position);
-        form.reference.after(inputPosition);
+  function changePositionAddress(position, address_text) {
+    var address = address_text.split(", ");
+    form.address.value = address[0];
+    form.district.value = address[1];
+    form.city.value = address[2];
+    form.address_gps.value = JSON.stringify(position);
   }
 
   function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
@@ -259,26 +233,26 @@
     );
     infoWindow.open(map);
   }
-  function loadScript(){
-        // Create the script tag, set the appropriate attributes
-        var key = document.querySelector('#key');
-        var keyValue = key.dataset.value;
-        var script = document.createElement('script');
-        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key='+ keyValue +'&callback=initMap';
-        script.async = true;
+  function loadScript() {
+    // Create the script tag, set the appropriate attributes
+    var key = document.querySelector('#key');
+    var keyValue = key.dataset.value;
+    var script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key=' + keyValue + '&callback=initMap';
+    script.async = true;
 
-        // Attach your callback function to the `window` object
-        window.initMap = function() {
-          // JS API is loaded and available
-          setDestination();
-        };
+    // Attach your callback function to the `window` object
+    window.initMap = function () {
+      // JS API is loaded and available
+      setDestination();
+    };
 
-        // Append the 'script' element to 'head'
-        document.head.appendChild(script);
+    // Append the 'script' element to 'head'
+    document.head.appendChild(script);
   }
 </script>
 <style>
-  #map{
+  #map {
     width: 100%;
     height: 400px;
   }

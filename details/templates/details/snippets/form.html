@@ -105,12 +105,12 @@
       </div>
       <i class='icon bx bx-right-arrow-alt bx-md text-title'></i>
       <div>
-        <h5 class="mb-4">Dirección de envió</h5>
+        <h5 class="mb-4">Dirección de envío</h5>
         <div class="address__wrapper mb-4">
           <div class="mb-4">
             <div class="form-group-search m-0">
               <input type="search" class="input input-outline" id="destiny_search"
-                placeholder="Buscar dirección de envió en google maps">
+                placeholder="Buscar dirección de envío en google maps">
               <i class="input-icon bx bx-search bx-sm"></i>
             </div>
             <input type="hidden" id="destiny_search_text">
@@ -173,7 +173,7 @@
     form.origin_address.value = address[0];
     form.origin_district.value = address[1];
     form.origin_city.value = address[2];
-    form.origin_position.value = position;
+    form.origin_position.value = JSON.stringify(position);
     if(form.destiny_address.value !== null && form.destiny_district.value !== null && form.destiny_city.value !==  ''){
       getDistanceMatrix();
     }
@@ -316,8 +316,7 @@
         this.btnDisabled = true;
         this.address_before = '';
         this.address_list.push(this.address_select);
-        var jsonPosition = this.address_select.fields.address_gps;
-        // JSON.parse(this.address_select.fields.address_gps);
+        var jsonPosition = JSON.parse(this.address_select.fields.address_gps);
         changePositionAddressOrigin(jsonPosition, this.getAddressText(this.address_select.fields));
         changeInfoAddressOrigin(this.address_select.fields);
       },
