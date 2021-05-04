@@ -6,10 +6,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.views.generic import DeleteView
 from django.urls import reverse 
 
-from .models import Detail
+from .models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress
 from addresses.models import Address
 
-from .forms import DetailForm, DetailModelForm
+from .forms import DetailForm, DetailModelForm, PackageDeliveredModelForm
 from addresses.forms import OriginAddressForm, DestinyAddressForm
 
 from orders.utils import fields_destiny_form, get_or_create_order, fields_origin_form
@@ -105,10 +105,14 @@ def origin_map_view(request, pk):
     title = 'Ver mapa de dirección de recojo'
     template_name = 'details/origin-map.html'
     detail = Detail.objects.get(pk=pk) 
+    if not detail.is_delivered:
+        detail.on_routed()
+    driver = AssignOriginAddress.objects.filter(detail=detail).first().driver
 
     return render(request, template_name, context={
         'title': title,
-        'detail': detail
+        'detail': detail,
+        'driver': driver
     })
 
 @login_required()
@@ -116,10 +120,71 @@ def destiny_map_view(request, pk):
     title = 'Ver mapa de dirección de entrega'
     template_name = 'details/destiny-map.html'
     detail = Detail.objects.get(pk=pk) 
+    if not detail.is_delivered:
+        detail.on_routed()
+    driver = AssignDeliveryAddress.objects.filter(detail=detail).first().driver
 
     return render(request, template_name, context={
         'title': title,
+        'detail': detail,
+        'driver': driver
+    })
+
+@login_required()
+@permission_required('details.view_assignoriginaddress', raise_exception=True)
+def received_package_view(request, pk):
+    if request.method == 'GET':
+        detail = Detail.objects.get(pk=pk)
+        detail.received()
+        UnassignDeliveryAddress.objects.create(
+            detail=detail
+        )
+
+        messages.success(request, 'El paquete ha sido recojido')
+        return redirect('orders:origins')
+
+@login_required()
+@permission_required('details.view_assignoriginaddress', raise_exception=True)
+def not_on_routed_origin_view(request, pk):
+    if request.method == 'GET':
+        detail = Detail.objects.get(pk=pk)
+        if not detail.is_delivered:
+            detail.pended()
+
+        return redirect('orders:origins')
+
+@login_required()
+@permission_required('details.view_assigndeliveryaddress', raise_exception=True)
+def not_on_routed_delivery_view(request, pk):
+    if request.method == 'GET':
+        detail = Detail.objects.get(pk=pk)
+        if not detail.is_delivered:
+            detail.pended()
+
+        return redirect('orders:deliveries')
+
+@login_required()
+@permission_required('details.add_packagedelivered', raise_exception=True)
+def package_delivered_view(request, pk):
+    title = 'Entrega de paquete'
+    template_name = 'orders/assign/delivered.html'
+    detail = Detail.objects.get(pk=pk)
+    form_class = PackageDeliveredModelForm(request.POST, request.FILES)
+    if request.method == 'POST' and form_class.is_valid():
+        print('post', request.FILES)
+        form = form_class.save(commit=False)
+        form.detail = detail
+        form.driver = request.user.driver if request.user.is_driver else None
+        form.save()
+        detail.delivered()
+        messages.success(request, 'El paquete fue registrado como entregado')
+        return redirect('orders:deliveries')
+
+    return render(request, template_name, context={
+        'title': title,
+        'form': form_class,
         'detail': detail
     })
+
 
 

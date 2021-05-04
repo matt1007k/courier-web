@@ -194,10 +194,10 @@
                 </div>
                 <div class="mt-5">
                     <h6>Imágenes del pago realizado</h6>
-                    {% if order.image_payed %}
+                    {% if order.payed_image %}
                     <div class="package-picture modal-container" x-data="{ isOpen: false }">
                         <div class="package-picture cursor-pointer" @click="isOpen = true">
-                            <img src="{{ order.image_payed.url }}" alt="{{ order.tracking_code }}">
+                            <img class="w-full mt-2" src="{{ order.payed_image.url }}" alt="{{ order.tracking_code }}">
                         </div>
                         <div 
                             x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
@@ -214,8 +214,8 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="form-modal">
-                                    <img src="{{ order.image_payed.url }}" style="width: 100%" alt="{{ order.image_payed }}">
+                                <div class="form-modal" style="overflow: auto;">
+                                    <img src="{{ order.payed_image.url }}" style="width: 100%" alt="{{ order.tracking_code }}">
                                 </div>
 
                             </div>

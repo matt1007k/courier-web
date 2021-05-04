@@ -1,5 +1,5 @@
 import decimal
-from promo_codes.models import PromoCode
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 
@@ -7,6 +7,7 @@ from django.db.models.signals import pre_save
 
 from django.urls.base import reverse
 from clients.models import Client
+from promo_codes.models import PromoCode
 
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
@@ -92,6 +93,12 @@ class Order(models.Model):
     def completed(self):
         self.status = Order.OrderStatus.COMPLETED
         self.save()
+
+    def get_tracking_code_text(self):
+        return '# TRACKING {}'.format(self.tracking_code)
+    
+    def created_at_naturaltime(self):
+        return naturaltime(self.created_at)
     
     @property
     def get_first_detail(self):

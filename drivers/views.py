@@ -215,7 +215,7 @@ def payment_account_update_view(request, slug):
 def get_driver_view(request):
     if request.method == 'GET':
         q = request.GET.get('q')
-        filters = Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(dni__icontains=q)
+        filters = Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(dni__icontains=q) | Q(district__icontains=q)
         qs = Driver.objects.filter(filters)[:5]
         data = serialize('json', qs)
         return HttpResponse(data, content_type='application/json')

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Detail
+from .models import Detail, PackageDelivered
 
 class DetailForm(forms.Form):
     size = forms.CharField(max_length=150, label='Tamaño del paquete', widget=forms.TextInput(attrs={
@@ -28,4 +28,13 @@ class DetailModelForm(forms.ModelForm):
             'value',
             'image',
             'description',
+        )
+
+class PackageDeliveredModelForm(forms.ModelForm):
+    class Meta:
+        model = PackageDelivered
+        fields = (
+            'image',
+            'image2',
+            'description'
         )

@@ -1,6 +1,10 @@
 import json
+import ast
+from details.paginations import LargeResultsSetPagination
+from details.serializers import UnAssignOrignAddressSerializer
 from django.http.response import HttpResponse, JsonResponse
 from django.core.serializers import serialize
+from rest_framework.generics import ListAPIView
 from orders.mails import Mail
 from clients.models import Client
 from drivers.models import Driver
@@ -11,7 +15,7 @@ from django.shortcuts import redirect, render
 from datetime import datetime
 from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress, UnassignOriginAddress
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, detail
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -72,8 +76,6 @@ class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, L
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Recojo de paquetes'
-        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
-        self.request.session['order_id'] = None
         return context
 
     def query(self):
@@ -100,8 +102,6 @@ class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin,
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Entrega de paquetes'
-        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
-        self.request.session['order_id'] = None
         return context
 
     def query(self):
@@ -128,21 +128,12 @@ class UnassignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin,
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Asignar recojos'
-        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
-        self.request.session['order_id'] = None
         return context
 
     def query(self):
         return self.request.GET.get('q')
 
-    def query_date(self):
-        return self.request.GET.get('date')
-
-    def query_status(self):
-        return self.request.GET.get('status')
-
     def get_queryset(self):
-            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
         object_list = self.model.objects.all().order_by('-id')
         return object_list
 
@@ -155,21 +146,12 @@ class UnassignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixi
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Asignar entregas'
-        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
-        self.request.session['order_id'] = None
         return context
 
     def query(self):
         return self.request.GET.get('q')
 
-    def query_date(self):
-        return self.request.GET.get('date')
-
-    def query_status(self):
-        return self.request.GET.get('status')
-
     def get_queryset(self):
-            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
         object_list = self.model.objects.all().order_by('-id')
         return object_list
 
@@ -220,6 +202,7 @@ def payment_view(request):
             )
             for detail in order.detail_set.all():
                 Mail.send_origin_complete_order(detail, detail.address_origin.email)
+                UnassignOriginAddress.objects.create(detail=detail)
             return redirect('orders:payment-success') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
@@ -277,45 +260,53 @@ class DetailOrderView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
         return context
 
 @login_required()
-@permission_required('orders.add_assignoriginaddress', login_url='/orders/')
-def assign_order_view(request, pk):
-    template_name = 'orders/assign/create.html'
-    title = 'Asignar pedido'
-    btnText = 'Asignar'
-    detail = Detail.objects.get(pk=pk)
-    assign_detail = AssignOriginAddress.objects.filter(detail=detail).first()
-    if assign_detail:
-        driver = assign_detail.driver
-        title = 'Reasignar pedido'
-        btnText = 'Reasignar'
-
-    if request.method == 'POST':
-        driver = Driver.objects.filter(pk=request.POST.get('driver_id')).first()
-        if assign_detail:
-            assign_detail.update_driver(
-                driver=driver,
-                admin=request.user if request.user.is_administrator else None
-            )
-            messages.success(request, 'Pedido reasignado con éxito')
-            return redirect('details:index')
-        else:
-            AssignOriginAddress.objects.create(
-                detail=detail,
-                driver=driver,
-                admin=request.user if request.user.is_administrator else None
-            )
-            messages.success(request, 'Pedido asignado con éxito')
-            return redirect('orders:index')
-
-    return render(request, template_name, context={
-        'detail': detail,
-        'assign_detail': assign_detail,
-        'title': title,
-        'btnText': btnText,
-    })
+def get_client_view(request):
+    qs = get_or_create_order(request).client
+    data = serialize('json', [qs])
+    return HttpResponse(data, content_type="aplication/json")
 
 @login_required()
 def get_client_view(request):
     qs = get_or_create_order(request).client
     data = serialize('json', [qs])
     return HttpResponse(data, content_type="aplication/json")
+
+
+class UnassignOriginAddressListAPIView(ListAPIView):
+    queryset = UnassignOriginAddress.objects.all()
+    serializer_class = UnAssignOrignAddressSerializer
+    pagination_class = LargeResultsSetPagination 
+
+@login_required()
+@permission_required('details.add_assignoriginaddress', raise_exception=True)
+def assign_origins_to_driver_view(request):
+    if request.method == 'POST':
+        detail_ids = ast.literal_eval(request.POST.get('assign_addresses_ids'))
+        driver = Driver.objects.get(pk=request.POST.get('driver_id'))
+        for id in detail_ids:
+            detail = Detail.objects.get(pk=id)
+            AssignOriginAddress.objects.create(
+                detail=detail,
+                driver=driver,
+                admin=request.user if request.user.is_administrator else None
+            )
+            UnassignOriginAddress.objects.filter(detail=detail).first().delete()
+        messages.success(request, 'Direccion(es) de recojo asignada(s) con éxito')
+        return redirect("orders:unassign-origins")
+
+@login_required()
+@permission_required('details.add_assigndeliveryaddress', raise_exception=True)
+def assign_deliveries_to_driver_view(request):
+    if request.method == 'POST':
+        detail_ids = ast.literal_eval(request.POST.get('assign_addresses_ids'))
+        driver = Driver.objects.get(pk=request.POST.get('driver_id'))
+        for id in detail_ids:
+            detail = Detail.objects.get(pk=id)
+            AssignDeliveryAddress.objects.create(
+                detail=detail,
+                driver=driver,
+                admin=request.user if request.user.is_administrator else None
+            )
+            UnassignDeliveryAddress.objects.filter(detail=detail).first().delete()
+        messages.success(request, 'Direccion(es) de entrega asignada(s) con éxito')
+        return redirect("orders:unassign-deliveries")

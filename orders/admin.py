@@ -20,7 +20,7 @@ class AssingDeliveryAddressAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'detail', 'driver', 'admin')
 
 class PackageDeliveredAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'detail')
+    list_display = ('__str__', 'detail', 'driver', 'created_at')
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Detail)

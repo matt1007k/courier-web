@@ -97,13 +97,41 @@ class Detail(models.Model):
             )
         return address_destiny[0]
 
+    def pended(self):
+        self.status = Detail.PackageStatus.PENDING
+        self.save()
+
+    def on_routed(self):
+        self.status = Detail.PackageStatus.ON_ROUTE
+        self.save()
+
     def received(self):
         self.status = Detail.PackageStatus.RECEIVED
+        self.save()
+
+    def wakehoused(self):
+        self.status = Detail.PackageStatus.WAREHOUSE
+        self.save()
+
+    def wakehoused(self):
+        self.status = Detail.PackageStatus.WAREHOUSE
         self.save()
 
     def delivered(self):
         self.status = Detail.PackageStatus.DELIVERED
         self.save()
+
+    def undelivered(self):
+        self.status = Detail.PackageStatus.UNDELIVERED
+        self.save()
+
+    def reprogrammed(self):
+        self.status = Detail.PackageStatus.REPROGRAMMED
+        self.save()
+
+    @property
+    def is_delivered(self):
+        return self.status == Detail.PackageStatus.DELIVERED
 
     class Meta:
         verbose_name = "detalle"
@@ -165,14 +193,19 @@ class UnassignDeliveryAddress(models.Model):
         verbose_name_plural = 'direcciones de envío sin asignar '
 
 class PackageDelivered(models.Model):
-    detail = models.OneToOneField(Detail, on_delete=models.CASCADE, verbose_name='dirección de envío')
-    image = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 1')
-    image2 = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 2')
+    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='dirección de envío')
+    driver = models.ForeignKey(Driver, null=True, blank=True, on_delete=models.CASCADE, verbose_name='motorizado')
+    image = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', verbose_name='imagen o foto 1')
+    image2 = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', verbose_name='imagen o foto 2')
     description = models.TextField(max_length=250, null=True, blank=True, verbose_name='nota (opcional)')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de entrega')
+
+    def __str__(self) -> str:
+        return self.detail.address_destiny.full_name
 
     class Meta:
-        verbose_name = 'entrega de dirección de envío'
-        verbose_name_plural = 'entrega de direcciones de envío'
+        verbose_name = 'entrega de paquete'
+        verbose_name_plural = 'entrega de paquetes'
 
 def set_price_rate(sender, instance, *args, **kargs):
     pass

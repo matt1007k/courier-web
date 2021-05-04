@@ -6,7 +6,7 @@
 {% block content_head %}
 <div class="content-head">
     <div class="left">
-        <a href="{% url 'orders:deliveries' %}" class="btn btn-link btn-small">
+        <a href="{% url 'details:not-onrouted-delivery' pk=detail.pk  %}" class="btn btn-link btn-small">
             <i class='bx bx-left-arrow-alt bx-sm'></i>
         </a>
         <h4>{{ title }}</h4>
@@ -33,7 +33,7 @@
             {% endfor %}
         
             <div class="actions reverse right">
-                <a href="{% url 'orders:deliveries' %}" class="btn btn-default">Cancelar</a>
+                <a href="{% url 'details:not-onrouted-delivery' pk=detail.pk %}" class="btn btn-default">Cancelar</a>
                 <button type="submit" class="btn btn-primary">Entregado</a>
             </div>
         </form>

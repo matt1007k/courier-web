@@ -10,74 +10,61 @@
         <h4>{{ title }}</h4>
     </div>
     <div class="right">
-        <!-- <div x-data="{ isOpen: false }" class="container-modal">
-            <button @click="isOpen = true" class="btn btn-link btn-small">
-            <svg
-            class="filter"
-            width="24"
-            height="24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                    d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
-                    fill="#2E3A59"
-                />
-            </svg>
-            </button>
-            <div 
-                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
-                class="modal modal-right">
-                <div 
-                    class="modal-content card" style="width: 400px" 
-                    @click.away="isOpen = false" 
-                >
-                    <div class="head">
-                        <h6>Búsqueda avanzada</h6>
-                        <div class="close">
-                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
-                                <i class='bx bx-x bx-sm' ></i>
-                            </button>
-                        </div>
-                    </div>
-                    <form method='GET' class="form-modal">
-                        <div class="form-group">
-                            <input type='search' name='q' placeholder="¿Qué estás buscando?" value='{{ request.GET.q }}' class="input">
-                        </div>
-                        <div class="form-group">
-                            <label for="date">Fecha de registro</label>
-                            <input type="date" class="input" name="date" id="date" value="{{ request.GET.date }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Estado</label>
-                            <select name="status" id="status" class="input">
-                                <option value="">Seleccionar el estado</option>
-                                <option value="{{ statuses.REGISTERED }}" {% if status == 'REGISTERED'%}selected{% endif %}>Entregado</option>
-                                <option value="{{ statuses.ON_ROUTE }}" {% if status == 'ON_ROUTE'%}selected{% endif %}>En Ruta</option>
-                                <option value="{{ statuses.DELIVERED }}" {% if status == 'DELIVERED'%}selected{% endif %}>Entregado</option>
-                                <option value="{{ statuses.UNDELIVERED }}" {% if status == 'UNDELIVERED'%}selected{% endif %}>No Entregado</option>
-                                <option value="{{ statuses.REPROGRAMMED }}" {% if status == 'REPROGRAMMED'%}selected{% endif %}>Reprogramado</option>
-                            </select>
-                        </div>
-                        
-                        <div class="actions right">
-                            <button type='submit' class="btn btn-primary">Buscar</button>
-                        </div>
-                    </form> 
-                </div>
-            </div>
-        </div> -->
     </div>
 </div>
 {% endblock content_head %}
 {% block content %}
-<!-- <div class="filter-list space-x-2">
-    <a href="{% url 'orders:index' %}?status={{ statuses.REGISTERED }}" class="btn btn-{% if status == statuses.REGISTERED %}primary{% else %}link{% endif %} btn-small">Registrado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.ON_ROUTE }}" class="btn btn-{% if status == statuses.ON_ROUTE %}primary{% else %}link{% endif %} btn-small">En Ruta</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.DELIVERED }}" class="btn btn-{% if status == statuses.DELIVERED %}primary{% else %}link{% endif %} btn-small">Entregado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.UNDELIVERED }}" class="btn btn-{% if status == statuses.UNDELIVERED %}primary{% else %}link{% endif %} btn-small">No Entregado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.REPROGRAMMED }}" class="btn btn-{% if status == statuses.REPROGRAMMED %}primary{% else %}link{% endif %} btn-small">Reprogramado</a>
-</div> -->
+<div>
+    <div class="container-modal" x-data="addressState()" x-init="init()">
+
+        <div id="assign-to-driver" class="mb-4 mt-4">
+            <a type="button" class="btn btn-secondary btn-small btn-rounded" @click="isOpen = true">
+                <i class="bx bx-check-circle bx-sm"></i>
+                <span>Asignar a un motorizado</span>
+            </a>
+        </div>
+        <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+            <div class="modal-content card" style="width: 450px" @click.away="isOpen = false">
+                <div class="head">
+                    <h6>Asignar un motorizado</h6>
+                    <div class="close">
+                        <a @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                            <i class='bx bx-x bx-sm m-0'></i>
+                        </a>
+                    </div>
+                </div>
+                <form id="assign-form" class="form-modal" method="POST" action="{% url 'orders:assign-deliveries' %}">
+                    {% csrf_token %}
+                    <div class="form-group-search m-0">
+                        <input type="search" class="input input-outline" id="seach" x-model="search" ref="search"
+                            placeholder="Buscar un motorizado" />
+                        <i class="input-icon bx bx-search bx-sm"></i>
+                    </div>
+                    <div class="options-2 mt-4">
+                        <template x-if="driver_list.length || driver_select" x-for="(driver, index) in driver_list"
+                            :key="index">
+                            <div class="option-item" style="transition: all 1s;"
+                                :class="{'active': driver_select.pk === driver.pk}" @click="selectDriver(index)">
+                                <i class="bx bx-check-circle bx-md"></i>
+                                <div>
+                                    <p class="text-muted text-small text-left" x-text="`DNI ${driver.fields.dni}`"></p>
+                                    <p class="text-primary text-left" x-text="getFullNameText(driver.fields)"></p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div x-show="!driver_list.length" class="alert text-muted" x-text="emptyMessageText"></div>
+                    <input type="hidden" name="driver_id" required>
+                    <input type="hidden" name="assign_addresses_ids" required>
+                    <div class="actions right">
+                        <a @click="isOpen = false" class="btn btn-default">Cancelar</a>
+                        <button type="submit" :disabled="btnDisabled" class="btn btn-primary">Asignar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="mb-10 order-list-grid">
     <div class="order-list-head">
         <div class="order-list-head-item">
@@ -87,7 +74,7 @@
             Dirección de envío
         </div>
         <div class="order-list-head-item">
-          ¿Quién te atenderá? 
+            ¿Quién te atenderá?
         </div>
         <div class="order-list-head-item" style="justify-self: end;">
             Acciones
@@ -98,7 +85,10 @@
 
     {% for object in object_list %}
 
-    <div class="card card-normal order-list-row" x-data="{ isOpenSm: false, isOpenMd: false }">
+    <div class="card card-normal order-list-row checkbox" x-data="{ isOpenSm: false, isOpenMd: false }">
+        <div class="checkbox">
+            <input type="checkbox" onclick="selectAddressDetail({{object.detail.id}})" value="{{ object.detail.id }}">
+        </div>
         <div class="order-list-col">
             <div class="icon icon-warning-default rounded rounded-md">
                 <img src="{% static 'icon/order-icon.svg' %}" />
@@ -141,16 +131,11 @@
                 x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
                 @click.away="isOpenMd = false">
                 {% if perms.details.view_detail %}
-                <a href="{{ detail.destiny_map_path }}"
-                    class="dropdown-item-2">
+                <a href="{{ object.detail.destiny_map_path }}" class="dropdown-item-2">
                     <span>Ver mapa</span>
                     <i class='bx bx-map-pin bx-sm'></i>
                 </a>
                 {% endif %}
-                <!-- <a href="#" class="dropdown-item-2 text-primary">
-                    <span>Recibido</span>
-                    <i class='bx bx-check-circle bx-sm'></i>
-                </a> -->
             </div>
         </div>
         <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpenSm" class="modal modal-sheet">
@@ -166,7 +151,7 @@
                 <div class="form-modal">
                     <div class="options">
                         {% if perms.details.view_detail %}
-                        <a href="{{ detail.destiny_map_path }}" class="option-item">
+                        <a href="{{ object.detail.destiny_map_path }}" class="option-item">
                             <span>Ver mapa</span>
                             <div class="icon ">
                                 <i class='bx bx-map-pin bx-sm'></i>
@@ -226,3 +211,122 @@
     {% endif %}
 </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+    var assign_addresses = [];
+    var visible = false;
+    var assign_to_driver = document.getElementById('assign-to-driver');
+    var form = document.getElementById('assign-form');
+    (function () {
+        setHidden();
+    })()
+    function selectAddressDetail(id) {
+        if (assign_addresses.includes(id)) {
+            var index = assign_addresses.indexOf(id);
+            assign_addresses.splice(index, 1);
+        } else {
+            assign_addresses.push(id);
+        }
+        validateAssignOrigin();
+    }
+    function validateAssignOrigin() {
+        if (assign_addresses.length > 0) {
+            visible = true;
+            setVisible();
+        } else {
+            visible = false;
+            setHidden();
+        }
+    }
+    function setVisible() {
+        assign_to_driver.classList.remove('hidden');
+        assign_to_driver.classList.add('visible');
+    }
+    function setHidden() {
+        assign_to_driver.classList.remove('visible');
+        assign_to_driver.classList.add('hidden');
+    }
+    function addressState() {
+        return {
+            isOpen: false,
+            search: '',
+            driver_list: [],
+            driver_select: {},
+            emptyMessageText: 'Ingrese el distrito, dni o apellidos y nombres',
+            btnDisabled: true,
+            getDrivers(value) {
+                fetch('/drivers/get-drivers/?q=' + value)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.length) {
+                            this.emptyMessageText = 'Sin resultados';
+                            this.driver_list = [];
+                            return;
+                        }
+                        this.driver_list = data;
+                    });
+            },
+            getFullNameText(driver) {
+                return `${driver.first_name}, ${driver.last_name}`;
+            },
+            selectDriver(index) {
+                this.driver_select = this.driver_list[index];
+                this.btnDisabled = false;
+                changeFieldsAssign(this.driver_select);
+            },
+            init() {
+                this.$watch('search', (value) => {
+                    if (!value) {
+                        this.emptyMessageText = 'Ingrese el distrito, dni o apellidos y nombres';
+                        this.driver_list = [];
+                        return;
+                    }
+                    this.getDrivers(value);
+                });
+            }
+        }
+    }
+    function changeFieldsAssign(driver_selected) {
+        form.driver_id.value = driver_selected.pk;
+        form.assign_addresses_ids.value = JSON.stringify(assign_addresses);
+    }
+</script>
+<style>
+    #assign-to-driver {
+        display: none;
+        transition: all 1s ease-in;
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    #assign-to-driver.visible {
+        display: flex;
+        justify-content: flex-end;
+        animation: slide-out 1s forwards;
+    }
+
+    #assign-to-driver.hidden {
+        display: none;
+        animation: slide-in 1s forwards;
+    }
+
+    @keyframes slide-in {
+        100% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+    }
+
+    @keyframes slide-out {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

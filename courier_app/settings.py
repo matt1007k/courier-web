@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'livereload',
     'django_inlinecss',
+    'rest_framework',
 
     'pages',
     'authentication',
@@ -153,6 +154,10 @@ AUTHENTICATION_BACKENDS = ['authentication.backends.EmailBackend']
 
 # LOGIN_REDIRECT_URL = '/auth/login'
 LOGIN_URL = '/auth/login'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+}
 
 from decouple import config
 
