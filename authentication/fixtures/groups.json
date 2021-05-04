@@ -1,0 +1,67 @@
+[
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "Administrador",
+        "permissions": [
+            45,
+            46,
+            21,
+            40,
+            49,
+            52,
+            53,
+            56,
+            57,
+            58,
+            59,
+            60,
+            68,
+            64,
+            25,
+            26,
+            27,
+            28,
+            33,
+            34,
+            41,
+            44
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "Cliente",
+        "permissions": [
+            45,
+            46,
+            47,
+            48,
+            57,
+            58,
+            59,
+            60,
+            41,
+            44
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "Motorizado",
+        "permissions": [
+            52,
+            56,
+            69,
+            72,
+            29,
+            30
+        ]
+    }
+}
+]
