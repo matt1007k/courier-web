@@ -8,308 +8,351 @@
 
 {% block content_head %}
 <div class="content-head">
-    <div class="left">
-        <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Formas de pago">
+    <div class="left modal-container" x-data="{ isOpen: false }">
+        <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Formas de pago" @click="isOpen = true">
             <i class='bx bx-help-circle bx-sm'></i>
         </a>
+        <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+            <div class="modal-content card" style="width: 600px" @click.away="isOpen = false">
+                <div class="head">
+                    <h6>Formas de pago</h6>
+                    <div class="close">
+                        <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                            <i class='bx bx-x bx-sm'></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-modal">
+                    <h5>Los depósitos se realizan a:</h6> 
+
+                    <h6>Meredith Botta Palacios (Gerente General)</h6>
+                    <p>E -COURIER INVERSIONES EIRL</p>
+                    
+
+                    <h6 class="mt-2">💳 Cuenta INTERBANK Soles</h6>
+                    <p>Num. cuenta: 0113113801509</p>
+                    <div class="subheading mb-2">A nombre de: Meredith Botta Palacios</div>  
+
+                    <h6 class="mt-2">💳 Cuenta BCP Soles</h6>
+                    <p>Num. cuenta: 19395798059013</p>
+                    <p>CCI: 00219319579805901317</p>
+                    <div class="subheading mb-2">A nombre de: E-Courier inversiones EIRL</div>  
+
+                    <h6 class="mt-4 mb-2">TAMBIÉN TENEMOS</h6>
+
+                    <h6 class="mt-2">📍Yape: 923948049</h6>
+                    <p class="m-2 subheading">A Nombre de: Ecourier Inversiones EIRL</p>
+                    
+                    <h6 class="mt-2">📍Plim: 923948049</h6>
+                    <p class="m-2 subheading">A Nombre de: Meredith Botta Palacios</p>
+
+                </div>
+
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
 {% block content %}
 <form method="post" enctype="multipart/form-data">
-{% csrf_token %}
-<div class="mb-10">
-    <div class="card card-create-order create-order">
-        
-        <div class="step-wrapper">
-            <div class="step success">
-                <div class="step-icon-wrapper">
-                    <div class="step-icon">
-                        <i class='bx bx-check bx-sm' ></i>
-                    </div> 
-                    <div class="step-progress-desktop"></div>
-                </div> 
-                <div class="step-content">
-                    <div class="text-small caption">Paso 1</div>
-                    <h6>Información del cliente</h6>
-                </div>
-                <div class="step-progress-mobile"></div>
-            </div>
-            <div class="step success">
-                <div class="step-icon-wrapper">
-                    <div class="step-icon">
-                        <i class='bx bx-map-pin bx-sm' ></i>
-                    </div> 
-                    <div class="step-progress-desktop"></div>
-                </div> 
-                <div class="step-content">
-                    <div class="text-small caption">Paso 2</div>
-                    <h6>Direcciones de envío</h6>
-                </div>
-                <div class="step-progress-mobile"></div>
-            </div>
-            <div class="step active">
-                <div class="step-icon-wrapper">
-                    <div class="step-icon">
-                        <i class='bx bx-credit-card bx-sm' ></i>
-                    </div> 
-                    <div class="step-progress-desktop"></div>
-                </div> 
-                <div class="step-content">
-                    <div class="text-small caption">Paso 3</div>
-                    <h6>Realizar pago</h6>
-                </div>
-                <div class="step-progress-mobile"></div>
-            </div>
-        </div>
-        <div class="order-content-2">
-            <div class="order-addresess-2">
-                {% if order.detail_set.count > 0 %}
-                {% for detail in order.detail_set.all %}
-                
-                <div class="address-item">
-                    <div class="address-delivered">
-                        <div class="address-origin">
-                            <h6>{{ detail.address_origin.address }}</h6>
-                            <div class="text-small font-medium">{{ detail.address_origin.address_city }}</div>
+    {% csrf_token %}
+    <div class="mb-10">
+        <div class="card card-create-order create-order">
+
+            <div class="step-wrapper">
+                <div class="step success">
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class='bx bx-check bx-sm'></i>
                         </div>
-                        <img class="order-icon" src="{% static 'icon/order-icon.svg' %}"/>
-                        <div class="address-destiny">
-                            <h6>{{ detail.address_destiny.address }}</h6>
-                            <div class="text-small font-medium">{{ detail.address_destiny.address_city }}</div>
-                        </div>
+                        <div class="step-progress-desktop"></div>
                     </div>
-                    <div class="address-order-detail">
-                        <div class="collapse" x-data="{ isOpen: false }">
-                            <div class="collapse-title cursor-pointer" @click="isOpen = !isOpen">
-                                <h6>Detalles del pedido</h6>
-                                <i class='bx bx-chevron-down bx-sm' :class="{ 'bx-bx-rotate-180': isOpen }" ></i>
+                    <div class="step-content">
+                        <div class="text-small caption">Paso 1</div>
+                        <h6>Información del cliente</h6>
+                    </div>
+                    <div class="step-progress-mobile"></div>
+                </div>
+                <div class="step success">
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class='bx bx-map-pin bx-sm'></i>
+                        </div>
+                        <div class="step-progress-desktop"></div>
+                    </div>
+                    <div class="step-content">
+                        <div class="text-small caption">Paso 2</div>
+                        <h6>Direcciones de envío</h6>
+                    </div>
+                    <div class="step-progress-mobile"></div>
+                </div>
+                <div class="step active">
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class='bx bx-credit-card bx-sm'></i>
+                        </div>
+                        <div class="step-progress-desktop"></div>
+                    </div>
+                    <div class="step-content">
+                        <div class="text-small caption">Paso 3</div>
+                        <h6>Realizar pago</h6>
+                    </div>
+                    <div class="step-progress-mobile"></div>
+                </div>
+            </div>
+            <div class="order-content-2">
+                <div class="order-addresess-2">
+                    {% if order.detail_set.count > 0 %}
+                    {% for detail in order.detail_set.all %}
+
+                    <div class="address-item">
+                        <div class="address-delivered">
+                            <div class="address-origin">
+                                <h6>{{ detail.address_origin.address }}</h6>
+                                <div class="text-small font-medium">{{ detail.address_origin.address_city }}</div>
                             </div>
-                            <div class="collapse-content" x-show.transition.in.scale.opacity.400ms.out.origin.top.scale.opacity.200ms="isOpen">
-                                <div class="client-info">
-                                    <h6 class="mb-2 subheading text-muted">Información del paquete</h6>
-                                    <div class="detail-package">
-                                        <div class="detail-package__row">
-                                          <h6>Tamaño</h6>
-                                          <p>{{ detail.get_size_display }}</p>
-                                        </div>
-                                        <div class="detail-package__row">
-                                          <h6>Contenido</h6>
-                                          <p>{{ detail.contain }}</p>
-                                        </div>
-                                        <div class="detail-package__row">
-                                          <h6>Valor</h6>
-                                          <p>{{ detail.value }}</p>
+                            <img class="order-icon" src="{% static 'icon/order-icon.svg' %}" />
+                            <div class="address-destiny">
+                                <h6>{{ detail.address_destiny.address }}</h6>
+                                <div class="text-small font-medium">{{ detail.address_destiny.address_city }}</div>
+                            </div>
+                        </div>
+                        <div class="address-order-detail">
+                            <div class="collapse" x-data="{ isOpen: false }">
+                                <div class="collapse-title cursor-pointer" @click="isOpen = !isOpen">
+                                    <h6>Detalles del pedido</h6>
+                                    <i class='bx bx-chevron-down bx-sm' :class="{ 'bx-bx-rotate-180': isOpen }"></i>
+                                </div>
+                                <div class="collapse-content"
+                                    x-show.transition.in.scale.opacity.400ms.out.origin.top.scale.opacity.200ms="isOpen">
+                                    <div class="client-info">
+                                        <h6 class="mb-2 subheading text-muted">Información del paquete</h6>
+                                        <div class="detail-package">
+                                            <div class="detail-package__row">
+                                                <h6>Tamaño</h6>
+                                                <p>{{ detail.get_size_display }}</p>
+                                            </div>
+                                            <div class="detail-package__row">
+                                                <h6>Contenido</h6>
+                                                <p>{{ detail.contain }}</p>
+                                            </div>
+                                            <div class="detail-package__row">
+                                                <h6>Valor</h6>
+                                                <p>{{ detail.value }}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="footer-details mt-4">
-                                    <h6 class="mb-2 subheading text-muted">Detalles adicionales</h6>
-                                    <div class="package">
-                                        {% if detail.image %}
-                                        <div class="package-picture modal-container" x-data="{ isOpen: false }">
-                                            <div class="package-picture cursor-pointer" @click="isOpen = true">
-                                                <img src="{{ detail.image.url }}" alt="{{ detail.description }}">
-                                            </div>
-                                            <div 
-                                                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
-                                                class="modal">
-                                                <div 
-                                                    class="modal-content card" style="width: 600px" 
-                                                    @click.away="isOpen = false" 
-                                                >
-                                                    <div class="head">
-                                                        <h6>Imagen del paquete</h6>
-                                                        <div class="close">
-                                                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
-                                                                <i class='bx bx-x bx-sm' ></i>
-                                                            </button>
+                                    <div class="footer-details mt-4">
+                                        <h6 class="mb-2 subheading text-muted">Detalles adicionales</h6>
+                                        <div class="package">
+                                            {% if detail.image %}
+                                            <div class="package-picture modal-container" x-data="{ isOpen: false }">
+                                                <div class="package-picture cursor-pointer" @click="isOpen = true">
+                                                    <img src="{{ detail.image.url }}" alt="{{ detail.description }}">
+                                                </div>
+                                                <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                                                    class="modal">
+                                                    <div class="modal-content card" style="width: 600px"
+                                                        @click.away="isOpen = false">
+                                                        <div class="head">
+                                                            <h6>Imagen del paquete</h6>
+                                                            <div class="close">
+                                                                <button @click="isOpen = false"
+                                                                    class="btn btn-default btn-circle btn-small">
+                                                                    <i class='bx bx-x bx-sm'></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-modal">
-                                                        <img src="{{ detail.image.url }}" style="width: 100%" alt="{{ detail.description }}">
-                                                    </div>
+                                                        <div class="form-modal">
+                                                            <img src="{{ detail.image.url }}" style="width: 100%"
+                                                                alt="{{ detail.description }}">
+                                                        </div>
 
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="package-picture">
-                                            <span class="text-muted text-small">Imagen no disponible</span>
-                                        </div>
-                                        {% endif %}
-                                        <div class="package-details">
-                                            <h6>Descripción</h6>
-                                            {% if detail.description %}
-                                                <p>{{ detail.description }}</p>
                                             {% else %}
-                                                <p class="text-muted">Sin nota o descripción del paquete</p>
+                                            <div class="package-picture">
+                                                <span class="text-muted text-small">Imagen no disponible</span>
+                                            </div>
                                             {% endif %}
+                                            <div class="package-details">
+                                                <h6>Descripción</h6>
+                                                {% if detail.description %}
+                                                <p>{{ detail.description }}</p>
+                                                {% else %}
+                                                <p class="text-muted">Sin nota o descripción del paquete</p>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>                                
-                </div> 
-                <div class="address-order-summary">
-                    <div class="distance">
-                        <h5 class="m-0">{{ detail.distance|unlocalize }}{% if detail.distance >= 1 %}KM{% else %}M{% endif %}</h5>
-                        <p class="text-small">Distancia</p>
                     </div>
-                    <div class="rate">
-                        <div class="price flex items-center">
-                            <span class="text-muted mr-1">S/.</span>
-                            <div class="h5 m-0">{{ detail.price_rate|unlocalize }}</div>
+                    <div class="address-order-summary">
+                        <div class="distance">
+                            <h5 class="m-0">{{ detail.distance|unlocalize }}{% if detail.distance >= 1 %}KM{% else %}M{% endif %}</h5>
+                            <p class="text-small">Distancia</p>
                         </div>
-                        <p class="text-small m-0">Precio de tarifa</p>
+                        <div class="rate">
+                            <div class="price flex items-center">
+                                <span class="text-muted mr-1">S/.</span>
+                                <div class="h5 m-0">{{ detail.price_rate|unlocalize }}</div>
+                            </div>
+                            <p class="text-small m-0">Precio de tarifa</p>
+                        </div>
                     </div>
-                </div>
-                {% endfor %}
+                    {% endfor %}
 
-                {% else %}
+                    {% else %}
                     <h5 class="text-muted text-center">No hay una dirección de envío para para este pedido.</h5>
                     <div class="text-small text-center">Le aconsejamos agregar una dirección para continuar...</div>
-                {% endif %}
-            </div>
-            <div class="order-right">
-                <div class="order-total-2">
-                    <div class="order-row">
-                        <h class="text-muted">Subtotal</h>
-                        <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
-                            <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
-                            <span id="subtotal">{{ order.sub_total|unlocalize }}</span>
-                        </div>
-                    </div>
-                    <div class="order-row">
-                        <h6 class="text-muted">IGV</h6>
-                        <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
-                            <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
-                            <span id="igv">{{ order.igv|unlocalize }}</span>
-                        </div>
-                    </div>
-                    
-                    <div id="discount-wrapper" class="order-row" style="display: {% if order.promo_code %}grid;{% else %}none;{% endif %}">
-                        <h6 class="text-danger">Descuento</h6>
-                        <div class="price h6 font-semibold text-danger flex justity-end items-center m-0">
-                            <span class="text-base font-medium text-danger m-0 mr-1">-S/.</span>
-                            <span id="discount">{{ order.get_discount|unlocalize }}</span>
-                        </div>
-                    </div>
-                    <div id="total-previous-wrapper" class="order-row" style="display: {% if order.promo_code %}grid;{% else %}none;{% endif %}">
-                        <span class="font-medium text-danger text-small">Total anterior</span>
-                        <span class="font-medium text-right text-danger text-small" style="text-decoration: line-through">S/. <span id="total-previous">{{ order.get_total_previous|unlocalize }}</span></span> 
-                    </div>
-                    
-                    <div class="order-row mt-4">
-                        <h6 class="m-0">Total a pagar</h6>
-                        <div class="price h4 flex justity-end items-center">
-                            <span class="h6 text-muted m-0 mr-1">S/. </span>
-                            <span id="total">{{ order.total|unlocalize }}</span>
-                        </div>
-                        
-                    </div>
+                    {% endif %}
                 </div>
+                <div class="order-right">
+                    <div class="order-total-2">
+                        <div class="order-row">
+                            <h class="text-muted">Subtotal</h>
+                            <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
+                                <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
+                                <span id="subtotal">{{ order.sub_total|unlocalize }}</span>
+                            </div>
+                        </div>
+                        <div class="order-row">
+                            <h6 class="text-muted">IGV</h6>
+                            <div class="price h6 font-semibold text-muted flex justity-end items-center m-0">
+                                <span class="text-base font-medium text-muted m-0 mr-1">S/.</span>
+                                <span id="igv">{{ order.igv|unlocalize }}</span>
+                            </div>
+                        </div>
 
-                <div class="form-group mt-5">
-                    <input type="text" class="input" name="promo-code" id="promo-code" placeholder="Ingrese cupón de promoción" value="{{ order.promo_code.code }}" {% if order.promo_code %}readonly{% endif %}>
-                    {% if order.promo_code %}
+                        <div id="discount-wrapper" class="order-row"
+                            style="display: {% if order.promo_code %}grid;{% else %}none;{% endif %}">
+                            <h6 class="text-danger">Descuento</h6>
+                            <div class="price h6 font-semibold text-danger flex justity-end items-center m-0">
+                                <span class="text-base font-medium text-danger m-0 mr-1">-S/.</span>
+                                <span id="discount">{{ order.get_discount|unlocalize }}</span>
+                            </div>
+                        </div>
+                        <div id="total-previous-wrapper" class="order-row"
+                            style="display: {% if order.promo_code %}grid;{% else %}none;{% endif %}">
+                            <span class="font-medium text-danger text-small">Total anterior</span>
+                            <span class="font-medium text-right text-danger text-small"
+                                style="text-decoration: line-through">S/. <span id="total-previous">{{
+                                    order.get_total_previous|unlocalize }}</span></span>
+                        </div>
+
+                        <div class="order-row mt-4">
+                            <h6 class="m-0">Total a pagar</h6>
+                            <div class="price h4 flex justity-end items-center">
+                                <span class="h6 text-muted m-0 mr-1">S/. </span>
+                                <span id="total">{{ order.total|unlocalize }}</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-5">
+                        <input type="text" class="input" name="promo-code" id="promo-code"
+                            placeholder="Ingrese cupón de promoción" value="{{ order.promo_code.code }}" {% if order.promo_code %}readonly{% endif %}>
+                        {% if order.promo_code %}
                         <div class="mt-2 text-success">
                             Cupón de promoción aplicada
                         </div>
-                    {% else %}
+                        {% else %}
                         <div id="promo-code-message" class="mt-2"></div>
+                        {% endif %}
+                    </div>
+                    {% if not order.promo_code %}
+                    <div class="actions right mt-2">
+                        <button id="btn-promocode" class="btn btn-secondary btn-small">Aplicar</button>
+                    </div>
                     {% endif %}
-                </div>
-                {% if not order.promo_code %}
-                <div class="actions right mt-2">
-                    <button id="btn-promocode" class="btn btn-secondary btn-small">Aplicar</button>
-                </div>
-                {% endif %}
-                <div class="mt-5">
-                    <h6>Imágenes del pago realizado</h6>
-                    <input type="file" class="input mt-2" name="payed_image" required>
-                </div>
-                <div class="mt-5">
-                    <h6>Tipo de comprobante</h6>
-                    <div class="radio-group mt-2">
-                        <div class="radio-input">
-                            <input type="radio" name="type_ticket" id="boleta" checked value="BOLETA" required>
+                    <div class="mt-5">
+                        <h6>Imágenes del pago realizado</h6>
+                        <input type="file" class="input mt-2" name="payed_image" required>
+                    </div>
+                    <div class="mt-5">
+                        <h6>Tipo de comprobante</h6>
+                        <div class="radio-group mt-2">
+                            <div class="radio-input">
+                                <input type="radio" name="type_ticket" id="boleta" checked value="BOLETA" required>
                                 <label for="boleta">
-                                <i class='bx bx-radio-circle bx-sm'></i>
-                                <i class='active bx bx-radio-circle-marked bx-sm' ></i>
-                                <span>
-                                    Boleta
-                                </span>
-                            </label>
-                        </div>
-                        <div class="radio-input">
-                            <input type="radio" name="type_ticket" id="factura" value="FACTURA" required>
+                                    <i class='bx bx-radio-circle bx-sm'></i>
+                                    <i class='active bx bx-radio-circle-marked bx-sm'></i>
+                                    <span>
+                                        Boleta
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="radio-input">
+                                <input type="radio" name="type_ticket" id="factura" value="FACTURA" required>
                                 <label for="factura">
-                                <i class='bx bx-radio-circle bx-sm'></i>
-                                <i class='active bx bx-radio-circle-marked bx-sm' ></i>
-                                <span>
-                                    Factura
-                                </span>
-                            </label>
+                                    <i class='bx bx-radio-circle bx-sm'></i>
+                                    <i class='active bx bx-radio-circle-marked bx-sm'></i>
+                                    <span>
+                                        Factura
+                                    </span>
+                                </label>
+                            </div>
                         </div>
-                    </div> 
-                </div>
-                <div class="mt-6 actions full">
-                    <button type="submit" class="btn btn-primary">Completar pedido</button>
-                    <a href="{% url 'orders:add-addresses' %}" class="btn btn-default">Regresar</a>
+                    </div>
+                    <div class="mt-6 actions full">
+                        <button type="submit" class="btn btn-primary">Completar pedido</button>
+                        <a href="{% url 'orders:add-addresses' %}" class="btn btn-default">Regresar</a>
+                    </div>
                 </div>
             </div>
+
         </div>
-        
     </div>
-</div>  
-</form>   
+</form>
 {% endblock content %}
 {% block scripts %}
-    <script>
-        var btnAplyCode = document.getElementById('btn-promocode');
-        const inputPromoCode = document.getElementById('promo-code');
-        const messagePromoCode = document.getElementById('promo-code-message');
-        const total = document.getElementById('total');
-        const igv = document.getElementById('igv');
-        const sub_total = document.getElementById('subtotal');
-        const discount_wrapper = document.getElementById('discount-wrapper');
-        const total_previous_wrapper = document.getElementById('total-previous-wrapper');
-        btnAplyCode.addEventListener('click', function(ev){
-            ev.preventDefault();
-            const code = inputPromoCode.value;
-            if (code){
-                fetch('/promo-codes/validate/?code='+code)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === true){
-                            igv.innerText = data.igv;
-                            sub_total.innerText = data.sub_total;
-                            code.value = data.code;
-                            code.readOnly = true;
-                            if (messagePromoCode.classList.contains('text-danger'))
-                                messagePromoCode.classList.remove('text-danger');
-                            messagePromoCode.classList.add('text-success');
-                            messagePromoCode.innerText = 'Cupón de promoción aplicado';
-                            btnAplyCode.style.display = 'none';
+<script>
+    var btnAplyCode = document.getElementById('btn-promocode');
+    const inputPromoCode = document.getElementById('promo-code');
+    const messagePromoCode = document.getElementById('promo-code-message');
+    const total = document.getElementById('total');
+    const igv = document.getElementById('igv');
+    const sub_total = document.getElementById('subtotal');
+    const discount_wrapper = document.getElementById('discount-wrapper');
+    const total_previous_wrapper = document.getElementById('total-previous-wrapper');
+    btnAplyCode.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        const code = inputPromoCode.value;
+        if (code) {
+            fetch('/promo-codes/validate/?code=' + code)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === true) {
+                        igv.innerText = data.igv;
+                        sub_total.innerText = data.sub_total;
+                        code.value = data.code;
+                        code.readOnly = true;
+                        if (messagePromoCode.classList.contains('text-danger'))
+                            messagePromoCode.classList.remove('text-danger');
+                        messagePromoCode.classList.add('text-success');
+                        messagePromoCode.innerText = 'Cupón de promoción aplicado';
+                        btnAplyCode.style.display = 'none';
 
-                            discount_wrapper.style.display = 'grid'
-                            discount_wrapper.querySelector('#discount').innerHTML = data.discount;
+                        discount_wrapper.style.display = 'grid'
+                        discount_wrapper.querySelector('#discount').innerHTML = data.discount;
 
-                            total_previous_wrapper.style.display = 'grid'
-                            total_previous_wrapper.querySelector('#total-previous').innerHTML = data.total_previous;
-                            total.innerText = data.total;
-                        } else{
-                            messagePromoCode.classList.add('text-danger');
-                            messagePromoCode.innerText = 'Cupón de promoción no válido';
-                        }
-                    });
+                        total_previous_wrapper.style.display = 'grid'
+                        total_previous_wrapper.querySelector('#total-previous').innerHTML = data.total_previous;
+                        total.innerText = data.total;
+                    } else {
+                        messagePromoCode.classList.add('text-danger');
+                        messagePromoCode.innerText = 'Cupón de promoción no válido';
+                    }
+                });
 
-            }else{
-                messagePromoCode.classList.add('text-danger');
-                messagePromoCode.innerText = 'Ingrese un cupón de promoción';
-            }
-        });
-    </script>
+        } else {
+            messagePromoCode.classList.add('text-danger');
+            messagePromoCode.innerText = 'Ingrese un cupón de promoción';
+        }
+    });
+</script>
 {% endblock scripts %}

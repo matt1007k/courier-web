@@ -8,31 +8,62 @@
 
 {% block content_head %}
 <div class="content-head">
-    <div class="left">
-        <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Cálculo de tarifa">
+    <div class="left" modal-container" x-data="{ isOpen: false }">
+        <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Cálculo de tarifa"
+            @click="isOpen = true">
             <i class='bx bx-help-circle bx-sm'></i>
         </a>
+        <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+            <div class="modal-content card" style="width: 600px" @click.away="isOpen = false">
+                <div class="head">
+                    <h6>Cálculo de tarifa</h6>
+                    <div class="close">
+                        <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                            <i class='bx bx-x bx-sm'></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-modal">
+                    <div class="list__group">
+                        <p class="list__item">
+                            <i class="bx bx-check bx-sm text-success"></i>
+                            <span>DE OKM A 13KM S/10.00</span>
+                        </p>
+                        <p class="list__item">
+                            <i class="bx bx-check bx-sm text-success"></i>
+                            <span>DE 15KM A 35KM S/12.00</span>
+                        </p>
+                        <p class="list__item">
+                            <i class="bx bx-check bx-sm text-success"></i>
+                            <span>DE 35KM A MÁS S/15.00</span>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-    <div class="right">
-        <a href="{% url 'orders:create-detail' %}" class="btn btn-link btn-small">
-            <i class="bx bx-location-plus bx-sm"></i>
-            <span>Agregar dirección</span>
-        </a>
-    </div>   
+
+<div class="right">
+    <a href="{% url 'orders:create-detail' %}" class="btn btn-link btn-small">
+        <i class="bx bx-location-plus bx-sm"></i>
+        <span>Agregar dirección</span>
+    </a>
+</div>
 </div>
 {% endblock %}
 {% block content %}
 <div class="mb-10">
     <div class="card card-create-order create-order">
-        
+
         <div class="step-wrapper">
             <div class="step success">
                 <div class="step-icon-wrapper">
                     <div class="step-icon">
-                        <i class='bx bx-check bx-sm' ></i>
-                    </div> 
+                        <i class='bx bx-check bx-sm'></i>
+                    </div>
                     <div class="step-progress-desktop"></div>
-                </div> 
+                </div>
                 <div class="step-content">
                     <div class="text-small caption">Paso 1</div>
                     <h6>Información del cliente</h6>
@@ -42,10 +73,10 @@
             <div class="step active">
                 <div class="step-icon-wrapper">
                     <div class="step-icon">
-                        <i class='bx bx-map-pin bx-sm' ></i>
-                    </div> 
+                        <i class='bx bx-map-pin bx-sm'></i>
+                    </div>
                     <div class="step-progress-desktop"></div>
-                </div> 
+                </div>
                 <div class="step-content">
                     <div class="text-small caption">Paso 2</div>
                     <h6>Direcciones de envío</h6>
@@ -55,10 +86,10 @@
             <div class="step">
                 <div class="step-icon-wrapper">
                     <div class="step-icon">
-                        <i class='bx bx-credit-card bx-sm' ></i>
-                    </div> 
+                        <i class='bx bx-credit-card bx-sm'></i>
+                    </div>
                     <div class="step-progress-desktop"></div>
-                </div> 
+                </div>
                 <div class="step-content">
                     <div class="text-small caption">Paso 3</div>
                     <h6>Realizar pago</h6>
@@ -70,46 +101,57 @@
             <div class="order-addresess-2">
                 {% if order.detail_set.count > 0 %}
                 {% for detail in order.detail_set.all %}
-                
+
                 <div class="address-item">
                     <div class="address-head" x-data="{ isOpen: false }">
                         <div class="icon icon-secondary-default icon-sm rounded-sm">
-                            <i class='bx bx-map-pin bx-xs' ></i>
+                            <i class='bx bx-map-pin bx-xs'></i>
                         </div>
                         <div class="dropdown">
-                        <button @click="isOpen = !isOpen" class="btn btn-link btn-xsmall">
-                        <svg class="cursor-pointer icon-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <g id="icon_more" data-name="icon more" transform="translate(0 -2)">
-                                <rect id="Rectangle_177" data-name="Rectangle 177" width="24" height="24" transform="translate(0 2)" fill="none" opacity="0.997"/>
-                                <g id="Group_133" data-name="Group 133" transform="translate(2 -16)" opacity="0.5">
-                                <circle id="Ellipse_75" data-name="Ellipse 75" cx="2" cy="2" r="2" transform="translate(2 23)" fill="#22154a" opacity="0.697"/>
-                                <circle id="Ellipse_76" data-name="Ellipse 76" cx="2" cy="2" r="2" transform="translate(8 23)" fill="#22154a" opacity="0.697"/>
-                                <circle id="Ellipse_77" data-name="Ellipse 77" cx="2" cy="2" r="2" transform="translate(14 23)" fill="#22154a" opacity="0.697"/>
-                                </g>
-                            </g>
-                        </svg>
-                        </button>
-                        <div class="dropdown-menu right" x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpen" @click.away="isOpen = false">
-                            <a href="{% url 'orders:update-detail' detail.pk %}" class="dropdown-item-2">
-                                <span>Editar</span>
-                                <i class='bx bx-edit bx-sm'></i>
-                            </a>
-                            <a href="{% url 'details:delete' detail.pk %}?next={{ request.path}}" class="dropdown-item-2 text-danger">
-                                <span>Eliminar</span>
-                                <i class='bx bx-trash bx-sm'></i>
-                            </a>
-                        </div>
+                            <button @click="isOpen = !isOpen" class="btn btn-link btn-xsmall">
+                                <svg class="cursor-pointer icon-svg" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" viewBox="0 0 24 24">
+                                    <g id="icon_more" data-name="icon more" transform="translate(0 -2)">
+                                        <rect id="Rectangle_177" data-name="Rectangle 177" width="24" height="24"
+                                            transform="translate(0 2)" fill="none" opacity="0.997" />
+                                        <g id="Group_133" data-name="Group 133" transform="translate(2 -16)"
+                                            opacity="0.5">
+                                            <circle id="Ellipse_75" data-name="Ellipse 75" cx="2" cy="2" r="2"
+                                                transform="translate(2 23)" fill="#22154a" opacity="0.697" />
+                                            <circle id="Ellipse_76" data-name="Ellipse 76" cx="2" cy="2" r="2"
+                                                transform="translate(8 23)" fill="#22154a" opacity="0.697" />
+                                            <circle id="Ellipse_77" data-name="Ellipse 77" cx="2" cy="2" r="2"
+                                                transform="translate(14 23)" fill="#22154a" opacity="0.697" />
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                            <div class="dropdown-menu right"
+                                x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpen"
+                                @click.away="isOpen = false">
+                                <a href="{% url 'orders:update-detail' detail.pk %}" class="dropdown-item-2">
+                                    <span>Editar</span>
+                                    <i class='bx bx-edit bx-sm'></i>
+                                </a>
+                                <a href="{% url 'details:delete' detail.pk %}?next={{ request.path}}"
+                                    class="dropdown-item-2 text-danger">
+                                    <span>Eliminar</span>
+                                    <i class='bx bx-trash bx-sm'></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="address-delivered">
                         <div class="address-origin">
-                            <div class="text-small flex items-center"><i style="margin-right: 5px;" class="bx bx-user bx-xs"></i> {{ detail.address_origin.full_name }}</div>
+                            <div class="text-small flex items-center"><i style="margin-right: 5px;"
+                                    class="bx bx-user bx-xs"></i> {{ detail.address_origin.full_name }}</div>
                             <h6>{{ detail.address_origin.address }}</h6>
                             <div class="text-small font-medium">{{ detail.address_origin.address_city }}</div>
                         </div>
-                        <img class="order-icon" src="{% static 'icon/order-icon.svg' %}"/>
+                        <img class="order-icon" src="{% static 'icon/order-icon.svg' %}" />
                         <div class="address-destiny">
-                            <div class="text-small flex items-center justity-end"><i style="margin-right: 5px;" class="bx bx-user bx-xs"></i> {{ detail.address_destiny.full_name }}</div>
+                            <div class="text-small flex items-center justity-end"><i style="margin-right: 5px;"
+                                    class="bx bx-user bx-xs"></i> {{ detail.address_destiny.full_name }}</div>
                             <h6>{{ detail.address_destiny.address }}</h6>
                             <div class="text-small font-medium">{{ detail.address_destiny.address_city }}</div>
                         </div>
@@ -118,23 +160,24 @@
                         <div class="collapse" x-data="{ isOpen: false }">
                             <div class="collapse-title cursor-pointer" @click="isOpen = !isOpen">
                                 <h6>Detalles del pedido</h6>
-                                <i class='bx bx-chevron-down bx-sm' :class="{ 'bx-bx-rotate-180': isOpen }" ></i>
+                                <i class='bx bx-chevron-down bx-sm' :class="{ 'bx-bx-rotate-180': isOpen }"></i>
                             </div>
-                            <div class="collapse-content" x-show.transition.in.scale.opacity.400ms.out.origin.top.scale.opacity.200ms="isOpen">
+                            <div class="collapse-content"
+                                x-show.transition.in.scale.opacity.400ms.out.origin.top.scale.opacity.200ms="isOpen">
                                 <div class="client-info">
                                     <h6 class="mb-2 subheading text-muted">Información del paquete</h6>
                                     <div class="detail-package">
                                         <div class="detail-package__row">
-                                          <h6>Tamaño</h6>
-                                          <p>{{ detail.get_size_display }}</p>
+                                            <h6>Tamaño</h6>
+                                            <p>{{ detail.get_size_display }}</p>
                                         </div>
                                         <div class="detail-package__row">
-                                          <h6>Contenido</h6>
-                                          <p>{{ detail.contain }}</p>
+                                            <h6>Contenido</h6>
+                                            <p>{{ detail.contain }}</p>
                                         </div>
                                         <div class="detail-package__row">
-                                          <h6>Valor</h6>
-                                          <p>{{ detail.value }}</p>
+                                            <h6>Valor</h6>
+                                            <p>{{ detail.value }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -146,23 +189,22 @@
                                             <div class="package-picture cursor-pointer" @click="isOpen = true">
                                                 <img src="{{ detail.image.url }}" alt="{{ detail.description }}">
                                             </div>
-                                            <div 
-                                                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                                            <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
                                                 class="modal">
-                                                <div 
-                                                    class="modal-content card" style="width: 600px" 
-                                                    @click.away="isOpen = false" 
-                                                >
+                                                <div class="modal-content card" style="width: 600px"
+                                                    @click.away="isOpen = false">
                                                     <div class="head">
                                                         <h6>Imagen del paquete</h6>
                                                         <div class="close">
-                                                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
-                                                                <i class='bx bx-x bx-sm' ></i>
+                                                            <button @click="isOpen = false"
+                                                                class="btn btn-default btn-circle btn-small">
+                                                                <i class='bx bx-x bx-sm'></i>
                                                             </button>
                                                         </div>
                                                     </div>
                                                     <div class="form-modal">
-                                                        <img src="{{ detail.image.url }}" style="width: 100%" alt="{{ detail.description }}">
+                                                        <img src="{{ detail.image.url }}" style="width: 100%"
+                                                            alt="{{ detail.description }}">
                                                     </div>
 
                                                 </div>
@@ -175,7 +217,7 @@
                                         {% endif %}
                                         <div class="package-details">
                                             <h6>Nota</h6>
-                                            {% if detail.description %} 
+                                            {% if detail.description %}
                                             <p>{{ detail.description }}</p>
                                             {% else %}
                                             <p>El paquete no tiene una nota...</p>
@@ -185,8 +227,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                                
-                </div> 
+                    </div>
+                </div>
                 <div class="address-order-summary">
                     <div class="distance">
                         <h5 class="m-0">{{ detail.distance|unlocalize }}{% if detail.distance >= 1 %}KM{% else %}M{% endif %}</h5>
@@ -203,8 +245,8 @@
                 {% endfor %}
 
                 {% else %}
-                    <h5 class="text-muted text-center">No hay una dirección de envío para este pedido.</h5>
-                    <div class="text-small text-center">Le aconsejamos agregar una dirección para continuar...</div>
+                <h5 class="text-muted text-center">No hay una dirección de envío para este pedido.</h5>
+                <div class="text-small text-center">Le aconsejamos agregar una dirección para continuar...</div>
                 {% endif %}
             </div>
             <div class="order-right">
@@ -233,12 +275,12 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="mt-8 actions reverse right">
             <a href="{% url 'orders:create' %}" class="btn btn-default">Regresar</a>
             <a {% if order.detail_set.count > 0 %} href="{% url 'orders:payment' %}" disabled {% endif %} class="btn btn-primary">Siguiente</a>
         </div>
     </div>
-</div>  
-    
+</div>
+
 {% endblock content %}

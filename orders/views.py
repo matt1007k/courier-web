@@ -310,3 +310,4 @@ def assign_deliveries_to_driver_view(request):
             UnassignDeliveryAddress.objects.filter(detail=detail).first().delete()
         messages.success(request, 'Direccion(es) de entrega asignada(s) con éxito')
         return redirect("orders:unassign-deliveries")
+

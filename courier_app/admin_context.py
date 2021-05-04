@@ -72,7 +72,7 @@ def menu_items(request):
             'title': 'Reporte',
             'icon': 'bx-library',
             'img': None,
-            'path': reverse('dash'),
+            'path': '#',
             'permission': None,
         },
     ]
