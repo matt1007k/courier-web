@@ -201,7 +201,7 @@ def payment_view(request):
                 type_ticket = request.POST.get('type_ticket')
             )
             for detail in order.detail_set.all():
-                Mail.send_origin_complete_order(detail, detail.address_origin.email)
+                # Mail.send_origin_complete_order(detail, detail.address_origin.email)
                 UnassignOriginAddress.objects.create(detail=detail)
             return redirect('orders:payment-success') 
         else:
