@@ -41,7 +41,7 @@
           </div>
 
           <div class="mb-4">O</div>
-          <a class="btn btn-link btn-small" @click="isOpen = true">Seleccionar una dirección anterior</a>
+          <a class="btn btn-secondary btn-small" @click="isOpen = true">Seleccionar una dirección anterior</a>
           <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
             <div class="modal-content card" style="width: 450px" @click.away="isOpen = false">
               <div class="head">

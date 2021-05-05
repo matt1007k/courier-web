@@ -1,15 +1,15 @@
-import decimal
+from typing import Any, Dict
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic import DeleteView
+from django.views.generic import DeleteView, DetailView
 from django.urls import reverse 
 
 from .models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress
 from addresses.models import Address
 
-from .forms import DetailForm, DetailModelForm, PackageDeliveredModelForm
+from .forms import DetailForm, DetailModelForm, PackageDeliveredModelForm, PackageStatusModelForm
 from addresses.forms import OriginAddressForm, DestinyAddressForm
 
 from orders.utils import fields_destiny_form, get_or_create_order, fields_origin_form
@@ -28,6 +28,7 @@ def create_detail_view(request):
         address_origin = Address.objects.update_or_create_address_origin(client, origin_form.cleaned_data)
         address_destiny = Address.objects.update_or_create_address_destiny(client, destiny_form.cleaned_data)
         detail = Detail.objects.create(
+            client=client,
             order=order, 
             size = request.POST.get('size'),
             contain = request.POST.get('contain'),
@@ -169,9 +170,8 @@ def package_delivered_view(request, pk):
     title = 'Entrega de paquete'
     template_name = 'orders/assign/delivered.html'
     detail = Detail.objects.get(pk=pk)
-    form_class = PackageDeliveredModelForm(request.POST, request.FILES)
+    form_class = PackageDeliveredModelForm(request.POST or None, request.FILES or None)
     if request.method == 'POST' and form_class.is_valid():
-        print('post', request.FILES)
         form = form_class.save(commit=False)
         form.detail = detail
         form.driver = request.user.driver if request.user.is_driver else None
@@ -186,5 +186,31 @@ def package_delivered_view(request, pk):
         'detail': detail
     })
 
+class PackageDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    template_name = 'details/detail.html'
+    permission_required = 'details.view_detail'
+    model = Detail
 
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Detalles del paquete'
+        return context
+
+def change_status_view(request, pk):
+    template_name = 'details/change-status.html'
+    title = 'Cambiar estado'
+    detail = get_object_or_404(Detail, pk=pk)
+    # statuses = Detail.PackageStatus
+    form_class = PackageStatusModelForm(request.POST or None, instance=detail)
+
+    if request.method == 'POST' and form_class.is_valid():
+        form_class.save()
+        messages.success(request, 'El estado del paquete ha sido cambiado')
+        return redirect('orders:index')
+
+    return render(request, template_name, context={
+        'title': title,
+        'detail': detail,
+        'form': form_class
+    })
 

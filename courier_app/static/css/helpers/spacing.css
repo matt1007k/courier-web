@@ -60,3 +60,7 @@
 .p-0{
     padding: 0;
 }
+
+.scroll-auto{
+    overflow: auto;
+}

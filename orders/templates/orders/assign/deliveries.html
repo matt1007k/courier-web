@@ -144,10 +144,13 @@
                     <span>Ver mapa</span>
                     <i class='bx bx-map-pin bx-sm'></i>
                 </a>
-                <!-- <a href="#" class="dropdown-item-2 text-primary">
-                    <span>Recibido</span>
-                    <i class='bx bx-check-circle bx-sm'></i>
-                </a> -->
+                {% if request.user.is_administrator %}
+                <a href="{% url 'orders:return-unassign-delivery' pk=object.detail.pk %}"
+                    class="dropdown-item-2">
+                    <span>Dejar de asignar</span>
+                    <i class='bx bx-archive-in bx-sm'></i>
+                </a>
+                {% endif %}
             </div>
         </div>
         <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpenSm" class="modal modal-sheet">
@@ -168,6 +171,15 @@
                                 <i class='bx bx-map-pin bx-sm'></i>
                             </div>
                         </a>
+                        {% if request.user.is_administrator %}
+                        <a href="{% url 'orders:return-unassign-delivery' pk=object.detail.pk %}"
+                            class="option-item">
+                            <span>Dejar de asignar</span>
+                            <div class="icon">
+                                <i class='bx bx-archive-in bx-sm'></i>
+                            </div>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

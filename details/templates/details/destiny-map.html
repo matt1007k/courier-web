@@ -25,25 +25,20 @@
                 <img src="{% static 'icon/order-icon.svg' %}" />
             </div>
             <h5 class="mt-2 mb-2 font-bold">Detalles del paquete</h5>
-            <div class="list__group">
-                <p class="list__item">
-                    <i class="bx bx-check bx-sm text-success"></i>
-                    <span>{{ detail.size }}</span> 
-                </p>
-                <p class="list__item">
-                    <i class="bx bx-check bx-sm text-success"></i>
-                    <span>{{ detail.contain }}</span> 
-                </p>
-                <p class="list__item">
-                    <i class="bx bx-check bx-sm text-success"></i>
-                    <span>{{ detail.value }}</span> 
-                </p>
+            <div class="mb-2">
+                {% include 'details/snippets/status.html %}
             </div>
+            {% if detail.description %}
+            <p>{{ detail.description }}</p>
+            {% else %}
+            <p>Sin ninguna nota.</p>
+            {% endif %}
             <div class="mt-4">
                 <h5 class="mb-2 font-bold">Dirección de entrega</h5>
-                <p># TRACKING {{ detail.order.tracking_code }}</p>
+                <p>{{ detail.get_tracking_code_text }}</p>
                 <h6>{{ detail.address_destiny.address_complete }}</h6>
-
+                <div class="mt-2 subheading">{{ detail.address_destiny.address_detail }}</div>
+                <p>{{ detail.address_destiny.reference }}</p>
             </div>
             <div class="mt-6">
                 <h5 class="mb-2 font-bold">¿Quién atenderá al motorizado?</h5>

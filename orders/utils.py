@@ -1,4 +1,3 @@
-from django.shortcuts import redirect
 from .models import Order
 from clients.models import Client
 
@@ -56,26 +55,3 @@ def fields_destiny_form(detail):
         'distance': detail.distance,
     }
     return fields
-
-def get_generate_tracking_code():
-    orders_count = Order.objects.count()
-    if orders_count <= 1:
-        orders_count = 0
-
-    zero = ''
-    
-    if orders_count < 10:
-        zero = '00000'
-    if orders_count >= 10:
-        zero = '0000'
-    if orders_count >= 100:
-        zero = '000'
-    if orders_count >= 1000:
-        zero = '00'
-    if orders_count >= 10000:
-        zero = '0'
-    if orders_count >= 100000:
-        zero = ''
-
-    code = '{}{}'.format(zero, orders_count + 1)
-    return 'CC{}'.format(code)

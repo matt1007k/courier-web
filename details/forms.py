@@ -19,6 +19,13 @@ class DetailForm(forms.Form):
         'class': 'input'
     }))
 
+class PackageStatusModelForm(forms.ModelForm):
+    class Meta:
+        model = Detail
+        fields = (
+            'status',
+        )
+
 class DetailModelForm(forms.ModelForm):
     class Meta:
         model = Detail

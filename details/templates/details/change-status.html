@@ -1,0 +1,48 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% load static %}
+{% load l10n %}
+
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <a href="{% url 'orders:index' %}" class="btn btn-link btn-small">
+            <i class='bx bx-left-arrow-alt bx-sm'></i>
+        </a>
+        <h4>{{ title }}</h4>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="mb-10">
+    <div class="card card-form">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            {% if field.is_hidden %}
+            {{ field }}
+            {% else %}
+            <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+            {% for error in field.errors %}
+            <div class="text-invalid">
+                {{ error }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div class="mt-6 actions right">
+                <a href="{% url 'orders:index' %}" class="btn btn-default">Regresar</a>
+                <button type="submit" class="btn btn-primary">Cambiar</button>
+            </div>
+        </form>
+    </div>
+</div>  
+{% endblock content %}

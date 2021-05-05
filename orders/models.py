@@ -1,5 +1,4 @@
 import decimal
-from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 
@@ -20,7 +19,6 @@ class Order(models.Model):
         BOLETA = 'BOLETA'
 
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
-    tracking_code = models.CharField(max_length=8, unique=True, null=True, blank=True, verbose_name="Código de seguimiento")
     status = models.CharField(max_length=50, choices=OrderStatus.choices, default=OrderStatus.REGISTERED, verbose_name='Estado')
     total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     type_ticket = models.CharField(max_length=10, choices=TypeTicket.choices, default=TypeTicket.FACTURA, verbose_name="Comprobante electrónico")
@@ -31,7 +29,7 @@ class Order(models.Model):
     promo_code = models.OneToOneField(PromoCode, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return str(self.tracking_code)
+        return self.client.full_name()
 
     def get_index_path(self):
         return reverse('orders:index')
@@ -80,9 +78,8 @@ class Order(models.Model):
     def get_total(self):
         return sum([ detail.price_rate for detail in self.detail_set.all() ])
 
-    def payed_order(self, payed_image, tracking_code, type_ticket):
+    def payed_order(self, payed_image, type_ticket):
         self.payed_image = payed_image
-        self.tracking_code = tracking_code        
         self.type_ticket = type_ticket
         self.save()
 
@@ -94,12 +91,6 @@ class Order(models.Model):
         self.status = Order.OrderStatus.COMPLETED
         self.save()
 
-    def get_tracking_code_text(self):
-        return '# TRACKING {}'.format(self.tracking_code)
-    
-    def created_at_naturaltime(self):
-        return naturaltime(self.created_at)
-    
     @property
     def get_first_detail(self):
         return self.detail_set.first()

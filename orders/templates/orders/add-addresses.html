@@ -8,7 +8,7 @@
 
 {% block content_head %}
 <div class="content-head">
-    <div class="left" modal-container" x-data="{ isOpen: false }">
+    <div class="left modal-container" x-data="{ isOpen: false }">
         <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Cálculo de tarifa"
             @click="isOpen = true">
             <i class='bx bx-help-circle bx-sm'></i>
@@ -44,12 +44,12 @@
         </div>
     </div>
 
-<div class="right">
-    <a href="{% url 'orders:create-detail' %}" class="btn btn-link btn-small">
-        <i class="bx bx-location-plus bx-sm"></i>
-        <span>Agregar dirección</span>
-    </a>
-</div>
+    <div class="right">
+        <a href="{% url 'orders:create-detail' %}" class="btn btn-link btn-small">
+            <i class="bx bx-location-plus bx-sm"></i>
+            <span>Agregar dirección</span>
+        </a>
+    </div>
 </div>
 {% endblock %}
 {% block content %}
@@ -191,7 +191,7 @@
                                             </div>
                                             <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
                                                 class="modal">
-                                                <div class="modal-content card" style="width: 600px"
+                                                <div class="modal-content card w-sm-full" style="width: 680px"
                                                     @click.away="isOpen = false">
                                                     <div class="head">
                                                         <h6>Imagen del paquete</h6>
@@ -202,8 +202,8 @@
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <div class="form-modal">
-                                                        <img src="{{ detail.image.url }}" style="width: 100%"
+                                                    <div class="form-modal scroll-auto">
+                                                        <img src="{{ detail.image.url }}" 
                                                             alt="{{ detail.description }}">
                                                     </div>
 

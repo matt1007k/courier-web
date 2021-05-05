@@ -15,26 +15,26 @@ from django.shortcuts import redirect, render
 from datetime import datetime
 from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress, UnassignOriginAddress
 
-from django.views.generic import ListView, DetailView, detail
+from django.views.generic import ListView, DetailView
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from .utils import delete_order, get_generate_tracking_code, get_or_create_order
+from .utils import delete_order, get_or_create_order
+from details.utils import get_generate_tracking_code
 from .models import Order
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'orders.view_order'
     template_name = 'orders/index.html'
     paginate_by = 10
-    model = Order
+    model = Detail
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['title'] = 'Pedidos'
-        context['statuses'] = Order.OrderStatus
-        context['client_list'] = Client.objects.all()[:5]
-        context['status'] = self.query_status() or Order.OrderStatus.REGISTERED
+        context['statuses'] = Detail.PackageStatus
+        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
         self.request.session['order_id'] = None
         return context
 
@@ -59,11 +59,9 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             # created_at__date='2021-3-25'
             # created_at__range=(start_date, end_date)
         if self.request.user.is_client:
-            object_list = self.request.user.client.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
-        elif self.request.user.is_driver:
-            object_list = self.request.user.driver.assignorder_set
+            object_list = self.request.user.client.detail_set.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         else:
-            object_list = self.model.objects.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
+            object_list = self.model.objects.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         
         return object_list
 
@@ -91,6 +89,8 @@ class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, L
         if self.request.user.is_driver:
             # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
             object_list = self.request.user.driver.assignoriginaddress_set.all().order_by('-id')
+        else:
+            object_list = self.model.objects.all().order_by('-id')
         return object_list
 
 class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -117,6 +117,8 @@ class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin,
         if self.request.user.is_driver:
             # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
             object_list = self.request.user.driver.assigndeliveryaddress_set.all().order_by('-id')
+        else:
+            object_list = self.model.objects.all().order_by('-id')
         return object_list
 
 class UnassignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -197,10 +199,12 @@ def payment_view(request):
                 messages.error(request, 'El pedido no tiene ninguna dirección de envío')
             order.payed_order(
                 payed_image = request.FILES['payed_image'],
-                tracking_code = get_generate_tracking_code(),
                 type_ticket = request.POST.get('type_ticket')
             )
             for detail in order.detail_set.all():
+                detail.payed(
+                    tracking_code = get_generate_tracking_code(),
+                )
                 # Mail.send_origin_complete_order(detail, detail.address_origin.email)
                 UnassignOriginAddress.objects.create(detail=detail)
             return redirect('orders:payment-success') 
@@ -311,3 +315,26 @@ def assign_deliveries_to_driver_view(request):
         messages.success(request, 'Direccion(es) de entrega asignada(s) con éxito')
         return redirect("orders:unassign-deliveries")
 
+@login_required()
+@permission_required('details.add_unassignoriginaddress', raise_exception=True)
+def return_unassign_origin_view(request, pk):
+    if request.method == 'GET':
+        detail = Detail.objects.get(pk=pk)
+        UnassignOriginAddress.objects.create(
+            detail=detail,
+        )
+        AssignOriginAddress.objects.filter(detail=detail).first().delete()
+        messages.success(request, 'La dirección de recojo, dejó de ser asignada al motorizado.')
+        return redirect("orders:origins")
+
+@login_required()
+@permission_required('details.add_unassigndeliveryaddress', raise_exception=True)
+def return_unassign_delivery_view(request, pk):
+    if request.method == 'GET':
+        detail = Detail.objects.get(pk=pk)
+        UnassignDeliveryAddress.objects.create(
+            detail=detail,
+        )
+        AssignDeliveryAddress.objects.filter(detail=detail).first().delete()
+        messages.success(request, 'La dirección de envío, dejó de ser asignada al motorizado.')
+        return redirect("orders:deliveries")

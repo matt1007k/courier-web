@@ -10,7 +10,7 @@
 
   <div class="mb-4">O</div>
   <div>
-    <a class="btn btn-link btn-small btn-full" @click="isOpen = true">Elegir mi dirección en el mapa</a>
+    <a class="btn btn-secondary btn-small btn-full" @click="isOpen = true">Elegir mi dirección en el mapa</a>
   </div>
 
   <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
@@ -134,7 +134,6 @@
         const infowindow = new google.maps.InfoWindow();
         this.currentPosition(geocoder, infowindow);
 
-        setDestination();
         map.addListener("click", (mapsMouseEvent) => {
           this.address.position = mapsMouseEvent.latLng,
             this.geocodeLatLng(geocoder, map, infowindow);
@@ -180,7 +179,7 @@
 
     // Attach your callback function to the `window` object
     window.initMap = function () {
-      // JS API is loaded and available
+        setDestination();
     };
 
     // Append the 'script' element to 'head'

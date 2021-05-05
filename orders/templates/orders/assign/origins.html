@@ -147,6 +147,13 @@
                     <i class='bx bx-map-pin bx-sm'></i>
                 </a>
                 {% endif %}
+                {% if request.user.is_administrator %}
+                <a href="{% url 'orders:return-unassign-origin' pk=object.detail.pk %}"
+                    class="dropdown-item-2">
+                    <span>Dejar de asignar</span>
+                    <i class='bx bx-archive-in bx-sm'></i>
+                </a>
+                {% endif %}
             </div>
         </div>
         <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpenSm" class="modal modal-sheet">
@@ -166,6 +173,15 @@
                             <span>Ver mapa</span>
                             <div class="icon ">
                                 <i class='bx bx-map-pin bx-sm'></i>
+                            </div>
+                        </a>
+                        {% endif %}
+                        {% if request.user.is_administrator %}
+                        <a href="{% url 'orders:return-unassign-origin' pk=object.detail.pk %}"
+                            class="option-item">
+                            <span>Dejar de asignar</span>
+                            <div class="icon">
+                                <i class='bx bx-archive-in bx-sm'></i>
                             </div>
                         </a>
                         {% endif %}

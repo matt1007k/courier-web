@@ -1,13 +1,16 @@
-from authentication.models import User
 import decimal
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from typing import Dict
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
 from django.db import models
+
 from orders.models import Order
 from drivers.models import Driver
 from addresses.models import Address
+from clients.models import Client
+from authentication.models import User
 
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
@@ -27,7 +30,9 @@ class Detail(models.Model):
         MEDIUM = 'MD', _('Mediano')
         LARGE = 'LG', _('Grande')
 
+    client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.CASCADE, verbose_name='cliente')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='pedido')
+    tracking_code = models.CharField(max_length=8, unique=True, null=True, blank=True, verbose_name="Código de seguimiento")
     size = models.CharField(max_length=100, choices=PackageSize.choices, default=PackageSize.SMALL, verbose_name='tamaño')
     contain = models.CharField(max_length=100, verbose_name='¿Qué contiene?')
     value = models.CharField(max_length=150, verbose_name='valor del paquete')
@@ -37,13 +42,20 @@ class Detail(models.Model):
     address_destiny = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='address_destiny',verbose_name='dirección de destino')
     distance = models.DecimalField(max_digits=10, decimal_places=1, verbose_name='distancia', default=0)
     price_rate = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Precio de tarifa', default=0)
-    status = models.CharField(max_length=50, choices=PackageStatus.choices, default=PackageStatus.PENDING)
+    status = models.CharField(max_length=50, choices=PackageStatus.choices, default=PackageStatus.PENDING, verbose_name='estado')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
 
     def __str__(self) -> str:
-        return self.full_name()
+        return str(self.tracking_code)
 
-    def full_name(self):
-        return "%s %s" % (self.order.tracking_code, self.contain)
+    def sumary_package(self):
+        return "%s %s" % (self.tracking_code, self.contain)
+
+    def get_detail_path(self):
+        return reverse('details:detail', kwargs={'pk': self.pk})
+        
+    def get_change_status_path(self):
+        return reverse('details:change-status', kwargs={'pk': self.pk})
 
     def origin_map_path(self):
         return reverse('details:origin-map', kwargs={'pk': self.pk})
@@ -57,6 +69,7 @@ class Detail(models.Model):
         self.save()
 
     def update_information(self, order, instance, distance, price_rate):
+        self.client = order.client
         self.order = order
         self.size = instance.size
         self.contain = instance.contain
@@ -97,6 +110,10 @@ class Detail(models.Model):
             )
         return address_destiny[0]
 
+    def payed(self, tracking_code):
+        self.tracking_code = tracking_code
+        self.save()
+
     def pended(self):
         self.status = Detail.PackageStatus.PENDING
         self.save()
@@ -107,10 +124,6 @@ class Detail(models.Model):
 
     def received(self):
         self.status = Detail.PackageStatus.RECEIVED
-        self.save()
-
-    def wakehoused(self):
-        self.status = Detail.PackageStatus.WAREHOUSE
         self.save()
 
     def wakehoused(self):
@@ -129,6 +142,12 @@ class Detail(models.Model):
         self.status = Detail.PackageStatus.REPROGRAMMED
         self.save()
 
+    def get_tracking_code_text(self):
+        return '# TRACKING {}'.format(self.tracking_code)
+    
+    def created_at_naturaltime(self):
+        return naturaltime(self.created_at)
+
     @property
     def is_delivered(self):
         return self.status == Detail.PackageStatus.DELIVERED
@@ -143,7 +162,7 @@ class AssignOriginAddress(models.Model):
     admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
 
     def __str__(self) -> str:
-        return self.detail.order.tracking_code
+        return self.detail.tracking_code
 
     def update_driver(self, driver, admin):
         self.driver = driver
@@ -160,7 +179,7 @@ class AssignDeliveryAddress(models.Model):
     admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
 
     def __str__(self) -> str:
-        return self.detail.order.tracking_code
+        return self.detail.tracking_code
 
     
     def update_driver(self, driver, admin):
@@ -176,7 +195,7 @@ class UnassignOriginAddress(models.Model):
     detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del packete')
         
     def __str__(self) -> str:
-        return str(self.detail.order.tracking_code)
+        return str(self.detailtracking_code)
 
     class Meta:
         verbose_name = 'sin asignar dirección de recojo'
@@ -186,7 +205,7 @@ class UnassignDeliveryAddress(models.Model):
     detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del packete')
         
     def __str__(self) -> str:
-        return str(self.detail.order.tracking_code)
+        return str(self.detail.tracking_code)
 
     class Meta:
         verbose_name = 'sin asignar dirección de envío'

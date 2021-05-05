@@ -182,7 +182,7 @@
     align-items: center;
     justify-content: center;
 }
-.order-content-2 .order-addresess-2 .address-order-detail .footer-details .package .package-picture img{
+.order-content-2 .order-addresess-2 .address-order-detail .footer-details .package .package-picture > img{
     width: 90px;
     background: rgba(var(--accent-color), .2);
     border-radius: 8px;

@@ -25,25 +25,20 @@
                 <img src="{% static 'icon/order-icon.svg' %}" />
             </div>
             <h5 class="mt-2 mb-2 font-bold">Detalles del paquete</h5>
-            <div class="list__group">
-                <p class="list__item">
-                    <i class="bx bx-check bx-sm text-success"></i>
-                    <span>{{ detail.size }}</span> 
-                </p>
-                <p class="list__item">
-                    <i class="bx bx-check bx-sm text-success"></i>
-                    <span>{{ detail.contain }}</span> 
-                </p>
-                <p class="list__item">
-                    <i class="bx bx-check bx-sm text-success"></i>
-                    <span>{{ detail.value }}</span> 
-                </p>
+            <div class="mb-2">
+                {% include 'details/snippets/status.html %}
             </div>
+            {% if detail.description %}
+            <p>{{ detail.description }}</p>
+            {% else %}
+            <p>Sin ninguna nota.</p>
+            {% endif %}
             <div class="mt-4">
                 <h5 class="mb-2 font-bold">Dirección de recojo</h5>
-                <p># TRACKING {{ detail.order.tracking_code }}</p>
+                <p>{{ detail.get_tracking_code }}</p>
                 <h6>{{ detail.address_origin.address_complete }}</h6>
-
+                <div class="mt-2 subheading">{{ detail.address_origin.address_detail }}</div>
+                <p>{{ detail.address_origin.reference }}</p>
             </div>
             <div class="mt-6">
                 <h5 class="mb-2 font-bold">¿Quién atenderá al motorizado?</h5>
@@ -53,7 +48,7 @@
                     <span>{{ detail.address_origin.cell_phone }}</span>
                 </p>
             </div>
-            {% if not detail.is_delivered %}
+            {% if not detail.is_delivered or perms.add_unassigndeliveryaddress or detail.status = 'ER' %}
             <div class="actions full">
                 <a href="{% url 'details:received' pk=detail.pk %}" class="btn btn-secondary btn-small btn-rounded">
                     <i class="bx bx-ckeck-circle bx-sm"></i>

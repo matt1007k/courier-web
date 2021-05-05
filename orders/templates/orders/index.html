@@ -48,17 +48,6 @@
                             <label for="date">Fecha de registro</label>
                             <input type="date" class="input" name="date" id="date" value="{{ request.GET.date }}">
                         </div>
-                        <div class="form-group">
-                            <label for="status">Estado</label>
-                            <select name="status" id="status" class="input">
-                                <option value="">Seleccionar el estado</option>
-                                <option value="{{ statuses.REGISTERED }}" {% if status == 'REGISTERED'%}selected{% endif %}>Entregado</option>
-                                <option value="{{ statuses.ON_ROUTE }}" {% if status == 'ON_ROUTE'%}selected{% endif %}>En Ruta</option>
-                                <option value="{{ statuses.DELIVERED }}" {% if status == 'DELIVERED'%}selected{% endif %}>Entregado</option>
-                                <option value="{{ statuses.UNDELIVERED }}" {% if status == 'UNDELIVERED'%}selected{% endif %}>No Entregado</option>
-                                <option value="{{ statuses.REPROGRAMMED }}" {% if status == 'REPROGRAMMED'%}selected{% endif %}>Reprogramado</option>
-                            </select>
-                        </div>
                         
                         <div class="actions right">
                             <button type='submit' class="btn btn-primary">Buscar</button>
@@ -132,12 +121,10 @@
 </div>
 {% endblock content_head %}
 {% block content %}
- <div class="filter-list space-x-2">
-    <a href="{% url 'orders:index' %}?status={{ statuses.REGISTERED }}" class="btn btn-{% if status == statuses.REGISTERED %}primary{% else %}link{% endif %} btn-small">Registrado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.ON_ROUTE }}" class="btn btn-{% if status == statuses.ON_ROUTE %}primary{% else %}link{% endif %} btn-small">En Ruta</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.DELIVERED }}" class="btn btn-{% if status == statuses.DELIVERED %}primary{% else %}link{% endif %} btn-small">Entregado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.UNDELIVERED }}" class="btn btn-{% if status == statuses.UNDELIVERED %}primary{% else %}link{% endif %} btn-small">No Entregado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.REPROGRAMMED }}" class="btn btn-{% if status == statuses.REPROGRAMMED %}primary{% else %}link{% endif %} btn-small">Reprogramado</a>
+ <div class="filter-list">
+    {% for cstatus in statuses %}
+    <a href="{% url 'orders:index' %}?status={{ cstatus }}" class="btn btn-{% if status == cstatus %}primary{% else %}link{% endif %} btn-rounded btn-small">{{ cstatus.label }}</a>
+    {% endfor %}
 </div>
  <div class="mb-10 order-list-grid">  
     <div class="order-list-head">
@@ -159,7 +146,7 @@
 
     {% if object_list.count > 0 %}
     
-    {% for order in object_list %}
+    {% for detail in object_list %}
     
     <div class="card card-normal order-list-row" x-data="{ isOpenSm: false, isOpenMd: false }">
         <div class="order-list-col">
@@ -167,10 +154,10 @@
                 <img src="{% static 'icon/order-icon.svg' %}"/>
             </div>
             <div class="content" style="align-items: flex-start;">
-                <p class="text-small text-muted font-normal"># TRACKING {{ order.tracking_code }}</p>
-                <h6>{{ order.client.full_name }}</h6>
+                <p class="text-small text-muted font-normal">{{ detail.get_tracking_code_text }}</p>
+                <h6>{{ detail.order.client.full_name }}</h6>
                 <div class="order-detail">
-                    <p>{{ order.created_at|naturaltime }}</p>
+                    <p>{{ detail.order.created_at|naturaltime }}</p>
                 </div>
             </div>
             <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">
@@ -178,23 +165,23 @@
             </div>
         </div>
         <div class="order-list-col">
-            <div class="text-small">{{ order.get_first_detail.address_origin.address_complete }}</div>
-            <h6>{{ order.get_first_detail.address_origin.full_name }}</h6>
+            <div class="text-small">{{ detail.address_origin.address_complete }}</div>
+            <h6>{{ detail.address_origin.full_name }}</h6>
             <p class="flex items-center">
                 <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
-                <span>{{ order.get_first_detail.address_origin.cell_phone }}</span>
+                <span>{{ detail.address_origin.cell_phone }}</span>
             </p>
         </div>
         <div class="order-list-col">
-            <div class="text-small">{{ order.get_first_detail.address_destiny.address_complete }}</div>
-            <h6>{{ order.get_first_detail.address_destiny.full_name }}</h6>
+            <div class="text-small">{{ detail.address_destiny.address_complete }}</div>
+            <h6>{{ detail.address_destiny.full_name }}</h6>
             <p class="flex items-center">
                 <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
-                <span>{{ order.get_first_detail.address_destiny.cell_phone }}</span>
+                <span>{{ detail.address_destiny.cell_phone }}</span>
             </p>
         </div>
         <div class="order-list-col">
-            {% include "orders/snippets/status.html" %}
+            {% include "details/snippets/status.html" %}
         </div>
         <div class="order-list-col dropdown" style="justify-self: end;">
             <div class="cursor-pointer h6" @click="isOpenMd = !isOpenMd">
@@ -204,15 +191,15 @@
                 x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
                 @click.away="isOpenMd = false">
                 {% if perms.orders.view_order %}
-                <a href="{{ order.get_detail_path }}" class="dropdown-item-2">
+                <a href="{{ detail.get_detail_path }}" class="dropdown-item-2">
                     <span>Ver detalles</span>
                     <i class='bx bx-map-pin bx-sm'></i>
                 </a>
                 {% endif %}
-                {% if perms.orders.add_assignorder %}
-                <a href="{% url 'orders:assign' order.pk %}" class="dropdown-item-2">
-                    <span>Asignar motorizado</span>
-                    <i class='bx bx-check-circle bx-sm'></i>
+                {% if request.user.is_administrator %}
+                <a href="{{ detail.get_change_status_path }}" class="dropdown-item-2">
+                    <span>Cambiar estado</span>
+                    <i class='bx bx-wrench bx-sm'></i>
                 </a>
                 {% endif %}
             </div>
@@ -229,23 +216,11 @@
                 </div>
                 <div class="form-modal">
                     <div class="options">
-                        {% if perms.orders.view_order %}
-                        <a href="{{ order.get_detail_path }}" class="option-item">
+                        {% if perms.details.view_detail %}
+                        <a href="{{ detail.get_detail_path }}" class="option-item">
                             <span>Ver detalles</span>
                             <div class="icon ">
                                 <i class='bx bx-map-pin bx-sm'></i>
-                            </div>
-                        </a>
-                        {% endif %}
-                        {% if perms.orders.add_assignorder %}
-                        <a href="{% url 'orders:assign' order.pk %}" class="option-item">
-                            {% if order.is_assign %}
-                                <span>Reasignar motorizado</span>
-                            {% else %}
-                                <span>Asignar motorizado</span>
-                            {% endif %}
-                            <div class="icon ">
-                                <i class='bx bx-check-circle bx-sm'></i>
                             </div>
                         </a>
                         {% endif %}
@@ -295,7 +270,7 @@
     {% else %}
     <div class="card mb-10">
         <p>
-            Sin registros...
+            Sin pedidos para ese estado.
         </p>
     </div>
     {% endif %}

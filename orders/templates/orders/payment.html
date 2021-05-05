@@ -8,9 +8,10 @@
 
 {% block content_head %}
 <div class="content-head">
-    <div class="left modal-container" x-data="{ isOpen: false }">
+    <div class="right modal-container" x-data="{ isOpen: false }">
         <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Formas de pago" @click="isOpen = true">
             <i class='bx bx-help-circle bx-sm'></i>
+            <span>¿Cómo puedo pagar?</span>
         </a>
         <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
             <div class="modal-content card" style="width: 600px" @click.away="isOpen = false">

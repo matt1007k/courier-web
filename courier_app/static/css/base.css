@@ -45,11 +45,17 @@ body.dark{
 .w-full{
     width: 100% !important;
 }
+.w-auto{
+    width: auto !important;
+}
 
 @media (min-width: 1024px){
     .container{
         max-width: 980px;
         margin: 0 auto;
+    }
+    .w-sm-full{
+        width: 100% !important;
     }
 }
 
@@ -57,5 +63,8 @@ body.dark{
     .container{
         max-width: 1200px;
         margin: 0 auto;
+    }
+    .w-sm-full{
+        width: auto !important;
     }
 }
