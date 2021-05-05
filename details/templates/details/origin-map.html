@@ -51,7 +51,7 @@
                     <span>{{ detail.address_origin.cell_phone }}</span>
                 </p>
             </div>
-            {% if not detail.is_delivered or perms.add_unassigndeliveryaddress or detail.status = 'ER' %}
+            {% if not detail.is_delivered or perms.add_unassigndeliveryaddress or detail.status == 'ER' %}
             <div class="actions full">
                 <a href="{% url 'details:received' pk=detail.pk %}" class="btn btn-secondary btn-small btn-rounded">
                     <i class="bx bx-ckeck-circle bx-sm"></i>
@@ -87,9 +87,6 @@
             };
             window.map = new google.maps.Map(document.getElementById('map'), { zoom: 16, center: myLatLng, });
             getDrawRoute();
-            setInterval(() => {
-                console.log(myLatLng.lat + addN())
-            }, 1000)
         };
 
         // Append the 'script' element to 'head'
@@ -103,42 +100,96 @@
         var directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': false });
         var directionsService = new google.maps.DirectionsService();
         var address = {{ detail.address_origin| jsonify }}[0];
+        var address_destiny_text = `${address.fields.address}, ${address.fields.district}, ${address.fields.city}`;
+        var address_destiny_content = `
+            <p>${address_destiny_text}</p>
+            <h5 class="mb-2 font-bold">¿Quién atenderá al motorizado?</h5>
+            <h6>${ address.fields.full_name }</h6>
+            <p class="flex items-center">
+                <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
+                <span>${ address.fields.cell_phone }</span>
+            </p>
+        `;
+        {% if driver %}
         var driver = {{ driver|jsonify }}[0];
         var address_origin_text = `${driver.fields.address}, ${driver.fields.district}`;
-        var address_destiny_text = `${address.fields.address}, ${address.fields.district}, ${address.fields.city}`;
-        var position_driver = driver.fields.address_gps;
-        var latLng = position_driver;
-        latLng = new google.maps.LatLng(position_driver.lat + 0.003424, position_driver.lng - 0.000052144411);
-        new google.maps.Marker({
-            position: latLng,
-            map,
-            title: "Dirección del motorizado",
-            icon: "{% static 'icon/driver-icon.png' %}"
-        });
-
+        const address_origin_content = `
+            <p>${address_origin_text}</p>
+            <h5 class="mb-2 font-bold">Datos del motorizado</h5>
+            <h6>${ driver.fields.first_name } ${ driver.fields.last_name }</h6>
+            <p class="flex items-center">
+                <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i>
+                <span>${ driver.fields.cell_phone }</span>
+            </p>
+        `;
         displayRoute(
             address_origin_text,
             address_destiny_text,
             directionsService,
-            directionsDisplay
+            directionsDisplay,
+            address_origin_content,
+            address_destiny_content,
         );
+        {% else %}
+            var position_package = JSON.parse(address.fields.address_gps);
+            var latLng = new google.maps.LatLng(position_package.lat, position_package.lng);
+            const marker = new google.maps.Marker({
+                position: latLng,
+                map,
+                title: "Dirección de recojo",
+                icon: "{% static 'icon/order-icon.svg' %}"
+            });
+            map.setCenter(latLng);
+            const infowindow = new google.maps.InfoWindow({
+                content: address_destiny_content,
+            });
+            marker.addListener("click", () => {
+                infowindow.open(map, marker);
+            });
+        {% endif %}
     }
-    function displayRoute(origin_address, destiny_address, directionsService, directionsDisplay) {
+    function displayRoute(origin_address, destiny_address, directionsService, directionsDisplay, address_origin_content, address_destiny_content) {
         directionsService.route({
             origin: origin_address,
             destination: destiny_address,
             travelMode: 'DRIVING',
             avoidTolls: true
         }, function (response, status) {
-            if (status === 'OK') {
-                directionsDisplay.setMap(map);
-                directionsDisplay.setDirections(response);
-                // console.log(response.routes[0].legs[0].start_location().toFixed());
+            if (status === google.maps.DirectionsStatus.OK) {
+                new google.maps.DirectionsRenderer({
+                    map: map,
+                    directions: response,
+                    suppressMarkers: true
+                });
+                var leg = response.routes[0].legs[0];
+                var marker_origin = makeMarker(leg.start_location, "{% static 'icon/driver-icon.png' %}", origin_address, map);
+                var marker_destiny = makeMarker(leg.end_location, "{% static 'icon/order-icon.svg' %}", destiny_address, map);
+                map.setCenter(leg.start_location);
+                const infowindowOrigin = new google.maps.InfoWindow({
+                    content: address_origin_content,
+                });
+                const infowindowDestiny = new google.maps.InfoWindow({
+                    content: address_destiny_content,
+                });
+                marker_origin.addListener("click", () => {
+                    infowindowOrigin.open(map, marker_origin);
+                });
+                marker_destiny.addListener("click", () => {
+                    infowindowDestiny.open(map, marker_destiny);
+                });
             } else {
                 directionsDisplay.setMap(null);
                 directionsDisplay.setDirections(null);
                 alert('Could not display directions due to: ' + status);
             }
+        });
+    }
+    function makeMarker(position, icon, title, map) {
+        return new google.maps.Marker({
+            position: position,
+            map: map,
+            icon: icon,
+            title: title
         });
     }
 </script>

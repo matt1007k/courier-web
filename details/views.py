@@ -106,9 +106,13 @@ def origin_map_view(request, pk):
     title = 'Ver mapa de dirección de recojo'
     template_name = 'details/origin-map.html'
     detail = Detail.objects.get(pk=pk) 
-    if not detail.is_delivered:
+    if not detail.is_delivered and request.user.is_driver:
         detail.on_routed()
-    driver = AssignOriginAddress.objects.filter(detail=detail).first().driver
+
+    if detail.is_assign_origin:
+        driver = AssignOriginAddress.objects.filter(detail=detail).first().driver
+    else:
+        driver = None
 
     return render(request, template_name, context={
         'title': title,
@@ -121,9 +125,12 @@ def destiny_map_view(request, pk):
     title = 'Ver mapa de dirección de entrega'
     template_name = 'details/destiny-map.html'
     detail = Detail.objects.get(pk=pk) 
-    if not detail.is_delivered:
+    if not detail.is_delivered and request.user.is_driver:
         detail.on_routed()
-    driver = AssignDeliveryAddress.objects.filter(detail=detail).first().driver
+    if detail.is_assign_delivery:
+        driver = AssignDeliveryAddress.objects.filter(detail=detail).first().driver
+    else:
+        driver = None
 
     return render(request, template_name, context={
         'title': title,

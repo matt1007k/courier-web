@@ -152,6 +152,14 @@ class Detail(models.Model):
     def is_delivered(self):
         return self.status == Detail.PackageStatus.DELIVERED
 
+    @property
+    def is_assign_origin(self):
+        return AssignOriginAddress.objects.filter(detail=self).exists() 
+
+    @property
+    def is_assign_delivery(self):
+        return AssignDeliveryAddress.objects.filter(detail=self).exists() 
+
     class Meta:
         verbose_name = "detalle"
         verbose_name_plural = "detalles"
@@ -195,7 +203,7 @@ class UnassignOriginAddress(models.Model):
     detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del packete')
         
     def __str__(self) -> str:
-        return str(self.detailtracking_code)
+        return str(self.detail.tracking_code)
 
     class Meta:
         verbose_name = 'sin asignar dirección de recojo'
