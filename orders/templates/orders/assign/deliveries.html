@@ -103,7 +103,7 @@
                 <img src="{% static 'icon/order-icon.svg' %}" />
             </div>
             <div class="content" style="align-items: flex-start;">
-                <p class="text-small text-muted font-normal"># TRACKING {{ object.detail.order.tracking_code }}</p>
+                <p class="text-small text-muted font-normal">{{ object.detail.get_tracking_code_text }}</p>
                 <h6>{{ object.detail.order.client.full_name }}</h6>
                 <div class="order-detail">
                     <p>{{ object.detail.order.created_at|naturaltime }}</p>

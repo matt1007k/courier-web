@@ -289,12 +289,13 @@ def assign_origins_to_driver_view(request):
         driver = Driver.objects.get(pk=request.POST.get('driver_id'))
         for id in detail_ids:
             detail = Detail.objects.get(pk=id)
-            AssignOriginAddress.objects.create(
-                detail=detail,
-                driver=driver,
-                admin=request.user if request.user.is_administrator else None
-            )
-            UnassignOriginAddress.objects.filter(detail=detail).first().delete()
+            if not AssignOriginAddress.objects.filter(detail=detail).exists():
+                AssignOriginAddress.objects.create(
+                    detail=detail,
+                    driver=driver,
+                    admin=request.user if request.user.is_administrator else None
+                )
+                UnassignOriginAddress.objects.filter(detail=detail).first().delete()
         messages.success(request, 'Direccion(es) de recojo asignada(s) con éxito')
         return redirect("orders:unassign-origins")
 
@@ -306,12 +307,13 @@ def assign_deliveries_to_driver_view(request):
         driver = Driver.objects.get(pk=request.POST.get('driver_id'))
         for id in detail_ids:
             detail = Detail.objects.get(pk=id)
-            AssignDeliveryAddress.objects.create(
-                detail=detail,
-                driver=driver,
-                admin=request.user if request.user.is_administrator else None
-            )
-            UnassignDeliveryAddress.objects.filter(detail=detail).first().delete()
+            if not AssignDeliveryAddress.objects.filter(detail=detail).exists():
+                AssignDeliveryAddress.objects.create(
+                    detail=detail,
+                    driver=driver,
+                    admin=request.user if request.user.is_administrator else None
+                )
+                UnassignDeliveryAddress.objects.filter(detail=detail).first().delete()
         messages.success(request, 'Direccion(es) de entrega asignada(s) con éxito')
         return redirect("orders:unassign-deliveries")
 
@@ -320,11 +322,14 @@ def assign_deliveries_to_driver_view(request):
 def return_unassign_origin_view(request, pk):
     if request.method == 'GET':
         detail = Detail.objects.get(pk=pk)
-        UnassignOriginAddress.objects.create(
-            detail=detail,
-        )
-        AssignOriginAddress.objects.filter(detail=detail).first().delete()
-        messages.success(request, 'La dirección de recojo, dejó de ser asignada al motorizado.')
+        if not UnassignOriginAddress.objects.filter(detail=detail).exists():
+            UnassignOriginAddress.objects.create(
+                detail=detail,
+            )
+            AssignOriginAddress.objects.filter(detail=detail).first().delete()
+            messages.success(request, 'La dirección de recojo, dejó de ser asignada al motorizado.')
+            return redirect("orders:origins")
+        messages.success(request, 'La dirección de recojo, ya dejó de ser asignada previamente.')
         return redirect("orders:origins")
 
 @login_required()
@@ -332,9 +337,12 @@ def return_unassign_origin_view(request, pk):
 def return_unassign_delivery_view(request, pk):
     if request.method == 'GET':
         detail = Detail.objects.get(pk=pk)
-        UnassignDeliveryAddress.objects.create(
-            detail=detail,
-        )
-        AssignDeliveryAddress.objects.filter(detail=detail).first().delete()
-        messages.success(request, 'La dirección de envío, dejó de ser asignada al motorizado.')
+        if not UnassignDeliveryAddress.objects.filter(detail=detail).exists():
+            UnassignDeliveryAddress.objects.create(
+                detail=detail,
+            )
+            AssignDeliveryAddress.objects.filter(detail=detail).first().delete()
+            messages.success(request, 'La dirección de envío, dejó de ser asignada al motorizado.')
+            return redirect("orders:deliveries")
+        messages.success(request, 'La dirección de envío, ya dejó de ser asignada previamente.')
         return redirect("orders:deliveries")
