@@ -26,9 +26,10 @@
             </div>
             <h5 class="mt-2 mb-2 font-bold">Detalles del paquete</h5>
             <div class="mb-2">
-                {% include 'details/snippets/status.html %}
+                {% include 'details/snippets/status.html' %}
             </div>
             {% if detail.description %}
+            <h6>Nota</h6>
             <p>{{ detail.description }}</p>
             {% else %}
             <p>Sin ninguna nota.</p>
@@ -37,7 +38,9 @@
                 <h5 class="mb-2 font-bold">Dirección de recojo</h5>
                 <p>{{ detail.get_tracking_code }}</p>
                 <h6>{{ detail.address_origin.address_complete }}</h6>
-                <div class="mt-2 subheading">{{ detail.address_origin.address_detail }}</div>
+                <h6 class="mt-2">N° de puerta/Lte/Mz/Dpto/Piso</h6>
+                <div class="subheading">{{ detail.address_origin.address_detail }}</div>
+                <h6 class="mt-2">Referencia</h6>
                 <p>{{ detail.address_origin.reference }}</p>
             </div>
             <div class="mt-6">

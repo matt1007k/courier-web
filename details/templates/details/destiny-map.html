@@ -26,9 +26,10 @@
             </div>
             <h5 class="mt-2 mb-2 font-bold">Detalles del paquete</h5>
             <div class="mb-2">
-                {% include 'details/snippets/status.html %}
+                {% include 'details/snippets/status.html' %}
             </div>
             {% if detail.description %}
+            <h6>Nota</h6>
             <p>{{ detail.description }}</p>
             {% else %}
             <p>Sin ninguna nota.</p>
@@ -37,7 +38,9 @@
                 <h5 class="mb-2 font-bold">Dirección de entrega</h5>
                 <p>{{ detail.get_tracking_code_text }}</p>
                 <h6>{{ detail.address_destiny.address_complete }}</h6>
-                <div class="mt-2 subheading">{{ detail.address_destiny.address_detail }}</div>
+                <h6 class="mt-2">N° de puerta/Lte/Mz/Dpto/Piso</h6>
+                <div class="subheading">{{ detail.address_destiny.address_detail }}</div>
+                <h6 class="mt-2">Referencia</h6>
                 <p>{{ detail.address_destiny.reference }}</p>
             </div>
             <div class="mt-6">
@@ -48,7 +51,7 @@
                     <span>{{ detail.address_destiny.cell_phone }}</span>
                 </p>
             </div>
-            {% if not detail.is_delivered and perms.details.add_packagedelivered %}
+            {% if not detail.is_delivered and request.user.is_driver and perms.details.add_packagedelivered %}
             <div class="actions full">
                 <a href="{% url 'details:package-delivered' pk=detail.pk %}" class="btn btn-secondary btn-small btn-rounded">
                     <i class="bx bx-ckeck-circle bx-sm"></i>
