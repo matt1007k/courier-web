@@ -34,16 +34,16 @@
             {% else %}
             <p>Sin ninguna nota.</p>
             {% endif %}
-            <div class="mt-4">
+            <p class="mt-4">
                 <h5 class="mb-2 font-bold">Dirección de recojo</h5>
                 <p>{{ detail.get_tracking_code }}</p>
                 <h6>{{ detail.address_origin.address_complete }}</h6>
                 <h6 class="mt-2">N° de puerta/Lte/Mz/Dpto/Piso</h6>
-                <div class="subheading">{{ detail.address_origin.address_detail }}</div>
+                <p>{{ detail.address_origin.address_detail }}</p>
                 <h6 class="mt-2">Referencia</h6>
                 <p>{{ detail.address_origin.reference }}</p>
             </div>
-            <div class="mt-6">
+            <div class="mt-4">
                 <h5 class="mb-2 font-bold">¿Quién atenderá al motorizado?</h5>
                 <h6>{{ detail.address_origin.full_name }}</h6>
                 <p class="flex items-center">
