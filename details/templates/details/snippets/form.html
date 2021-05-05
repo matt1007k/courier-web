@@ -106,7 +106,7 @@
       <i class='icon bx bx-right-arrow-alt bx-md text-title'></i>
       <div>
         <h5 class="mb-4">Dirección de envío</h5>
-        <div class="address__wrapper mb-4">
+        <div class="address__wrapper mb-4 container-modal" x-data="addressDeliveryState()" x-init="init()">
           <div class="mb-4">
             <div class="form-group-search m-0">
               <input type="search" class="input input-outline" id="destiny_search"
@@ -114,6 +114,49 @@
               <i class="input-icon bx bx-search bx-sm"></i>
             </div>
             <input type="hidden" id="destiny_search_text">
+          </div>
+          <div class="mb-4">O</div>
+          <a class="btn btn-secondary btn-small" @click="isOpen = true">Seleccionar una dirección anterior</a>
+          <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+            <div class="modal-content card" style="width: 450px" @click.away="isOpen = false">
+              <div class="head">
+                <h6>Seleccionar un dirección anterior</h6>
+                <div class="close">
+                  <a @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                    <i class='bx bx-x bx-sm m-0'></i>
+                  </a>
+                </div>
+              </div>
+              <div class="form-modal">
+                <div class="form-group-search m-0">
+                  <input 
+                    type="search" 
+                    class="input input-outline"
+                    id="address_before" 
+                    x-model="address_before"
+                    ref="address_before"
+                    placeholder="Buscar una dirección anterior"
+                  />
+                  <i class="input-icon bx bx-search bx-sm"></i>
+                </div>
+                <div class="options-2 mt-4">
+                  <template x-if="address_list.length || address_select" x-for="(address, index) in address_list" :key="index">
+                    <div class="option-item" style="transition: all 1s;" :class="{'active': address_select.pk === address.pk}" @click="selectAddress(index)" >
+                      <i class="bx bx-check-circle bx-md"></i>
+                      <div>
+                        <p class="text-muted text-small text-left" x-text="address.fields.full_name"></p>
+                        <p class="text-primary text-left" x-text="getAddressText(address.fields)"></p>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <div x-show="!address_list.length" class="alert text-muted" x-text="emptyMessageText"></div>
+                <div class="actions right">
+                  <a @click="isOpen = false" class="btn btn-default">Cancelar</a>
+                  <button type="button" :disabled="btnDisabled" class="btn btn-primary" @click="setChangeDeliveryAddress()">Elegir</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         {% for field in destiny_form %}
@@ -333,12 +376,75 @@
       }
     }
   }
+  function addressDeliveryState() {
+    return {
+      isOpen: false,
+      address_before: '',
+      address_list: [],
+      address_select: {},
+      client: {},
+      emptyMessageText: 'Ingrese la dirección, distrito o ciudad',
+      btnDisabled: true,
+      getAddressBefore(value) {
+        const slug = this.client.fields.slug; 
+        fetch('/addresses/get-address/'+slug+'/?q=' + value)
+          .then(res => res.json())
+          .then(data => {
+            if (!data.length) {
+                this.emptyMessageText = 'Sin resultados';
+                this.address_list = [];
+                return;
+            }
+            this.address_list = data;
+          });
+      },
+      getClientOrder(){
+        fetch('/orders/get-client/')
+        .then(res => res.json())
+        .then(data => this.client = data[0]);
+      },
+      getAddressText(address){
+        return `${address.address}, ${address.district}, ${address.city}`;
+      },
+      selectAddress(index){
+        this.address_select  = this.address_list[index];
+        this.btnDisabled = false;
+      },
+      setChangeDeliveryAddress(){
+        this.isOpen = false;
+        this.btnDisabled = true;
+        this.address_before = '';
+        this.address_list.push(this.address_select);
+        var jsonPosition = JSON.parse(this.address_select.fields.address_gps);
+        changePositionAddressDestiny(jsonPosition, this.getAddressText(this.address_select.fields));
+        changeInfoAddressDelivery(this.address_select.fields);
+      },
+      init(){
+        this.getClientOrder(); 
+        this.$watch('address_before', (value) => {
+          if (!value) {
+              this.emptyMessageText = 'Ingrese la dirección, distrito o ciudad';
+              this.address_list = [];
+              return;
+          }
+          this.getAddressBefore(value);
+        });
+      }
+    }
+  }
   function changeInfoAddressOrigin(address_selected){
     form.origin_full_name.value = address_selected.full_name;
     form.origin_email.value = address_selected.email;
     form.origin_cell_phone.value = address_selected.cell_phone;
     form.origin_reference.value = address_selected.reference;
     form.origin_address_detail.value = address_selected.address_detail;
+  }
+  function changeInfoAddressDelivery(address_selected){
+    form.destiny_full_name.value = address_selected.full_name;
+    form.destiny_email.value = address_selected.email;
+    form.destiny_cell_phone.value = address_selected.cell_phone;
+    form.destiny_reference.value = address_selected.reference;
+    form.destiny_address_detail.value = address_selected.address_detail;
   }
 </script>
 {% endblock scripts %}

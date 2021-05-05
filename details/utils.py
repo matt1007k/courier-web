@@ -1,9 +1,9 @@
 from .models import Detail
 
 def get_generate_tracking_code():
-    details_count = Detail.objects.count()
-    if details_count <= 1:
-        details_count = 0
+    details_count = Detail.objects.exclude(tracking_code=None).count()
+    # if details_count <= 1:
+    #     details_count = 0
 
     zero = ''
     

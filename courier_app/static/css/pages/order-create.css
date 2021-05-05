@@ -270,9 +270,9 @@
     .order-content-2{
         grid-template-columns: 1fr .6fr;
     }
-    .order-content-2 .order-addresess-2 .address-item .address-delivered{
+    /* .order-content-2 .order-addresess-2 .address-item .address-delivered{
         grid-template-columns: 1fr 7rem 1fr;
-    }
+    } */
     .order-content-2 .order-addresess-2 .address-item .address-delivered h6{
         font-size: 15px;
     }
