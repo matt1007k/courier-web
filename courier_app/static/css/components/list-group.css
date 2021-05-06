@@ -1,0 +1,9 @@
+.list__group{
+    width: 100%; 
+}
+.list__item{
+    display: flex;
+}
+.list__item i{
+    margin-right: 5px;
+}

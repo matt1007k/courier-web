@@ -1,0 +1,30 @@
+.container-auth{
+    width: 328px;
+    margin: 0 auto;
+    padding-top: 50px;
+}
+.container-auth h4{ 
+    margin-bottom: 30px;
+    text-align: center;
+}
+.container-auth .btn{
+    margin-top: 34px;
+    margin-bottom: 20px;
+}
+.container-auth p{
+    text-align: center;
+    margin-bottom: 30px;
+}
+.container-auth p a{
+    text-decoration: none;
+    font-weight: 500;
+}
+
+@media(min-width: 1024px){
+    .container-auth h4{ 
+        margin-bottom: 45px;
+    }
+    .container-auth .btn{
+        margin-bottom: 30px;
+    }
+}

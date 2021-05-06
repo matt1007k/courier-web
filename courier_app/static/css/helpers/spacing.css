@@ -1,0 +1,66 @@
+.space-x-2 > :not(template) ~ :not(template) {
+    --space-x-reverse: 0;
+    margin-right: calc(1rem * var(--space-x-reverse));
+    margin-left: calc(1rem * (1 - var(--space-x-reverse)));
+}
+.space-x > :not(template) ~ :not(template) {
+    --space-x-reverse: 0;
+    margin-right: calc(.63rem * var(--space-x-reverse));
+    margin-left: calc(.63rem * (1 - var(--space-x-reverse)));
+}
+.m-0{
+    margin: 0 !important;
+}
+
+.mr-1{
+    margin-right: 0.25rem !important;
+}
+
+.mb-2{
+    margin-bottom: 0.5rem !important;
+}
+.mb-4{
+    margin-bottom: 1rem !important;
+}
+.mb-5{
+    margin-bottom: 1.25rem !important;
+}
+.mb-6{
+    margin-bottom: 1.50rem !important;
+}
+.mb-8{
+    margin-bottom: 4rem !important;
+}
+.mb-10{
+    margin-bottom: 5rem !important;
+}
+
+.mt-2{
+    margin-top: 0.5rem !important;
+}
+.mt-4{
+    margin-top: 1rem !important;
+}
+.mt-5{
+    margin-top: 1.5rem !important;
+}
+.mt-6{
+    margin-top: 2rem !important;
+}
+.mt-7{
+    margin-top: 3rem !important;
+}
+.mt-8{
+    margin-top: 4rem !important;
+}
+.mt-10{
+    margin-top: 5rem !important;
+}
+
+.p-0{
+    padding: 0;
+}
+
+.scroll-auto{
+    overflow: auto;
+}

@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
+
+body{
+    --primary-color: 33, 0, 136;
+    --secondary-color: 255, 94, 0;
+    --primary-page-color: 25, 95, 181;
+    --accent-color: 255, 158, 0;
+    --danger-color: 232, 92, 92;
+    --success-color: 30, 222, 156;
+    --title-color: 34, 21, 74;
+    --text-color: rgba(var(--title-color), 0.6);
+    --text-secondary-color: rgba(0, 0, 0, 0.5);
+    --btn-default-color: rgb(0, 0, 0, .05);
+    --bg-primary-color: #FAFAFA;
+    --bg-secondary-color: white;
+    --filter-primary-color: invert(11%) sepia(63%) saturate(5903%) hue-rotate(257deg) brightness(73%) contrast(126%);
+    --filter-secondary-color: invert(62%) sepia(7%) saturate(92%) hue-rotate(219deg) brightness(93%) contrast(85%);
+    background: var(--bg-primary-color);
+    font-size: 15px;
+    font-family: 'Rubik', Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+body.dark{
+    --primary-color: 33, 0, 136;
+    --secondary-color: 255, 94, 0;
+    --accent-color: 255, 158, 0;
+    --danger-color: 232, 92, 92;
+    --title-color: 255, 255, 255;
+    --text-color: rgba(var(--title-color), 0.6);
+    --text-secondary-color: rgba(255, 255, 255, 0.5);
+    --btn-default-color: rgba(255, 255, 255, 0.15);
+    --bg-primary-color: #2c2c2c;
+    --bg-secondary-color: #414141;
+    --filter-primary-color: invert(100%) sepia(100%) saturate(9%) hue-rotate(167deg) brightness(103%) contrast(105%);;
+    --filter-secondary-color: invert(62%) sepia(7%) saturate(92%) hue-rotate(219deg) brightness(93%) contrast(85%);
+    /* blue */
+    /* --bg-primary-color: #1f1c2f;
+    --bg-secondary-color: #292448; */
+}
+
+.container{
+    padding: 0 20px;
+}
+.w-full{
+    width: 100% !important;
+}
+.w-auto{
+    width: auto !important;
+}
+
+@media (min-width: 1024px){
+    .container{
+        max-width: 980px;
+        margin: 0 auto;
+    }
+    .w-sm-full{
+        width: 100% !important;
+    }
+}
+
+@media (min-width: 1280px){
+    .container{
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .w-sm-full{
+        width: auto !important;
+    }
+}
