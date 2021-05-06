@@ -160,6 +160,14 @@ class Detail(models.Model):
     def is_assign_delivery(self):
         return AssignDeliveryAddress.objects.filter(detail=self).exists() 
 
+    @property
+    def is_unassign_origin(self):
+        return UnassignOriginAddress.objects.filter(detail=self).exists() 
+
+    @property
+    def is_unassign_delivery(self):
+        return UnassignDeliveryAddress.objects.filter(detail=self).exists() 
+
     class Meta:
         verbose_name = "detalle"
         verbose_name_plural = "detalles"

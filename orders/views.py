@@ -206,7 +206,8 @@ def payment_view(request):
                     tracking_code = get_generate_tracking_code(),
                 )
                 # Mail.send_origin_complete_order(detail, detail.address_origin.email)
-                UnassignOriginAddress.objects.create(detail=detail)
+                if not detail.is_unassign_origin:
+                    UnassignOriginAddress.objects.create(detail=detail)
             return redirect('orders:payment-success') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
@@ -289,7 +290,7 @@ def assign_origins_to_driver_view(request):
         driver = Driver.objects.get(pk=request.POST.get('driver_id'))
         for id in detail_ids:
             detail = Detail.objects.get(pk=id)
-            if not AssignOriginAddress.objects.filter(detail=detail).exists():
+            if not detail.is_assign_origin:
                 AssignOriginAddress.objects.create(
                     detail=detail,
                     driver=driver,
@@ -307,7 +308,7 @@ def assign_deliveries_to_driver_view(request):
         driver = Driver.objects.get(pk=request.POST.get('driver_id'))
         for id in detail_ids:
             detail = Detail.objects.get(pk=id)
-            if not AssignDeliveryAddress.objects.filter(detail=detail).exists():
+            if not detail.is_assign_delivery:
                 AssignDeliveryAddress.objects.create(
                     detail=detail,
                     driver=driver,
@@ -322,7 +323,7 @@ def assign_deliveries_to_driver_view(request):
 def return_unassign_origin_view(request, pk):
     if request.method == 'GET':
         detail = Detail.objects.get(pk=pk)
-        if not UnassignOriginAddress.objects.filter(detail=detail).exists():
+        if not detail.is_unassign_origin:
             UnassignOriginAddress.objects.create(
                 detail=detail,
             )
@@ -337,7 +338,7 @@ def return_unassign_origin_view(request, pk):
 def return_unassign_delivery_view(request, pk):
     if request.method == 'GET':
         detail = Detail.objects.get(pk=pk)
-        if not UnassignDeliveryAddress.objects.filter(detail=detail).exists():
+        if not detail.is_unassing_delivery:
             UnassignDeliveryAddress.objects.create(
                 detail=detail,
             )

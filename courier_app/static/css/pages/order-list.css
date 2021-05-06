@@ -1,13 +1,10 @@
 .filter-list{
-    /* display: flex;
-    justify-items: center; */
-    overflow-y: none;
+    display: flex;
     overflow-x: auto;
     margin-bottom: 34px;
-    min-width: 100%;
 }
 .filter-list a{
-    min-width: 90px;
+    min-width: 150px;
 }
 .order-list-grid .order-list-head{
     display: none;
@@ -15,7 +12,7 @@
 .order-list-row{
     display: grid;
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 20px;
     align-items: center;
 }
 .order-list-row.checkbox{
@@ -24,19 +21,22 @@
 .order-list-row:nth-child(n+2){
     margin-bottom: 20px;
 }
-.order-list-row .order-list-col:first-child, .order-list-grid.checkbox .order-list-col:nth-child(2){
-   display: flex; 
+.order-list-row .order-list-col:first-child{
+   display: flex !important; 
 }
 .order-list-row .order-list-col.actions{
     margin: 0;
-}
-.order-list-row.checkbox .order-list-col:nth-child(n+3){
-    display: none;
 }
 .order-list-row .order-list-col:nth-child(n+2) {
     display: none;
 }
 .order-list-row.checkbox .order-list-col:nth-child(n+3){
+    display: none !important;
+}
+.order-list-row.checkbox .order-list-col:nth-child(2){
+    display: flex !important;
+}
+.order-list-row.checkbox .order-list-col .icon{
     display: none;
 }
 .order-list-row .order-list-col .icon{
@@ -45,6 +45,17 @@
 .order-list-row .order-list-col .content{
     width: 80%;
     margin: 0 20px 0 15px;
+}
+.order-list-row.checkbox .order-list-col .content{
+    width: 80%;
+    margin: 0 20px 0 0;
+    flex: 1 auto;
+}
+.content__client{
+    display: none;
+}
+.content__address{
+    display: block;
 }
 .order-list-row .order-list-col .content p, .order-list-row .order-list-col .content span{
     font-size: 12px !important;
@@ -69,7 +80,7 @@
     .order-list-row .order-list-col:last-child{
         display: block;
     }
-    .order-list-row .order-list-col .content{
+    .order-list-row .order-list-col .content, .order-list-row.checkbox .order-list-col .content{
         flex: auto;
         margin: 0 0 0 15px;
     }
@@ -83,40 +94,54 @@
     .order-list-row .order-list-col:nth-child(n+4) {
         display: flex;
     }
+    .order-list-row.checkbox .order-list-col:nth-child(n+5) {
+        display: flex !important;
+    }
+    .order-list-row.checkbox .order-list-col .icon{
+        display: flex;
+    }
 }
 @media (min-width: 1200px){
-    .order-list-grid .order-list-head{
+    .filter-list a{
+        min-width: 140px;
+    }
+    .order-list-grid .order-list-head, .order-list-head.checkbox{
         color: var(--text-secondary-color);
         font-size: 14px;
         font-weight: 500;
         display: grid;
-        grid-template-columns: 2fr 1.5fr 1.5fr 10rem 2rem;
-        gap: 20px;
+        gap: 30px;
         text-align: left;
-        padding: 0 32px;
+        padding: 0 20px;
         margin: 20px 0;
     }
-    .order-list-grid.checkbox .order-list-head{
-        color: var(--text-secondary-color);
-        font-size: 14px;
-        font-weight: 500;
-        display: grid;
-        grid-template-columns: 2rem 2fr 1.5fr 1.5fr 10rem 2rem;
-        gap: 20px;
-        text-align: left;
-        padding: 0 32px;
-        margin: 20px 0;
+    .order-list-head{
+        grid-template-columns: 2fr 1.5fr 1.5fr 10rem 2rem;
+    }
+    .order-list-head.checkbox{
+        grid-template-columns: 1rem 2fr 1.5fr 1.5fr 10rem 2rem;
     }
     .order-list-row{
         grid-template-columns: 2fr 1.5fr 1.5fr 10rem 2rem;
+        gap: 30px;
     }
     .order-list-row.checkbox{
-        grid-template-columns: 2rem 2fr 1.5fr 1.5fr 10rem 2rem;
+        grid-template-columns: 1rem 2fr 1.5fr 1.5fr 10rem 2rem;
+    }
+    .order-list-row.checkbox .order-list-col .content{
+        flex: auto;
+        margin: 10px 0 0 0;
     }
     .order-list-row .order-list-col:nth-child(n+2){
         display: block;
     }
-    .order-list-row.checkbox .order-list-col:nth-child(n+3){
+    .order-list-row.checkbox .order-list-col:nth-child(n){
+        display: block !important;
+    }
+    .content__client{
         display: block;
+    }
+    .content__address{
+        display: none;
     }
 }
