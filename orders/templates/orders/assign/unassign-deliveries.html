@@ -66,7 +66,7 @@
     </div>
 </div>
 <div class="mb-10 order-list-grid">
-    <div class="order-list-head">
+    <div class="order-list-head checkbox">
         <div class="order-list-head-item">
             Detalles del pedido
         </div>
@@ -86,7 +86,7 @@
     {% for object in object_list %}
 
     <div class="card card-normal order-list-row checkbox" x-data="{ isOpenSm: false, isOpenMd: false }">
-        <div class="checkbox">
+        <div class="order-list-col checkbox">
             <input type="checkbox" onclick="selectAddressDetail({{object.detail.id}})" value="{{ object.detail.id }}">
         </div>
         <div class="order-list-col">
@@ -95,9 +95,20 @@
             </div>
             <div class="content" style="align-items: flex-start;">
                 <p class="text-small text-muted font-normal">{{ object.detail.get_tracking_code_text }}</p>
-                <h6>{{ object.detail.order.client.full_name }}</h6>
-                <div class="order-detail">
-                    <p>{{ object.detail.order.created_at|naturaltime }}</p>
+                <div class="content__client">
+                    <h6>{{ object.detail.order.client.full_name }}</h6>
+                    <div class="order-detail">
+                        <p>{{ object.detail.order.created_at|naturaltime }}</p>
+                    </div>
+                </div>
+                <div class="content__address">
+                    <div class="text-small flex items-center">
+                        <i style="margin-right: 5px;" class="bx bx-user bx-xs"></i>
+                        <span>{{ object.detail.address_destiny.full_name }}</span>
+                    </div>
+
+                    <h6>{{ object.detail.address_destiny.address }}</h6>
+                    <p>{{ object.detail.address_destiny.address_city }}</p>
                 </div>
             </div>
             <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">
