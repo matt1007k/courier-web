@@ -5,6 +5,13 @@
 }
 .page-admin .page-content nav .navbar-left {
     margin-right: auto;
+    display: flex;
+    align-items: center;
+}
+.page-admin .page-content nav .navbar-left > :not(template) ~ :not(template) {
+    --space-x-reverse: 0;
+    margin-right: calc(.5rem * var(--space-x-reverse));
+    margin-left: calc(.5rem * (1 - var(--space-x-reverse)));
 }
 .page-admin .page-content nav .navbar-left .logo {
     display: block;

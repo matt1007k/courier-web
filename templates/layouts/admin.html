@@ -8,6 +8,7 @@
     {% block title %}
     <title>Cuy Click Perú - Courier</title>
     {% endblock title %}
+    <link rel="icon" type="image/vnd.microsoft.icon" href="{% static 'favicon.ico' %}">
     <link href="{% static 'vendors/boxicons/css/boxicons.min.css' %}" rel='stylesheet'>
     <link href="{% static 'vendors/balloon/css/balloon.css' %}" rel='stylesheet'>
     <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
@@ -32,5 +33,24 @@
         </div>
     </div>
     {% block scripts %} {% endblock scripts %}
+
+  <script>
+      (function(){
+          var sidebar = document.getElementById('sidebar');
+          var sidebar_close = document.getElementById('sidebar-close');
+          var menu_icon = document.getElementById('menu-icon');
+          menu_icon.addEventListener('click',(ev) => {
+              ev.preventDefault();
+              if (sidebar.classList.contains('open')){
+                  sidebar.classList.remove('open');
+              }else{
+                  sidebar.classList.add('open');
+              }
+          });
+          sidebar_close.addEventListener('click', (ev) => {
+              sidebar.classList.remove('open');
+          });
+      })()
+  </script>
   </body>
 </html>

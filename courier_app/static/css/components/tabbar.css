@@ -8,8 +8,11 @@
     box-shadow: 0px 3px 30px rgba(0, 0, 0, 0.1);
     padding: 12px 20px;
     margin: 0;
-    display: flex;
+    display: none;
     justify-content: space-between;
+}
+.page-admin .tabbar li:nth-child(n+6){
+    display: none;
 }
 .page-admin .tabbar li{
     list-style: none;

@@ -1,5 +1,10 @@
 {% load static %}
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
+    <div id="sidebar-close" >
+        <button type="button" class="btn btn-default btn-small btn-circle">
+            <i class="bx bx-x bx-sm"></i> 
+        </button>
+    </div>
     <div class="sidebar-header">
         <img src="{% static 'img/logo.png' %}" alt="Cuy Click - Perú" class="logo">
     </div>
@@ -33,41 +38,3 @@
         {% endfor %}
     </ul>            
 </aside>
-
-<ul class="tabbar">
-    {% comment %} <li class="{% if request.path == '/dashboard/' %}active{% endif %}">
-        <a href="{% url 'dash' %}">
-            
-            <i class='bx bx-line-chart bx-sm'></i>
-            <span>Dashboard</span>
-        </a>
-    </li> {% endcomment %}
-    
-    {% for menu in menu_list %}
-            {% if menu.permission %}
-            <li class="{% if menu.path == request.path %}active{% endif %}">
-                <a href="{{ menu.path }}">
-                    
-                    {% if menu.icon %}
-                    <i class='bx {{ menu.icon }} bx-sm'></i>
-                    {% else %}
-                    <img src="{{ menu.img }}" alt="{{ menu.title }}">
-                    {% endif %}
-                    <span>{{ menu.title }}</span>
-                </a>
-            </li>
-            {% elif menu.permission is None %}
-            <li class="{% if menu.path == request.path %}active{% endif %}">
-                <a href="{{ menu.path }}">
-                    
-                    {% if menu.icon %}
-                    <i class='bx {{ menu.icon }} bx-sm'></i>
-                    {% else %}
-                    <img src="{{ menu.img }}" alt="{{ menu.title }}">
-                    {% endif %}
-                    <span>{{ menu.title }}</span>
-                </a>
-            </li> 
-            {% endif %}
-        {% endfor %}
-</ul>

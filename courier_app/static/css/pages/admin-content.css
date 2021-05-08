@@ -5,17 +5,18 @@
 }
 /** sidebar **/
 .page-admin .sidebar{
+    position: fixed;
     min-width: 270px;
     background: var(--bg-secondary-color);
     box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.06);
-    padding: 0px 10px;
+    padding: 0 10px 20px 10px;
     height: 100%;
     display: none;
     overflow-y: auto;
 }
 .page-admin .sidebar .sidebar-header{
     text-align: center;
-    margin: 50px 0;
+    margin: 30px 0;
 }
 .page-admin .sidebar .sidebar-menu{
     display:  flex;
@@ -26,7 +27,8 @@
 .page-admin .sidebar .sidebar-menu li {
     list-style: none;
     color: var(--text-secondary-color);
-    padding: 16px 10px;
+    /* padding: 16px 10px; */
+    padding: 16px 20px;
     margin: 0 !important;
     border-radius: 16px;
     transition: all .3s;
@@ -105,6 +107,24 @@
     width: 100%;
     text-align: center;
 }
+.page-admin .sidebar.open{
+    display: block;
+    width: 100%;
+    z-index: 1;
+    animation-name: slide-in;
+    animation-duration: 400ms;
+    animation-fill-mode: forwards;
+}
+.page-admin .sidebar.open > #sidebar-close{
+    display: block;
+    position: inherit;
+    top: 20px;
+    right: 20px;
+}
+#menu-icon{
+    display: block;
+    color: rgb(var(--title-color));
+}
 @media (min-width: 760px){
     .content-head{
         flex-direction: row;
@@ -122,14 +142,39 @@
     .content-head .left > .btn, .content-head .right > .btn, .content-head .right .container-modal > .btn{
         padding: 12px 24px;
     }
+    .page-admin .sidebar .sidebar-header{
+        margin: 50px 0;
+    }
 }
 @media (min-width: 1140px) { 
+    #menu-icon{
+        display: none;
+    }
     .page-admin .sidebar{
+        position: relative;
         display: block;
         padding: 0 20px;
+        transform: translateX(0);
+    }
+    #sidebar-close{
+        display: none;
     }
     .page-admin .sidebar .sidebar-menu li{
         padding: 17px 16px;
         margin-bottom: 10px;
+    }
+}
+
+@keyframes slide-in{
+    0%{
+        transform: translateX(-100%);
+    }
+}
+@keyframes slide-out{
+    0%{
+        transform: translateX(-100%);
+    }
+    100%{
+        transform: translateX(0);
     }
 }

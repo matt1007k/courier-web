@@ -159,7 +159,12 @@
                 new google.maps.DirectionsRenderer({
                     map: map,
                     directions: response,
-                    suppressMarkers: true
+                    suppressMarkers: true,
+                    polylineOptions: {
+                        strokeColor: '#ff5e00',
+                        strokeOpacity: 0.6,
+                        strokeWeight: 5
+                    }
                 });
                 var leg = response.routes[0].legs[0];
                 var marker_origin = makeMarker(leg.start_location, "{% static 'icon/driver-icon.png' %}", origin_address, map);
