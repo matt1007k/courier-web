@@ -29,7 +29,7 @@
                 x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
                 class="modal modal-right">
                 <div 
-                    class="modal-content card" style="width: 400px" 
+                    class="modal-content card" style="width: 400px; overflow: auto;" 
                     @click.away="isOpen = false" 
                 >
                     <div class="head">
@@ -42,11 +42,28 @@
                     </div>
                     <form method='GET' class="form-modal">
                         <div class="form-group">
-                            <input type='search' name='q' placeholder="¿Qué estás buscando?" value='{{ request.GET.q }}' class="input">
+                            <label for="search"># tracking o cliente</label>
+                            <input type='search' name='q' placeholder="Buscar por # seguimiento o datos del cliente" value='{{ request.GET.q }}' class="input">
+                        </div>
+                        <div class="form-group">
+                            <label for="origin">Dirección recojo o persona que antenderá</label>
+                            <input type='search' name='origin' placeholder="Buscar por distrito, datos de la persona" value='{{ request.GET.origin }}' class="input">
+                        </div>
+                        <div class="form-group">
+                            <label for="destiny">Dirección envío o persona que antenderá</label>
+                            <input type='search' name='destiny' placeholder="Buscar por distrito, datos de la persona" value='{{ request.GET.destiny }}' class="input">
                         </div>
                         <div class="form-group">
                             <label for="date">Fecha de registro</label>
                             <input type="date" class="input" name="date" id="date" value="{{ request.GET.date }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Estado</label>
+                            <select name="status" id="status" class="input">
+                                {% for cstatus in statuses %}
+                                <option value="{{ cstatus }}" {% if status == cstatus %}selected{% endif %}>{{ cstatus.label }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         
                         <div class="actions right">

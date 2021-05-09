@@ -1,6 +1,8 @@
 import decimal
+from orders.utils import is_valid_queryparams
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from typing import Dict
+from django.db.models import query
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
@@ -14,6 +16,30 @@ from authentication.models import User
 
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
+
+from django.db.models import Q
+
+class DetailQuerySet(models.QuerySet):
+    def search_detail_and_client(self, query):
+        if is_valid_queryparams(query):
+            filters = Q(tracking_code=query) | Q(client__first_name__icontains=query) | Q(client__last_name__icontains=query) | Q(client__cell_phone__icontains=query)
+            return self.filter(filters)
+        return self
+
+    def search_by_address_delivery(self, query):
+        if is_valid_queryparams(query):
+            filters = (Q(address_destiny__address__icontains=query) | Q(address_destiny__district__icontains=query) | Q(address_destiny__full_name__icontains=query) | Q(address_destiny__cell_phone__icontains=query))
+            return self.filter(filters)
+        return self
+
+    def search_by_address_origin(self, query):
+        if is_valid_queryparams(query):
+            filters = (Q(address_origin__address__icontains=query) | Q(address_origin__district__icontains=query) | Q(address_origin__full_name__icontains=query) | Q(address_origin__cell_phone__icontains=query))
+            return self.filter(filters)
+        return self
+
+class DetailManager(models.Manager):
+    pass
 
 class Detail(models.Model):
     class PackageStatus(models.TextChoices):
@@ -45,6 +71,8 @@ class Detail(models.Model):
     status = models.CharField(max_length=50, choices=PackageStatus.choices, default=PackageStatus.PENDING, verbose_name='estado')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
 
+    objects = DetailManager.from_queryset(DetailQuerySet)()
+
     def __str__(self) -> str:
         return str(self.tracking_code)
 
@@ -62,6 +90,7 @@ class Detail(models.Model):
 
     def destiny_map_path(self):
         return reverse('details:destiny-map', kwargs={'pk': self.pk})
+
 
     def update_addressess(self, client, origin_form, destiny_form):
         self.address_origin = self.update_or_create_address_origin(client=client, form_cleaned_data=origin_form)

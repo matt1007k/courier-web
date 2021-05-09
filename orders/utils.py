@@ -55,3 +55,7 @@ def fields_destiny_form(detail):
         'distance': detail.distance,
     }
     return fields
+
+
+def is_valid_queryparams(param):
+    return param != '' and param is not None

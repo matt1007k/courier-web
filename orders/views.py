@@ -20,7 +20,7 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from .utils import delete_order, get_or_create_order
+from .utils import delete_order, get_or_create_order, is_valid_queryparams
 from details.utils import get_generate_tracking_code
 from .models import Order
 
@@ -47,22 +47,26 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     def query_status(self):
         return self.request.GET.get('status')
 
+    def query_origin(self):
+        return self.request.GET.get('origin')
+
+    def query_destiny(self):
+        return self.request.GET.get('destiny')
+
     def get_queryset(self):
-        # if self.query() and self.query_date():            
-        #     filters = Q(tracking_code__icontains=self.query()) | Q(client__first_name__icontains=self.query()) | Q(client__last_name__icontains=self.query()) | Q(created_at__date=self.query_date())
-            
-        #     object_list = self.model.objects.filter(client=client).filter(filters)
-        # elif self.query_date() and self.query_status():
-        #     object_list = self.model.objects.filter(client=client).filter(status=self.query_status() or Order.OrderStatus.PENDING, created_at__date=self.query_date()).order_by('-id')
-        # else:
-        #     object_list = self.model.objects.filter(client=client).filter(status=self.query_status() or Order.OrderStatus.PENDING).order_by('-id')
-            # created_at__date='2021-3-25'
-            # created_at__range=(start_date, end_date)
         if self.request.user.is_client:
             object_list = self.request.user.client.detail_set.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         else:
             object_list = self.model.objects.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         
+        if is_valid_queryparams(self.query_status()):
+            object_list = object_list.filter(status=self.query_status())
+
+        object_list = object_list.search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny())
+
+        if is_valid_queryparams(self.query_date()):
+           object_list = object_list.filter(created_at__date=self.query_date()) 
+
         return object_list
 
 class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
