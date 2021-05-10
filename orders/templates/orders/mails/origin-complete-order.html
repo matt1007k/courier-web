@@ -1,21 +1,22 @@
 {% load inlinecss %}
-{% inlinecss "css/styles.css" %}
+{% inlinecss "mails.css" %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pedido - {{ detail.order.tracking_code }}</title>
+  <title>Pedido - {{ detail.tracking_code }}</title>
 </head>
 <body>
   <div class="container">
     <div class="card">
-      <h4># TRACKING {{ detail.order.tracking_code }}</h4>
+      <h4># TRACKING {{ detail.tracking_code }}</h4>
       <div>Cliente: {{ detail.address_origin.full_name }}</div>
-      <div>Pedido #:{{ detail.order.tracking_code }}</div>
+      <div>Paquete: {{ detail.get_size_display }} {{ detail.contain }}</div>
+      <div>Total S/.:{{ detail.order.total }}</div>
       <div class="mt-5">
-        <button class="btn btn-secondary">Consultar pedido</button>
+        <a href="{% url 'pages:index' %}" class="btn btn-secondary">Consultar pedido</button>
       </div>
     </div>
   </div>

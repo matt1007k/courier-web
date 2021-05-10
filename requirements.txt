@@ -4,6 +4,7 @@ cssutils==2.2.0
 Django==3.1.7
 django-inlinecss==0.3.0
 django-livereload-server==0.3.2
+django-naomi==0.8
 djangorestframework==3.12.4
 future==0.18.2
 gunicorn==20.1.0

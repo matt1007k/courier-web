@@ -55,6 +55,9 @@ INSTALLED_APPS = [
     'driver_payments'
 ]
 
+INSTALLED_APPS += ('naomi',)
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -159,13 +162,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 }
 
-# from decouple import config
+from decouple import config
 
-# EMAIL_HOST = 'smtp.googlemail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'mattfor17@gmail.com'
-# EMAIL_HOST_PASSWORD = config('USER_MAIL_PASSWORD')
-# EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mattfor17@gmail.com'
+EMAIL_HOST_PASSWORD = config('USER_MAIL_PASSWORD')
+EMAIL_USE_TLS = True
+
+if DEBUG:
+    EMAIL_BACKEND = "naomi.mail.backends.naomi.NaomiBackend"
+    EMAIL_FILE_PATH = "/mnt/c/Users/nomad1007/Documents/Code/courier-web/mailtest/tmp"
 
 
 try:
