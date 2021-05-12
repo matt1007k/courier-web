@@ -1,25 +1,97 @@
 {% load inlinecss %}
-{% inlinecss "mails.css" %}
+{% load static %}
+{% load l10n %}
+{% inlinecss "css/pages/email.css" %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pedido - {{ detail.tracking_code }}</title>
 </head>
+
 <body>
-  <div class="container">
-    <div class="card">
-      <h4># TRACKING {{ detail.tracking_code }}</h4>
-      <div>Cliente: {{ detail.address_origin.full_name }}</div>
-      <div>Paquete: {{ detail.get_size_display }} {{ detail.contain }}</div>
-      <div>Total S/.:{{ detail.order.total }}</div>
-      <div class="mt-5">
-        <a href="{% url 'pages:index' %}" class="btn btn-secondary">Consultar pedido</button>
+  <header>
+    <img src="cid:myimage" alt="CuyClick - Perú">
+  </header>
+  <section class="container">
+    <div class="head">
+      <p>Hola, {{ detail.client.full_name }}</p>
+      <p>Te invitamos a dar seguimiento de tu pedido, con el # tracking podrás ver el estado y su ubicación. El resumen
+        de tu pedido, es el siguiente:</p>
+      <h5 class="mb-4"><span class="text-muted font-normal"># TRACKING </span> <strong>{{ detail.tracking_code }}</strong></h5>
+    </div>
+    <div class="detail">
+      <div class="title">
+        <h6>Detalles del paquete:</h6>
+      </div>
+      <div class="content">
+        <ul>
+          <li>{{ detail.get_size_display }}</li>
+          <li>{{ detail.contain }}</li>
+          <li>{{ detail.value }}</li>
+        </ul>
+        <p>{{ detail.description }}</p>
       </div>
     </div>
-  </div>
+    <div class="detail">
+      <div class="title">
+        <h6>Dirección de recojo:</h6>
+      </div>
+      <div class="content">
+        <h6>Lugar a recojer</h6>
+        <p>{{ detail.address_origin.address_complete }}</p>
+        <h6>¿Quién atenderá?</h6>
+        <p>{{ detail.address_origin.full_name }}</p>
+        <h6>Num. de celular</h6>
+        <p>{{ detail.address_origin.cell_phone }}</p>
+      </div>
+    </div>
+    <div class="detail">
+      <div class="title">
+        <h6>Dirección de entrega:</h6>
+      </div>
+      <div class="content">
+        <h6>Lugar a entregar</h6>
+        <p>{{ detail.address_destiny.address_complete }}</p>
+        <h6>¿Quién atenderá?</h6>
+        <p>{{ detail.address_destiny.full_name }}</p>
+        <h6>Num. de celular</h6>
+        <p>{{ detail.address_destiny.cell_phone }}</p>
+      </div>
+    </div>
+    <div class="detail">
+      <div class="title">
+           <h6>Precio por envío:</h6>
+      </div>
+      <div class="content">
+          <h6>Distancia</h6>
+          <p>{{ detail.distance|unlocalize }}{% if detail.distance >= 1 %}KM{% else %}M{% endif %}</p>
+          <h6>Precio de tarifa</h6>
+          <p>S/ {{ detail.price_rate|unlocalize}}</p>
+      </div>
+    </div>
+    <div class="detail">
+      <div class="title">
+        <h6>Resumen del pago:</h6>
+      </div>
+      <div class="content">
+        <h6>Subtotal</h6>
+        <p>S/ {{ detail.order.sub_total|unlocalize  }}</p>
+        <h6>IGV</h6>
+        <p>S/ {{ detail.order.igv|unlocalize }}</p>
+        <h6>Total pagado</h6>
+        <h5 class="text-muted">S/ {{ detail.order.total|unlocalize }}</h5>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <p>Gracias por elegir nuestro servicio.</p>
+    <h5>CuyClick - Perú {{ current_year }}</h5>
+  </footer>
 </body>
+
 </html>
 {% endinlinecss %}

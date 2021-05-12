@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Rubik', Arial, Helvetica, sans-serif;
+    font-size: 15;
+    background-color: #e4e4e4;
+}
+
+header{
+    background-color: #195FB5;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+header img{
+    height: 70px;
+}
+
+.container{
+    width: 90%;
+    margin: 0 auto;
+    background-color: white;
+    padding: 35px;
+}
+p{
+    margin-bottom: 10px;
+    color: rgba(0, 0, 0, .7);
+    line-height: 1.5;
+}
+h5{
+    font-weight: bold;
+    font-size: 1.2em;
+}
+h6{
+    font-weight: 500;
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+ul{
+    margin-bottom: 10px;
+}
+ul li{
+    margin-left: 1.5em;
+    color: rgba(0, 0, 0, .7);
+    line-height: 1.5;
+}
+.text-muted{
+    color: rgba(0, 0, 0, .7) !important;
+}
+.font-normal{
+    font-weight: 400;
+}
+.mb-4{
+    margin-bottom: 1rem;
+}
+.detail{
+    padding: 25px 0;
+    display: flex;
+    border-top: 1px solid rgba(0, 0, 0, .15);
+}
+.title{
+    width: 30%;
+    margin-right: 10px;
+}
+.content{
+    width: 70%;
+}
+.content p{
+    margin-bottom: 15px;
+}
+footer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 35px 0;
+}

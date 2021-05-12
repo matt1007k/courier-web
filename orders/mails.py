@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
@@ -27,8 +28,10 @@ class Mail:
     def send_origin_complete_order(detail, email):
         subject = 'Tu pedido ha sido enviado'
         template = get_template('orders/mails/origin-complete-order.html')
+        current_year = datetime.now().year
         content = template.render({
             'detail': detail,
+            'current_year': current_year,
         })
 
         message = EmailMultiAlternatives(
