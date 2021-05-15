@@ -1,7 +1,7 @@
-{% extends "layouts/admin.html" %} 
+{% extends "layouts/admin.html" %}
 {% block title %}
 <title>Cuy Click Perú - {{ title }}</title>
-{% endblock title %} 
+{% endblock title %}
 {% load static %}
 {% load humanize %}
 {% block content_head %}
@@ -12,46 +12,37 @@
     <div class="right">
         <div x-data="{ isOpen: false }" class="container-modal">
             <button @click="isOpen = true" class="btn btn-link btn-small">
-            <svg
-            class="filter"
-            width="24"
-            height="24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                    d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
-                    fill="#2E3A59"
-                />
-            </svg>
+                <svg class="filter" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
+                        fill="#2E3A59" />
+                </svg>
             </button>
-            <div 
-                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
-                class="modal modal-right">
-                <div 
-                    class="modal-content card" style="width: 400px; overflow: auto;" 
-                    @click.away="isOpen = false" 
-                >
+            <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal modal-right">
+                <div class="modal-content card" style="width: 400px; overflow: auto;" @click.away="isOpen = false">
                     <div class="head">
                         <h6>Búsqueda avanzada</h6>
                         <div class="close">
                             <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
-                                <i class='bx bx-x bx-sm' ></i>
+                                <i class='bx bx-x bx-sm'></i>
                             </button>
                         </div>
                     </div>
                     <form method='GET' class="form-modal">
                         <div class="form-group">
                             <label for="search"># tracking o cliente</label>
-                            <input type='search' name='q' placeholder="Buscar por # seguimiento o datos del cliente" value='{{ request.GET.q }}' class="input">
+                            <input type='search' name='q' placeholder="Buscar por # seguimiento o datos del cliente"
+                                value='{{ request.GET.q }}' class="input">
                         </div>
                         <div class="form-group">
                             <label for="origin">Dirección recojo o persona que antenderá</label>
-                            <input type='search' name='origin' placeholder="Buscar por distrito, datos de la persona" value='{{ request.GET.origin }}' class="input">
+                            <input type='search' name='origin' placeholder="Buscar por distrito, datos de la persona"
+                                value='{{ request.GET.origin }}' class="input">
                         </div>
                         <div class="form-group">
                             <label for="destiny">Dirección envío o persona que antenderá</label>
-                            <input type='search' name='destiny' placeholder="Buscar por distrito, datos de la persona" value='{{ request.GET.destiny }}' class="input">
+                            <input type='search' name='destiny' placeholder="Buscar por distrito, datos de la persona"
+                                value='{{ request.GET.destiny }}' class="input">
                         </div>
                         <div class="form-group">
                             <label for="date">Fecha de registro</label>
@@ -65,85 +56,86 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        
+
                         <div class="actions right">
                             <button type='submit' class="btn btn-primary">Buscar</button>
                         </div>
-                    </form> 
+                    </form>
                 </div>
             </div>
         </div>
 
         {% if perms.orders.add_order %}
-            {% if request.user.is_client%}
-            <a href="{% url 'orders:create' %}" class="btn btn-link btn-small text-primary">
-                <i class='bx bx-plus bx-sm' ></i>
-                <span>Nuevo pedido</span> 
-            </a>
-            {% else %}
-            <div x-data="clientState()" x-init="init()" class="container-modal">
-                <button @click="isOpen = true" class="btn btn-link btn-small">
-                    Nuevo pedido
-                </button>
-                <div 
-                    x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
-                    class="modal">
-                    <div 
-                        class="modal-content card" style="width: 400px" 
-                        @click.away="isOpen = false" 
-                    >
-                        <div class="head">
-                            <h6>Nuevo pedido para</h6>
-                            <div class="close">
-                                <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
-                                    <i class='bx bx-x bx-sm' ></i>
-                                </button>
-                            </div>
+        {% if request.user.is_client%}
+        <a href="{% url 'orders:create' %}" class="btn btn-link btn-small text-primary">
+            <i class='bx bx-plus bx-sm'></i>
+            <span>Nuevo pedido</span>
+        </a>
+        {% else %}
+        <div x-data="clientState()" x-init="init()" class="container-modal">
+            <button @click="isOpen = true" class="btn btn-link btn-small">
+                Nuevo pedido
+            </button>
+            <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+                <div class="modal-content card" style="width: 400px" @click.away="isOpen = false">
+                    <div class="head">
+                        <div class="flex items-center">
+                            <h6 style="margin-right: 5px;">Nuevo pedido para</h6>
+                            <a href="{% url 'auth:create-client' %}" class="btn btn-outline-secondary btn-circle btn-xsmall"  data-balloon-pos="down" aria-label="Nuevo cliente"> 
+                                <i class="bx bx-plus"></i>
+                            </a>
                         </div>
-                        <form method='POST' id="client-form" action="{% url 'orders:create' %}" class="form-modal">
-                            {% csrf_token %}
-                            <div class="form-group-search m-0">
-                                <input type="search" class="input input-outline" id="client_search" x-model="search" ref="search"
-                                    placeholder="Buscar un cliente" />
-                                <i class="input-icon bx bx-search bx-sm"></i>
-                            </div>
-                            <div class="options-2 mt-4">
-                                <template x-if="client_list.length || client_select" x-for="(client, index) in client_list"
-                                    :key="index">
-                                    <div class="option-item" style="transition: all 1s;"
-                                        :class="{'active': client_select.pk === client.pk}" @click="selectClient(index)">
-                                        <i class="bx bx-check-circle bx-md"></i>
-                                        <div>
-                                            <p class="text-muted text-small text-left flex align-items" x-html="getCellPhone(client.fields)"></p>
-                                            <p class="text-primary text-left" x-text="getFullName(client.fields)"></p>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                            <div x-show="!client_list.length" class="alert text-muted" x-text="emptyMessageText"></div>
-                            <input type="hidden" name="client_id">
-                            
-                            <div class="actions right">
-                                <a href="{% url 'orders:index' %}" class="btn btn-default">Cancelar</a>
-                                <button type='submit' class="btn btn-primary">Continuar</button>
-                            </div>
-                        </form> 
+                        <div class="close">
+                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                <i class='bx bx-x bx-sm'></i>
+                            </button>
+                        </div>
                     </div>
+                    <form method='POST' id="client-form" action="{% url 'orders:create' %}" class="form-modal">
+                        {% csrf_token %}
+                        <div class="form-group-search m-0">
+                            <input type="search" class="input input-outline" id="client_search" x-model="search"
+                                ref="search" placeholder="Buscar un cliente" />
+                            <i class="input-icon bx bx-search bx-sm"></i>
+                        </div>
+                        <div class="options-2 mt-4">
+                            <template x-if="client_list.length || client_select" x-for="(client, index) in client_list"
+                                :key="index">
+                                <div class="option-item" style="transition: all 1s;"
+                                    :class="{'active': client_select.pk === client.pk}" @click="selectClient(index)">
+                                    <i class="bx bx-check-circle bx-md"></i>
+                                    <div>
+                                        <p class="text-muted text-small text-left flex align-items"
+                                            x-html="getCellPhone(client.fields)"></p>
+                                        <p class="text-primary text-left" x-text="getFullName(client.fields)"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        <div x-show="!client_list.length" class="alert text-muted" x-text="emptyMessageText"></div>
+                        <input type="hidden" name="client_id">
+
+                        <div class="actions right">
+                            <a href="{% url 'orders:index' %}" class="btn btn-default">Cancelar</a>
+                            <button type='submit' class="btn btn-primary">Continuar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            {% endif %}
+        </div>
         {% endif %}
-       
+        {% endif %}
+
     </div>
 </div>
 {% endblock content_head %}
 {% block content %}
- <div class="filter-list">
+<div class="filter-list">
     {% for cstatus in statuses %}
     <a href="{% url 'orders:index' %}?status={{ cstatus }}" class="btn btn-{% if status == cstatus %}primary{% else %}link{% endif %} btn-rounded btn-small">{{ cstatus.label }}</a>
     {% endfor %}
 </div>
- <div class="mb-10 order-list-grid">  
+<div class="mb-10 order-list-grid">
     <div class="order-list-head">
         <div class="order-list-head-item">
             Detalles del pedido
@@ -158,18 +150,18 @@
             Estado
         </div>
         <div class="order-list-head-item" style="justify-self: end;">
-            Acciones 
+            Acciones
         </div>
     </div>
 
     {% if object_list.count > 0 %}
-    
+
     {% for detail in object_list %}
-    
+
     <div class="card card-normal order-list-row" x-data="{ isOpenSm: false, isOpenMd: false }">
         <div class="order-list-col">
             <div class="icon icon-warning-default rounded rounded-md">
-                <img src="{% static 'icon/order-icon.svg' %}"/>
+                <img src="{% static 'icon/order-icon.svg' %}" />
             </div>
             <div class="content" style="align-items: flex-start;">
                 <p class="text-small text-muted font-normal">{{ detail.get_tracking_code_text }}</p>
@@ -263,25 +255,25 @@
             </p>
         </div>
         <div class="pagination space-x">
-          {% if page_obj.has_previous %}
+            {% if page_obj.has_previous %}
             <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Anterior</a>
-          {% else %}
-            <a class="pagination-item disable">Anterior</a>
-          {% endif %}
-
-          {% for i in page_obj.paginator.page_range %} 
-            {% if page_obj.number == i %}
-              <a class="pagination-item page-number active">{{ i }}</a>
             {% else %}
-              <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            <a class="pagination-item disable">Anterior</a>
             {% endif %}
-          {% endfor %}
 
-          {% if page_obj.has_next %}
+            {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+            <a class="pagination-item page-number active">{{ i }}</a>
+            {% else %}
+            <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Siguiente</a>
-          {% else %}
+            {% else %}
             <a class="pagination-item disable">Siguiente</a>
-          {% endif %}
+            {% endif %}
         </div>
     </div>
 
@@ -320,7 +312,7 @@
             getFullName(client) {
                 return `${client.first_name} ${client.last_name}`;
             },
-            getCellPhone(client){
+            getCellPhone(client) {
                 return ` <i class="bx bx-mobile-alt bx-xs" style="margin-right: 5px;"></i> <span>${client.cell_phone}</span>`;
             },
             selectClient(index) {

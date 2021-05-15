@@ -9,6 +9,9 @@ from details.models import (
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'status', 'client')
 
+class DetailAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'client', 'price_rate', 'distance')
+
 class UnassingOriginAddressAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'detail')
 class UnassingDeliveryAddressAdmin(admin.ModelAdmin):
@@ -23,7 +26,7 @@ class PackageDeliveredAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'detail', 'driver', 'created_at')
 
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Detail)
+admin.site.register(Detail, DetailAdmin)
 admin.site.register(UnassignOriginAddress, UnassingOriginAddressAdmin)
 admin.site.register(UnassignDeliveryAddress, UnassingDeliveryAddressAdmin)
 admin.site.register(AssignOriginAddress, AssingOriginAddressAdmin)

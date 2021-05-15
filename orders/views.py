@@ -12,7 +12,6 @@ from typing import Any, Dict
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect, render
-from datetime import datetime
 from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress, UnassignOriginAddress
 
 from django.views.generic import ListView, DetailView
@@ -57,6 +56,11 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     def get_queryset(self):
         if self.request.user.is_client:
             object_list = self.request.user.client.detail_set.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
+        elif self.request.user.is_driver:
+            clients = self.request.user.driver.get_clients()
+            object_list = Detail.objects.none()
+            for client in clients:
+                object_list = object_list | client.detail_set.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         else:
             object_list = self.model.objects.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         

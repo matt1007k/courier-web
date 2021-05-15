@@ -1,20 +1,24 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% block title %}
-    <title>Cuy Click Perú - Courier</title>
-    {% endblock title %}
-    <link href="{% static 'vendors/boxicons/css/boxicons.min.css' %}" rel='stylesheet'>
-    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <script src="{% static 'vendors/alpinejs/js/alpine.min.js' %}"></script>
-  </head>
-  <body>
-    {% block content %} {% endblock content %}
-    {% block scripts %} {% endblock scripts %}
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% block title %}
+  <title>Cuy Click Perú - Courier</title>
+  {% endblock title %}
+  <link rel="icon" type="image/vnd.microsoft.icon" href="{% static 'favicon.ico' %}">
+  <link href="{% static 'vendors/boxicons/css/boxicons.min.css' %}" rel='stylesheet'>
+  <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <script src="{% static 'vendors/alpinejs/js/alpine.min.js' %}"></script>
+</head>
+
+<body>
+  {% block content %} {% endblock content %}
+  {% block scripts %} {% endblock scripts %}
+</body>
+
 </html>

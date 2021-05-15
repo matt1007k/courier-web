@@ -1,27 +1,31 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% block title %}
-    <title>Cuy Click Perú - Courier</title>
-    {% endblock title %}
-    <link href="{% static 'vendors/boxicons/css/boxicons.min.css' %}" rel='stylesheet'>
-    <link href="{% static 'vendors/balloon/css/balloon.css' %}" rel='stylesheet'>
-    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    {% block styles %} {% endblock styles %}
-    <script src="{% static 'vendors/alpinejs/js/alpine.min.js' %}"></script>
-  </head>
-  <body>
-    <div class="page__wrapper">
-      {% include 'partials/navbar-page.html' %}
-      <div class="container">
-        {% block content %} {% endblock content %}
-      </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% block title %}
+  <title>Cuy Click Perú - Courier</title>
+  {% endblock title %}
+  <link rel="icon" type="image/vnd.microsoft.icon" href="{% static 'favicon.ico' %}">
+  <link href="{% static 'vendors/boxicons/css/boxicons.min.css' %}" rel='stylesheet'>
+  <link href="{% static 'vendors/balloon/css/balloon.css' %}" rel='stylesheet'>
+  <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  {% block styles %} {% endblock styles %}
+  <script src="{% static 'vendors/alpinejs/js/alpine.min.js' %}"></script>
+</head>
+
+<body>
+  <div class="page__wrapper">
+    {% include 'partials/navbar-page.html' %}
+    <div class="container">
+      {% block content %} {% endblock content %}
     </div>
-    {% block scripts %} {% endblock scripts %}
-  </body>
+  </div>
+  {% block scripts %} {% endblock scripts %}
+</body>
+
 </html>
