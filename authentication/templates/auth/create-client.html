@@ -1,0 +1,36 @@
+{% extends "layouts/admin.html" %} {% block title %}
+<title>Cuy Click Perú - Registrar usuario</title>
+{% endblock title %}
+{% block content_head %}
+<div class="content-head">
+  <div class="left">
+    <a href="{% url 'clients:index' %}" class="btn btn-link btn-small text-primary">
+      <i class='bx bx-left-arrow-alt bx-sm'></i>
+    </a>
+    <h4>Registrar usuario</h4>
+  </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+<div class="card card-form mb-10">
+  <form method="post">
+    {% csrf_token %} {% for field in form %}
+    <div class="form-group">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.errors %}
+      {% for error in field.errors %}
+      <div class="text-invalid">
+        {{ error }}
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+    {% endfor %}
+    <div class="actions right mt-5">
+      <a href="{% url 'clients:index' %}" class="btn btn-default">Cancelar</a>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+  </form>
+</div>
+{% endblock content %}

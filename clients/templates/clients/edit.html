@@ -3,40 +3,18 @@
 {% endblock title %}
 
 {% block content_head %}
-{% url 'clients:index' as clients_url %} 
+{% url 'clients:index' as clients_url %}
 <div class="content-head">
   <div class="left">
-      <a href="{{ clients_url }}" class="btn btn-link btn-small">
-        <i class='bx bx-left-arrow-alt bx-sm'></i>
-      </a>
-      <h4>{{ title }}</h4>
-  </div>
-  <div class="right">
-      <a href="{% url 'auth:create' %}?next={{request.path|urlencode}}" class="btn btn-link btn-small text-primary">Nuevo usuario</a>
+    <a href="{{ clients_url }}" class="btn btn-link btn-small">
+      <i class='bx bx-left-arrow-alt bx-sm'></i>
+    </a>
+    <h4>{{ title }}</h4>
   </div>
 </div>
 {% endblock content_head %}
 {% block content %}
 <div class="card card-form mb-10">
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %} 
-    {% for field in form %}
-    <div class="form-group">
-      {{ field.label_tag }} 
-      {{ field }} 
-      {% if field.errors %}
-        {% for error in field.errors %}
-        <div class="text-invalid">
-          {{ error }}
-        </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-    {% endfor %}
-    <div class="actions right">
-      <a href="{{ clients_url }}" class="btn btn-default">Cancelar</a>
-      <button type="submit" class="btn btn-primary">Editar</button>
-    </div>
-  </form>
+  {% include 'clients/snippets/form.html' with btnText='Editar' %}
 </div>
 {% endblock content %}

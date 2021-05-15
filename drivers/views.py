@@ -70,7 +70,6 @@ def driver_create_view(request, pk):
     form_class = DriverModelForm(request.POST or None)
     user = get_object_or_404(User, pk=pk)
 
-
     if request.method == 'POST' and form_class.is_valid():
         code = generate_driver_code()
         if 'address_gps' in request.POST:

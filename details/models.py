@@ -1,5 +1,5 @@
 import decimal
-from orders.utils import is_valid_queryparams
+from pages.utils import is_valid_queryparams
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from typing import Dict
 from django.db.models import query

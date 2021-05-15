@@ -7,14 +7,12 @@ class ClientModelForm(forms.ModelForm):
     class Meta:
         model = Client 
         fields = (
-            'user',
             'first_name',
             'last_name',
             'cell_phone',
             'logo',
             'store_name',
             'driver_code',
-            'social_media'
         )
 
     def clean_driver_code(self):

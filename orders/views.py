@@ -20,7 +20,8 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from .utils import delete_order, get_or_create_order, is_valid_queryparams
+from .utils import delete_order, get_or_create_order 
+from pages.utils import is_valid_queryparams
 from details.utils import get_generate_tracking_code
 from .models import Order
 
@@ -193,7 +194,7 @@ def add_addresses_view(request):
     })
 
 @login_required()
-@permission_required('orders.add_order', login_url='/orders')
+@permission_required('orders.add_order', raise_exception=True)
 def payment_view(request):
     template_name = 'orders/payment.html'
     order = get_or_create_order(request)
@@ -222,7 +223,7 @@ def payment_view(request):
     })
 
 @login_required()
-@permission_required('orders.add_order', login_url='/orders')
+@permission_required('orders.add_order', raise_exception=True)
 def payment_success_view(request):
     template_name = 'orders/payment-success.html'
     order = get_or_create_order(request)
@@ -233,28 +234,30 @@ def payment_success_view(request):
 def tracking_order_view(request):
     if request.method == 'GET':
         tracking_code = request.GET.get('tracking_code')
-        order = Order.objects.filter(tracking_code=tracking_code).first()
-        if order is None:
+        detail = Detail.objects.filter(tracking_code=tracking_code).first()
+        if detail is None:
             return JsonResponse({
                 'status': False,
             }, status=404)
-        post_json = serialize('json', [order])
-        detail_list = [{ 
+        detail_dict = { 
+                'tracking_code': detail.tracking_code,
                 'address_origin_full_name': detail.address_origin.full_name, 
                 'address_origin_cell_phone': detail.address_origin.cell_phone, 
                 'address_origin_text': detail.address_origin.address_complete(), 
                 'address_origin_reference': detail.address_origin.reference, 
-                'address_origin_position': json.loads(detail.address_origin.address_gps), 
+                'address_origin_position': detail.address_origin.address_gps, 
                 'address_destiny_full_name': detail.address_destiny.full_name, 
                 'address_destiny_cell_phone': detail.address_destiny.cell_phone, 
                 'address_destiny_text': detail.address_destiny.address_complete(), 
                 'address_destiny_reference': detail.address_destiny.reference, 
-                'address_destiny_position': json.loads(detail.address_destiny.address_gps), 
-            } for detail in order.detail_set.all()]
+                'address_destiny_position': detail.address_destiny.address_gps,
+                'status': detail.status,
+                'status_label': detail.get_status_display(),
+                'distance': str(detail.distance)
+            }
         order_json = json.dumps({
             'status': True,
-            'order': json.loads(post_json)[0],
-            'details': json.loads(json.dumps(detail_list))
+            'detail': detail_dict 
         })
         return HttpResponse(order_json, content_type="application/json")
 
@@ -273,13 +276,6 @@ def get_client_view(request):
     qs = get_or_create_order(request).client
     data = serialize('json', [qs])
     return HttpResponse(data, content_type="aplication/json")
-
-@login_required()
-def get_client_view(request):
-    qs = get_or_create_order(request).client
-    data = serialize('json', [qs])
-    return HttpResponse(data, content_type="aplication/json")
-
 
 class UnassignOriginAddressListAPIView(ListAPIView):
     queryset = UnassignOriginAddress.objects.all()

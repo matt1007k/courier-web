@@ -1,10 +1,24 @@
 import uuid
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
 from django.urls import reverse
+from pages.utils import is_valid_queryparams
 
 from authentication.models import User
+
+class ClientQuerySet(models.QuerySet):
+    def search(self, query):
+        if is_valid_queryparams(query):
+            filters = (Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(cell_phone__icontains=query) | Q(driver_code__icontains=query))
+
+            return self.filter(filters)
+        
+        return self
+
+class ClientManager(models.Manager):
+    pass
 
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Usuario')
@@ -16,6 +30,8 @@ class Client(models.Model):
     store_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre de tienda (opcional)')
     logo = models.ImageField(upload_to="clients/", null=True, blank=True, verbose_name='logo de la tienda (opcional)')
     social_media = models.JSONField(null=True, blank=True, verbose_name='redes sociales')
+
+    objects = ClientManager.from_queryset(ClientQuerySet)()
 
     def __str__(self) -> str:
         return self.full_name()

@@ -66,7 +66,7 @@ class Address(models.Model):
     reference = models.TextField(max_length=200, verbose_name='referencia')
     address_detail = models.CharField(max_length=200, verbose_name='N° de puerta/Lte/Mz/Dpto/Piso')
     address_gps = models.JSONField(null=True, blank=True, max_length=100, verbose_name='dirección gps')
-    default = models.BooleanField(default=False)
+    default = models.BooleanField(default=False, verbose_name='Principal')
     
     objects = AddressManager()
 

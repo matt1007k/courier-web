@@ -203,6 +203,7 @@ class PackageDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         context['title'] = 'Detalles del paquete'
         return context
 
+@login_required()
 def change_status_view(request, pk):
     template_name = 'details/change-status.html'
     title = 'Cambiar estado'

@@ -102,18 +102,32 @@ class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 
 @login_required()
-@permission_required('authentication.add_user', login_url='/drivers')
+@permission_required('authentication.add_user', raise_exception=True)
 def user_create_view(request):
     template_name = 'auth/create.html'
     form_class = CustomUserForm(request.POST or None)
 
     if request.method == 'POST' and form_class.is_valid():
         user = form_class.save()
-        if user:
-            user.set_driver()
-            messages.success(request, 'Usuario registrado con éxito')
-            return redirect('drivers:create', pk=user.pk)
-        return reverse('auth:create')
+        user.set_driver()
+        messages.success(request, 'Usuario registrado con éxito')
+        return redirect('drivers:create', pk=user.pk)
+
+    return render(request, template_name, context={
+        'form': form_class
+    })
+
+@login_required()
+@permission_required('authentication.add_user', raise_exception=True)
+def user_create_client_view(request):
+    template_name = 'auth/create-client.html'
+    form_class = CustomUserForm(request.POST or None)
+
+    if request.method == 'POST' and form_class.is_valid():
+        user = form_class.save()
+        user.set_client()
+        messages.success(request, 'Usuario registrado con éxito')
+        return redirect('clients:create', pk=user.pk)
 
     return render(request, template_name, context={
         'form': form_class

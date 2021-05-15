@@ -94,9 +94,6 @@
             <input type="checkbox" onclick="selectAddressDetail({{object.detail.id}})" value="{{ object.detail.id }}">
         </div>
         <div class="order-list-col">
-            <div class="icon icon-warning-default rounded rounded-md">
-                <img src="{% static 'icon/order-icon.svg' %}" />
-            </div>
             <div class="content" style="align-items: flex-start;">
                 <p class="text-small text-muted font-normal">{{ object.detail.get_tracking_code_text }}</p>
                 <div class="content__client">
