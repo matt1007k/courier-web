@@ -200,7 +200,7 @@
             <div class="dropdown-menu right"
                 x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
                 @click.away="isOpenMd = false">
-                {% if perms.orders.view_order %}
+                {% if perms.details.view_detail %}
                 <a href="{{ detail.get_detail_path }}" class="dropdown-item-2">
                     <span>Ver detalles</span>
                     <i class='bx bx-map-pin bx-sm'></i>

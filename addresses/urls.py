@@ -11,4 +11,5 @@ urlpatterns = [
     path('<int:pk>/update/', AddressUpdateView.as_view(), name="update"),
     path('<int:pk>/delete/', AddressDeleteView.as_view(), name="delete"),
     path('<int:pk>/default/', default_view, name="default"),
+
 ]
