@@ -1,16 +1,23 @@
 import json
+from orders.mails import Mail
 from typing import Any, Dict
-from django.http import HttpResponse
+from django.core.mail import message
+from django.http import HttpResponse, request
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls.base import reverse
+from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
 
+from django.utils.encoding import force_text
+from .utils import generate_token
+
 from django.contrib import messages
 
 from django.contrib.auth.models import Group
+from .models import User
 from .forms import CustomUserForm, RegisterForm
 from clients.forms import ClientRegisterForm
 from addresses.forms import AddressModelForm
@@ -21,6 +28,9 @@ def login_view(request):
         password = request.POST.get('password')
         user = authenticate(username=email, password=password)
         if user:
+            if not user.is_email_verified:
+                messages.success(request, 'Hemos enviado un correo, para verificar tu correo electrónico')
+                return redirect('auth:login')
             login(request, user)
             messages.success(request, 'Bienvenido {}'.format(user.username))
             next_url = request.GET.get('next')
@@ -75,6 +85,10 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self) -> str:
+        if not self.request.user.is_email_verified:
+            Mail.send_verify_account_email(self.request.user)
+            messages.success(self.request, 'Te hemos enviado un correo, para activar y verificar tu correo electrónico')
+            return redirect('auth:login')
         messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))
         return reverse('dash')
     
@@ -132,3 +146,23 @@ def user_create_client_view(request):
     return render(request, template_name, context={
         'form': form_class
     })
+
+def activate_user(request, uidb64, token):
+
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+
+    except Exception as e:
+        user = None
+
+    if user and generate_token.check_token(user, token):
+        user.is_email_verified = True
+        user.save()
+
+        messages.success(request, 'Correo electrónico verificado con exíto, ya puedes ingresar')
+        return redirect('auth:login')
+    template_name = 'auth/activate-failed.html'
+
+    return render(request, template_name, context={})
+

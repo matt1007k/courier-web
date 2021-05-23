@@ -55,14 +55,14 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.user.is_client:
-            object_list = self.request.user.client.detail_set.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
+            object_list = self.request.user.client.detail_set.exclude(tracking_code=None).filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         elif self.request.user.is_driver:
             clients = self.request.user.driver.get_clients()
             object_list = Detail.objects.none()
             for client in clients:
-                object_list = object_list | client.detail_set.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
+                object_list = object_list | client.detail_set.exclude(tracking_code=None).filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         else:
-            object_list = self.model.objects.filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
+            object_list = self.model.objects.exclude(tracking_code=None).filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
         
         if is_valid_queryparams(self.query_status()):
             object_list = object_list.filter(status=self.query_status())

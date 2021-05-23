@@ -65,13 +65,13 @@
 <div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
 <div id="detail" style="display: none;">{{detail|jsonify}}</div>
 <div id="driver" style="display: none;">{{driver|jsonify}}</div>
+<div id="is-driver" style="display: none;" data-user="{{request.user.is_driver}}"></div>
 {% endblock content %}
 
 {% block scripts %}
 <script>
     (function () {
         loadScript();
-        setTrackingOrder();
     })()
 
     function loadScript() {
@@ -89,6 +89,7 @@
                 lng: 13.404954
             };
             window.map = new google.maps.Map(document.getElementById('map'), { zoom: 16, center: myLatLng, });
+            setTrackingOrder();
             getDrawRoute();
         };
 
@@ -96,7 +97,7 @@
         document.head.appendChild(script);
     }
 
-    function getDrawRoute() {
+    function getDrawRoute(positionDriver = null) {
         var directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': false });
         var directionsService = new google.maps.DirectionsService();
         var address = {{ detail.address_origin| jsonify }}[0];
@@ -113,6 +114,10 @@
     {% if driver %}
     var driver = {{ driver| jsonify }}[0];
     var address_origin_text = `${driver.fields.address}, ${driver.fields.district}`;
+    if (positionDriver != null)
+        var latLngOring = positionDriver;
+    else
+        var latLngOring = JSON.parse(driver.fields.address_gps);
     const address_origin_content = `
             <p>${address_origin_text}</p>
             <h5 class="mb-2 font-bold">Datos del motorizado</h5>
@@ -123,7 +128,7 @@
             </p>
         `;
     displayRoute(
-        address_origin_text,
+        latLngOring,
         address_destiny_text,
         directionsService,
         directionsDisplay,
@@ -201,40 +206,37 @@
     function setTrackingOrder() {
         const detailDOM = document.getElementById('detail').textContent;
         const driverDOM = document.getElementById('driver').textContent;
+        const isDriver = document.getElementById('is-driver').dataset.user;
         const detail = JSON.parse(detailDOM)[0];
         const driver = JSON.parse(driverDOM)[0];
-        // console.log(json_detail);
+        // console.log(isDriverDOM);
         const socket = new WebSocket(
             `ws://${window.location.host}/ws/tracking/${detail.fields.tracking_code}/`
         );
         socket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            console.log(data);
+            // var marker_origin = makeMarker(data.message, "{% static 'icon/driver-icon.png' %}", "Driver", map);
+            new google.maps.Marker({
+                position: data.message,
+                map: map,
+                icon: 'https://image.flaticon.com/icons/png/512/609/609803.png',
+                title: 'Driver'
+            });
+            map.panTo(data.message);
+            map.setCenter(data.message)
         };
-        // socket.onclose = function (e) {
-        //     console.error('Websocket closed unexpectedly', e);
-        // };
 
-        if (driver) {
+        if (isDriver == 'True') {
             getLocationData();
             socket.onopen = function () {
-                setInterval(getLocationData, 1000);
-                var message = JSON.stringify({
-                    'message': window.position
-                });
-                // console.log(window.position);
-                socket.send(message);
-                // setInterval(function() {
-                //     if (socket.bufferedAmount == 0)
-                //         getLocationData();
-                //         socket.send(JSON.stringify({
-                //             'message': window.position
-                //         }));
-                // }, 1000);
+                setInterval(function() {
+                    if (socket.bufferedAmount == 0)
+                        getLocationData();
+                        socket.send(JSON.stringify({
+                            'message': window.position
+                        }));
+                }, 1000);
             };
-            
-        }else{
-            console.log('no driver')
         }
 
         function getLocationData(){

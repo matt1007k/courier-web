@@ -1,0 +1,33 @@
+{% load inlinecss %}
+{% load static %}
+{% load l10n %}
+{% inlinecss "css/pages/email.css" %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificar tu correo electrónico</title>
+</head>
+
+<body>
+  <header>
+    <img src="{{ protocol }}://{{ domain }}{% static 'img/logo-light.png' %}" alt="CuyClick - Perú">
+  </header>
+  <section class="container">
+    <div class="head">
+      <p>Hola, {{ user.full_name }}</p>
+      <p>Para verificar tu correo electrónico, has click en el siguiente enlace:</p>
+      <a href="{{ protocol }}://{{ domain }}{% url 'auth:activate' uidb64=uid token=token %}">{{ protocol }}://{{ domain }}{% url 'auth:activate' uidb64=uid token=token %}</a>
+    </div>
+  </section>
+  <footer>
+    <p>Gracias por elegir nuestro servicio.</p>
+    <h5>CuyClick - Perú {{ current_year }}</h5>
+  </footer>
+</body>
+
+</html>
+{% endinlinecss %}

@@ -1,24 +1,20 @@
-from .models import Detail
+from datetime import datetime
 
 def get_generate_tracking_code():
-    details_count = Detail.objects.exclude(tracking_code=None).count()
-    # if details_count <= 1:
-    #     details_count = 0
+    # details_count = Detail.objects.exclude(tracking_code=None).count()
 
-    zero = ''
+    now = datetime.now()
+    year = str(now.year)[-2:]
+    min = add_zero_to_number(now.minute)
+    seg = add_zero_to_number(now.second)
+    code_text = '{}{}{}'.format(year, min, seg)
     
-    if details_count < 10:
-        zero = '00000'
-    if details_count >= 10:
-        zero = '0000'
-    if details_count >= 100:
-        zero = '000'
-    if details_count >= 1000:
-        zero = '00'
-    if details_count >= 10000:
-        zero = '0'
-    if details_count >= 100000:
-        zero = ''
 
-    code = '{}{}'.format(zero, details_count + 1)
-    return 'CC{}'.format(code)
+    return 'CC{}'.format(code_text)
+
+
+def add_zero_to_number(min):
+    if min < 10:
+        return "0%s" % min
+
+    return min

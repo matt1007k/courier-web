@@ -5,6 +5,7 @@ from django.db.models.signals import pre_save
 from django.utils.text import slugify
 from django.urls import reverse
 from pages.utils import is_valid_queryparams
+from courier_app.utils import phone_regex
 
 from authentication.models import User
 
@@ -25,7 +26,7 @@ class Client(models.Model):
     slug = models.CharField(max_length=250, null=True, blank=True, unique=True, verbose_name='Identificador')
     first_name = models.CharField(max_length=100, verbose_name='Nombre') 
     last_name = models.CharField(max_length=150, verbose_name='Apellidos') 
-    cell_phone = models.CharField(max_length=9, null=True, blank=True, verbose_name='Núm. de celular')
+    cell_phone = models.CharField(validators=[phone_regex],max_length=9, null=True, blank=True, verbose_name='Núm. de celular')
     driver_code = models.CharField(max_length=12, verbose_name='código de motorizado')
     store_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre de tienda (opcional)')
     logo = models.ImageField(upload_to="clients/", null=True, blank=True, verbose_name='logo de la tienda (opcional)')

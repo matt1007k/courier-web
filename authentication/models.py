@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to="users/%Y/%m/%d/", null=False, blank=False)
+    is_email_verified = models.BooleanField(default=False, verbose_name='correo verificado')
 
     @property
     def is_client(self):

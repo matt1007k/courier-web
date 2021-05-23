@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 import json
 from typing import Dict
 from django.db import models
@@ -56,10 +57,11 @@ class AddressManager(models.Manager):
         
 
 class Address(models.Model):
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,9}$', message="El núm. de celular no es válido, es formato válido es: 999999999")
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='cliente')
     full_name = models.CharField(max_length=100, verbose_name='nombre completo')
     email = models.CharField(max_length=150, verbose_name='correo electrónico')
-    cell_phone = models.CharField(max_length=9, verbose_name='num. de celular')
+    cell_phone = models.CharField(validators=[phone_regex],max_length=9, verbose_name='num. de celular')
     address = models.CharField(max_length=150, verbose_name='dirección')
     district = models.CharField(max_length=100, verbose_name='distrito')
     city = models.CharField(max_length=150, verbose_name='ciudad o País')

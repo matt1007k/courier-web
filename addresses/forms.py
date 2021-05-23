@@ -1,6 +1,9 @@
 from django import forms
+from django.core.validators import RegexValidator, validate_email
 
 from .models import Address
+
+phone_regex = RegexValidator(regex=r'^\+?1?\d{9,9}$', message="El núm. de celular no es válido, es formato válido es: 999999999")
 
 class AddressModelForm(forms.ModelForm):
     address_gps = forms.CharField(max_length=200, widget=forms.HiddenInput())
@@ -22,10 +25,10 @@ class OriginAddressForm(forms.Form):
     origin_full_name = forms.CharField(max_length=100, label='Nombre completo de la persona', widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    origin_email = forms.EmailField(max_length=100, label='Correo electrónico' ,widget=forms.EmailInput(attrs={
+    origin_email = forms.EmailField(validators=[validate_email],max_length=100, label='Correo electrónico' ,widget=forms.EmailInput(attrs={
         'class': 'input'
     }))
-    origin_cell_phone = forms.CharField(max_length=9, label='Num. de celular' ,widget=forms.TextInput(attrs={
+    origin_cell_phone = forms.CharField(validators=[phone_regex],max_length=9, label='Num. de celular' ,widget=forms.TextInput(attrs={
         'class': 'input'
     }))
     origin_address = forms.CharField(label='Dirección', max_length=100, widget=forms.TextInput(attrs={
@@ -49,10 +52,10 @@ class DestinyAddressForm(forms.Form):
     destiny_full_name = forms.CharField(max_length=100, label='Nombre completo de la persona', widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    destiny_email = forms.EmailField(max_length=100, label='Correo electrónico' ,widget=forms.EmailInput(attrs={
+    destiny_email = forms.EmailField(validators=[validate_email],max_length=100, label='Correo electrónico' ,widget=forms.EmailInput(attrs={
         'class': 'input'
     }))
-    destiny_cell_phone = forms.CharField(max_length=9, label='Num. de celular' ,widget=forms.TextInput(attrs={
+    destiny_cell_phone = forms.CharField(validators=[phone_regex],max_length=9, label='Num. de celular' ,widget=forms.TextInput(attrs={
         'class': 'input'
     }))
     destiny_address = forms.CharField(label='Dirección', max_length=100, widget=forms.TextInput(attrs={
