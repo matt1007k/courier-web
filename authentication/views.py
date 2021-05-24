@@ -86,9 +86,9 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self) -> str:
         if not self.request.user.is_email_verified:
-            Mail.send_verify_account_email(self.request.user)
+            Mail.send_verify_account_email(self.request.user, self.request)
             messages.success(self.request, 'Te hemos enviado un correo, para activar y verificar tu correo electrónico')
-            return redirect('auth:login')
+            return reverse('auth:login')
         messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))
         return reverse('dash')
     

@@ -5,10 +5,12 @@ def get_generate_tracking_code():
 
     now = datetime.now()
     year = str(now.year)[-2:]
-    min = add_zero_to_number(now.minute)
+    month = now.month
+    hour = add_zero_to_number(now.hour)
+    minute = add_zero_to_number(now.minute)
     seg = add_zero_to_number(now.second)
-    code_text = '{}{}{}'.format(year, min, seg)
-    
+
+    code_text = '{}{}{}{}'.format(year, month, minute, seg)
 
     return 'CC{}'.format(code_text)
 

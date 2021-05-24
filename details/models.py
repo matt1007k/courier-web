@@ -58,7 +58,7 @@ class Detail(models.Model):
 
     client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.CASCADE, verbose_name='cliente')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='pedido')
-    tracking_code = models.CharField(max_length=8, unique=True, null=True, blank=True, verbose_name="Código de seguimiento")
+    tracking_code = models.CharField(max_length=10, unique=True, null=True, blank=True, verbose_name="Código de seguimiento")
     size = models.CharField(max_length=100, choices=PackageSize.choices, default=PackageSize.SMALL, verbose_name='tamaño')
     contain = models.CharField(max_length=100, verbose_name='¿Qué contiene?')
     value = models.CharField(max_length=150, verbose_name='valor del paquete')
@@ -270,6 +270,18 @@ class PackageDelivered(models.Model):
     class Meta:
         verbose_name = 'entrega de paquete'
         verbose_name_plural = 'entrega de paquetes'
+
+class TrackingOrder(models.Model):
+    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, related_name='trackings', verbose_name='paquete')
+    location = models.CharField(max_length=200, verbose_name='ubicación')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='fecha de registro')
+
+    def __str__(self) -> str:
+        return self.detail.tracking_code
+
+    class Meta:
+        verbose_name = 'Seguimiento de pedido'
+        verbose_name_plural = 'Seguimiento de pedidos'
 
 def set_price_rate(sender, instance, *args, **kargs):
     pass

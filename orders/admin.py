@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Order
 from details.models import (
     AssignOriginAddress, AssignDeliveryAddress, Detail,
-    UnassignOriginAddress, UnassignDeliveryAddress, PackageDelivered
+    UnassignOriginAddress, UnassignDeliveryAddress, PackageDelivered, TrackingOrder
 )
 
 class OrderAdmin(admin.ModelAdmin):
@@ -25,6 +25,9 @@ class AssingDeliveryAddressAdmin(admin.ModelAdmin):
 class PackageDeliveredAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'detail', 'driver', 'created_at')
 
+class TrackingOrderAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'location', 'created_at')
+
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Detail, DetailAdmin)
 admin.site.register(UnassignOriginAddress, UnassingOriginAddressAdmin)
@@ -32,3 +35,4 @@ admin.site.register(UnassignDeliveryAddress, UnassingDeliveryAddressAdmin)
 admin.site.register(AssignOriginAddress, AssingOriginAddressAdmin)
 admin.site.register(AssignDeliveryAddress, AssingDeliveryAddressAdmin)
 admin.site.register(PackageDelivered, PackageDeliveredAdmin)
+admin.site.register(TrackingOrder, TrackingOrderAdmin)
