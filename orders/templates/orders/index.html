@@ -240,6 +240,22 @@
                             </div>
                         </a>
                         {% endif %}
+                        {% if perms.details.view_trackingorder %}
+                        <a href="{{ detail.get_tracking_order_path }}" class="option-item">
+                            <span>Seguimiento</span>
+                            <div class="icon">
+                                <i class='bx bx-list-check bx-sm'></i>
+                            </div>
+                        </a>
+                        {% endif %}
+                        {% if request.user.is_administrator %}
+                        <a href="{{ detail.get_change_status_path }}" class="option-item">
+                            <span>Cambiar estado</span>
+                            <div class="icon">
+                                <i class='bx bx-wrench bx-sm'></i>
+                            </div>
+                        </a>
+                {% endif %}
                     </div>
                 </div>
             </div>

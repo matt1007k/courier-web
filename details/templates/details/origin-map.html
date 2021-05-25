@@ -209,35 +209,33 @@
         const isDriver = document.getElementById('is-driver').dataset.user;
         const detail = JSON.parse(detailDOM)[0];
         const driver = JSON.parse(driverDOM)[0];
-        // console.log(isDriverDOM);
-        const socket = new WebSocket(
-            `ws://${window.location.host}/ws/tracking/${detail.fields.tracking_code}/`
-        );
-        socket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            // var marker_origin = makeMarker(data.message, "{% static 'icon/driver-icon.png' %}", "Driver", map);
-            new google.maps.Marker({
-                position: data.message,
-                map: map,
-                icon: 'https://image.flaticon.com/icons/png/512/609/609803.png',
-                title: 'Driver'
-            });
-            map.panTo(data.message);
-            map.setCenter(data.message)
-        };
+        // const socket = new WebSocket(
+        //     `ws://${window.location.host}/ws/tracking/${detail.fields.tracking_code}/`
+        // );
+        // socket.onmessage = function (e) {
+        //     const data = JSON.parse(e.data);
+        //     new google.maps.Marker({
+        //         position: data.message,
+        //         map: map,
+        //         icon: 'https://image.flaticon.com/icons/png/512/609/609803.png',
+        //         title: 'Driver'
+        //     });
+        //     map.panTo(data.message);
+        //     map.setCenter(data.message)
+        // };
 
-        if (isDriver == 'True') {
-            getLocationData();
-            socket.onopen = function () {
-                setInterval(function() {
-                    if (socket.bufferedAmount == 0)
-                        getLocationData();
-                        socket.send(JSON.stringify({
-                            'message': window.position
-                        }));
-                }, 1000);
-            };
-        }
+        // if (isDriver == 'True') {
+        //     getLocationData();
+        //     socket.onopen = function () {
+        //         setInterval(function() {
+        //             if (socket.bufferedAmount == 0)
+        //                 getLocationData();
+        //                 socket.send(JSON.stringify({
+        //                     'message': window.position
+        //                 }));
+        //         }, 1000);
+        //     };
+        // }
 
         function getLocationData(){
             if (navigator.geolocation) {
