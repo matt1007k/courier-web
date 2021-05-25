@@ -45,7 +45,7 @@
                         </div>
                         <img class="order-icon" src="{% static 'icon/order-icon.svg' %}"/>
                         <div class="address-destiny">
-                            <div class="text-small flex items-center"><i style="margin-right: 5px;"
+                            <div class="text-small w-full flex items-center justity-end"><i style="margin-right: 5px;"
                                     class="bx bx-user bx-xs"></i> {{ detail.address_destiny.full_name }}</div>
                             <h6>{{ detail.address_destiny.address }}</h6>
                             <div class="text-small font-medium">{{ detail.address_destiny.address_city }}</div>
@@ -179,6 +179,7 @@
                     </div>
                 </div>
 
+                {% if not request.user.is_driver %}
                 <div class="form-group mt-5">
                     {% if detail.order.promo_code %}
                         <div class="mt-2 text-success">
@@ -190,7 +191,6 @@
                         </div>
                     {% endif %}
                 </div>
-                {% if not request.user.is_driver %}
                 <div class="mt-5">
                     <h6>Imágenes del pago realizado</h6>
                     {% if detail.order.payed_image %}
@@ -228,10 +228,24 @@
                 </div>
                 <div class="mt-5">
                     <h6>Tipo de comprobante</h6>
-                    <div class="mt-2 alert alert-primary">
+                    <div class="mt-2 subheading">
                         {{ detail.order.type_ticket }}
                     </div> 
                 </div>
+                    {% if detail.order.type_ticket == 'FACTURA' %}
+                    <div class="mt-4">
+                        <h6 class="mb-2">Razón social</h6>
+                        <div class="flex items-center text-body mb-4">
+                            <i class='bx bxs-business bx-sm' style="margin-right: 5px;"></i>
+                            <span>{{ detail.order.business_name }}</span>
+                        </div>
+                        <h6 class="mb-2">RUC</h6>
+                        <div class="flex items-center text-body">
+                            <i class='bx bx-id-card bx-sm' style="margin-right: 5px;"></i>
+                            <span>{{ detail.order.ruc }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

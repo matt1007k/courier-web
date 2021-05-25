@@ -1,9 +1,9 @@
 from django import forms
-from django.core.validators import RegexValidator, validate_email
 
 from .models import Address
 
-phone_regex = RegexValidator(regex=r'^\+?1?\d{9,9}$', message="El núm. de celular no es válido, es formato válido es: 999999999")
+from django.core.validators import validate_email
+from courier_app.utils import phone_regex
 
 class AddressModelForm(forms.ModelForm):
     address_gps = forms.CharField(max_length=200, widget=forms.HiddenInput())

@@ -1,0 +1,88 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% load static %}
+{% load l10n %}
+
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <a href="{% url 'orders:index' %}" class="btn btn-link btn-small">
+            <i class='bx bx-left-arrow-alt bx-sm'></i>
+        </a>
+        <h4>{{ title }}</h4>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="mb-10">
+    <div class="card card-create-order create-order">
+        
+        <div class="order-content-2">
+            <div class="order-addresess-2">
+                <div>
+                    <div>
+                        <h5>
+                            {{ detail.get_tracking_code_text }}
+                        </h5>
+                        {% include 'details/snippets/status.html' %}
+                    </div>
+                </div>
+                
+                <div class="address-item">
+                    <div class="address-delivered">
+                        <div class="address-origin">
+                            <div class="text-small flex items-center"><i style="margin-right: 5px;"
+                                    class="bx bx-user bx-xs"></i> {{ detail.address_origin.full_name }}</div>
+                            <h6>{{ detail.address_origin.address }}</h6>
+                            <div class="text-small font-medium">{{ detail.address_origin.address_city }}</div>
+                        </div>
+                        <img class="order-icon" src="{% static 'icon/order-icon.svg' %}"/>
+                        <div class="address-destiny">
+                            <div class="text-small w-full flex items-center justity-end"><i style="margin-right: 5px;"
+                                    class="bx bx-user bx-xs"></i> {{ detail.address_destiny.full_name }}</div>
+                            <h6>{{ detail.address_destiny.address }}</h6>
+                            <div class="text-small font-medium">{{ detail.address_destiny.address_city }}</div>
+                        </div>
+                    </div>
+                </div> 
+                <div class="address-order-summary">
+                    <div class="distance">
+                        <h5 class="m-0">{{ detail.distance|unlocalize }}  {% if detail.distance >= 1 %}KM{% else %}M{% endif %}</h5>
+                        <p class="text-small">Distancia</p>
+                    </div>
+                    <div class="rate">
+                        <div class="price flex items-center">
+                            <span class="text-muted mr-1">S/.</span>
+                            <div class="h5 m-0">{{ detail.price_rate|unlocalize }}</div>
+                        </div>
+                        <p class="text-small m-0">Precio de tarifa</p>
+                    </div>
+                </div>
+            </div>
+            <div class="order-right">
+                <h5>{{ title }}</h5>
+                {% if detail.trackings.count > 0 %}
+                    {% for tracking in detail.trackings.all %}
+                    <div class="mb-4">
+                        <h6>{{ tracking.location }}</h6>
+                        <div class="text-small">
+                            {{ tracking.created_at }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Sin historial de seguimiento</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mt-6 actions left">
+            <a href="{% url 'orders:index' %}" class="btn btn-default">Regresar</a>
+        </div>
+    </div>
+</div>  
+</form>   
+{% endblock content %}

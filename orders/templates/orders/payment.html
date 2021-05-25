@@ -303,6 +303,16 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="mt-4" id="detail-ruc" style="display: none;">
+                            <div class="form-group">
+                                <label for="business_name">Razón social</label>
+                                <input type="text" class="input" id="business_name" name="business_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="ruc">RUC</label>
+                                <input type="text" class="input" maxlength="10" id="ruc" name="ruc">
+                            </div>
+                        </div>
                     </div>
                     <div class="mt-6 actions full">
                         <button type="submit" class="btn btn-primary">Completar pedido</button>
@@ -360,5 +370,23 @@
             messagePromoCode.innerText = 'Ingrese un cupón de promoción';
         }
     });
+
+    const detailRuc = document.getElementById('detail-ruc');
+    const groupTypeTicket = document.querySelectorAll('[name="type_ticket"]'); groupTypeTicket.forEach((el) => {
+        el.addEventListener('change', (ev) => {
+            const businessNameInput = detailRuc.querySelector('#business_name');
+            const rucInput = detailRuc.querySelector('#ruc');
+            if (ev.target.checked && el.getAttribute('id') == 'factura'){
+                detailRuc.style.display = 'block';
+                businessNameInput.required = true;
+                rucInput.required = true;
+            }else{
+                detailRuc.style.display = 'none';
+                businessNameInput.required = false;
+                rucInput.required = false;
+            }
+        });
+    });
+
 </script>
 {% endblock scripts %}

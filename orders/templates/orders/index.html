@@ -206,6 +206,12 @@
                     <i class='bx bx-map-pin bx-sm'></i>
                 </a>
                 {% endif %}
+                {% if perms.details.view_trackingorder %}
+                <a href="{{ detail.get_tracking_order_path }}" class="dropdown-item-2">
+                    <span>Seguimiento</span>
+                    <i class='bx bx-list-check bx-sm'></i>
+                </a>
+                {% endif %}
                 {% if request.user.is_administrator %}
                 <a href="{{ detail.get_change_status_path }}" class="dropdown-item-2">
                     <span>Cambiar estado</span>

@@ -1,4 +1,4 @@
-import json
+import threading
 from orders.mails import Mail
 from typing import Any, Dict
 from django.core.mail import message
@@ -86,7 +86,11 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self) -> str:
         if not self.request.user.is_email_verified:
-            Mail.send_verify_account_email(self.request.user, self.request)
+            thread = threading.Thread(
+                target=Mail.send_verify_account_email,
+                args=(self.request.user, self.request)
+            )
+            thread.start()
             messages.success(self.request, 'Te hemos enviado un correo, para activar y verificar tu correo electrónico')
             return reverse('auth:login')
         messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))

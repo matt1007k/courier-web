@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import DeleteDetailView, PackageDetailView, change_status_view, not_on_routed_delivery_view, not_on_routed_origin_view, origin_map_view, destiny_map_view, package_delivered_view, received_package_view
+from .views import DeleteDetailView, PackageDetailView, change_status_view, not_on_routed_delivery_view, not_on_routed_origin_view, origin_map_view, destiny_map_view, package_delivered_view, package_tracking_view, received_package_view
 
 app_name = 'details'
 
@@ -12,6 +12,7 @@ urlpatterns = [
     path('<int:pk>/destiny-map/', destiny_map_view, name="destiny-map"),
     path('<int:pk>/received/', received_package_view, name="received"),
     path('<int:pk>/not-onrouted-origin/', not_on_routed_origin_view, name="not-onrouted-origin"),
+    path('<str:tracking_code>/tracking/', package_tracking_view, name="tracking"),
     path('<int:pk>/not-onrouted-delivery/', not_on_routed_delivery_view, name="not-onrouted-delivery"),
     path('<int:pk>/package-delivered/', package_delivered_view, name="package-delivered"),
 ]

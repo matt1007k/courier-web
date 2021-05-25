@@ -1,18 +1,18 @@
 import json
 import ast
+import threading
 from details.paginations import LargeResultsSetPagination
 from details.serializers import UnAssignOrignAddressSerializer
 from django.http.response import HttpResponse, JsonResponse
 from django.core.serializers import serialize
 from rest_framework.generics import ListAPIView
 from orders.mails import Mail
-from clients.models import Client
 from drivers.models import Driver
 from typing import Any, Dict
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect, render
-from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress, UnassignOriginAddress
+from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail, TrackingOrder, UnassignDeliveryAddress, UnassignOriginAddress
 
 from django.views.generic import ListView, DetailView
 
@@ -187,7 +187,7 @@ def cancel_order_view(request):
     return redirect('orders:index')
 
 @login_required()
-# @permission_required('details.view_detail', login_url='/orders')
+# @permission_required('details.view_detail', raise_exception=True)
 def add_addresses_view(request):
     template_name = 'orders/add-addresses.html'
     order = get_or_create_order(request)
@@ -208,13 +208,29 @@ def payment_view(request):
                 messages.error(request, 'El pedido no tiene ninguna dirección de envío')
             order.payed_order(
                 payed_image = request.FILES['payed_image'],
-                type_ticket = request.POST.get('type_ticket')
+                type_ticket = request.POST.get('type_ticket'),
+                business_name = request.POST.get('business_name'),
+                ruc = request.POST.get('ruc'),
             )
             for detail in order.detail_set.all():
                 detail.payed(
                     tracking_code = get_generate_tracking_code(),
                 )
-                # Mail.send_origin_complete_order(detail, detail.address_origin.email)
+                thread = threading.Thread(
+                    target=Mail.send_complete_order,
+                    args=(detail, detail.address_origin.email, request)
+                )
+                thread.start()
+                thread2 = threading.Thread(
+                    target=Mail.send_complete_order,
+                    args=(detail, detail.address_destiny.email, request)
+                )
+                thread2.start()
+                # Mail.send_complete_order(detail, detail.address_destiny.email, request)
+                TrackingOrder.objects.create(
+                    detail=detail,
+                    location='Pendiente a recojer en el dirección ingresada.'
+                )
                 if not detail.is_unassign_origin:
                     UnassignOriginAddress.objects.create(detail=detail)
             return redirect('orders:payment-success') 
@@ -295,6 +311,10 @@ def assign_origins_to_driver_view(request):
         for id in detail_ids:
             detail = Detail.objects.get(pk=id)
             if not detail.is_assign_origin:
+                TrackingOrder.objects.create(
+                    detail=detail,
+                    location='Motorizado asignado para recojer el paquete'
+                )
                 AssignOriginAddress.objects.create(
                     detail=detail,
                     driver=driver,
@@ -313,6 +333,10 @@ def assign_deliveries_to_driver_view(request):
         for id in detail_ids:
             detail = Detail.objects.get(pk=id)
             if not detail.is_assign_delivery:
+                TrackingOrder.objects.create(
+                    detail=detail,
+                    location='Motorizado asignado para entregar el paquete'
+                )
                 AssignDeliveryAddress.objects.create(
                     detail=detail,
                     driver=driver,
@@ -328,6 +352,11 @@ def return_unassign_origin_view(request, pk):
     if request.method == 'GET':
         detail = Detail.objects.get(pk=pk)
         if not detail.is_unassign_origin:
+            TrackingOrder.objects.create(
+                detail=detail,
+                location='Se reprogramo el recojo del paquete'
+            )
+            detail.reprogrammed()
             UnassignOriginAddress.objects.create(
                 detail=detail,
             )
@@ -343,6 +372,11 @@ def return_unassign_delivery_view(request, pk):
     if request.method == 'GET':
         detail = Detail.objects.get(pk=pk)
         if not detail.is_unassing_delivery:
+            TrackingOrder.objects.create(
+                detail=detail,
+                location='Se reprogramo la entrega del paquete'
+            )
+            detail.reprogrammed()
             UnassignDeliveryAddress.objects.create(
                 detail=detail,
             )

@@ -70,7 +70,7 @@
           <h6>Distancia</h6>
           <p>{{ detail.distance|unlocalize }}{% if detail.distance >= 1 %}KM{% else %}M{% endif %}</p>
           <h6>Precio de tarifa</h6>
-          <p>S/ {{ detail.price_rate|unlocalize}}</p>
+          <p>S/ {{ detail.price_rate|unlocalize }}</p>
       </div>
     </div>
     <div class="detail">
@@ -79,9 +79,9 @@
       </div>
       <div class="content">
         <h6>Subtotal</h6>
-        <p>S/ {{ detail.order.sub_total|unlocalize  }}</p>
+        <p>S/ {{ detail.order.get_sub_total|unlocalize  }}</p>
         <h6>IGV</h6>
-        <p>S/ {{ detail.order.igv|unlocalize }}</p>
+        <p>S/ {{ detail.order.get_igv|unlocalize }}</p>
         <h6>Total pagado</h6>
         <h5 class="text-muted">S/ {{ detail.order.total|unlocalize }}</h5>
       </div>

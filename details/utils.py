@@ -5,7 +5,7 @@ def get_generate_tracking_code():
 
     now = datetime.now()
     year = str(now.year)[-2:]
-    month = now.month
+    month = add_zero_to_number(now.month)
     hour = add_zero_to_number(now.hour)
     minute = add_zero_to_number(now.minute)
     seg = add_zero_to_number(now.second)

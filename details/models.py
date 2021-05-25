@@ -91,6 +91,8 @@ class Detail(models.Model):
     def destiny_map_path(self):
         return reverse('details:destiny-map', kwargs={'pk': self.pk})
 
+    def get_tracking_order_path(self):
+        return reverse('details:tracking', kwargs={'tracking_code': self.tracking_code})
 
     def update_addressess(self, client, origin_form, destiny_form):
         self.address_origin = self.update_or_create_address_origin(client=client, form_cleaned_data=origin_form)

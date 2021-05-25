@@ -8,6 +8,8 @@ from django.urls.base import reverse
 from clients.models import Client
 from promo_codes.models import PromoCode
 
+from courier_app.utils import ruc_regex
+
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
         REGISTERED = 'RE', _('Registrado')
@@ -27,6 +29,8 @@ class Order(models.Model):
     igv = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     sub_total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     promo_code = models.OneToOneField(PromoCode, null=True, blank=True, on_delete=models.CASCADE)
+    business_name = models.CharField(max_length=150, null=True, blank=True, verbose_name='razón social')
+    ruc = models.CharField(validators=[ruc_regex], max_length=10, null=True, blank=True, verbose_name='RUC')
 
     def __str__(self) -> str:
         return self.client.full_name()
@@ -50,6 +54,12 @@ class Order(models.Model):
 
             self.update_totals()
             promo_code.use()
+
+    def get_sub_total(self):
+        return round(self.sub_total, 2)
+
+    def get_igv(self):
+        return round(self.igv, 2)
 
     def get_discount(self):
         if self.promo_code:
@@ -78,9 +88,11 @@ class Order(models.Model):
     def get_total(self):
         return sum([ detail.price_rate for detail in self.detail_set.all() ])
 
-    def payed_order(self, payed_image, type_ticket):
+    def payed_order(self, payed_image, type_ticket, business_name, ruc):
         self.payed_image = payed_image
         self.type_ticket = type_ticket
+        self.business_name = business_name
+        self.ruc = ruc
         self.save()
 
     def canceled(self):

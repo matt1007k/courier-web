@@ -8,6 +8,8 @@ from authentication.models import User
 from django.utils.text import slugify
 from django.db.models.signals import pre_save
 
+from courier_app.utils import phone_regex
+
 class Driver(models.Model):
     user = OneToOneField(User, on_delete=models.CASCADE, verbose_name='usuario')
     first_name = models.CharField(max_length=100, verbose_name='Nombre')
@@ -15,8 +17,8 @@ class Driver(models.Model):
     slug = models.SlugField(blank=True, null=True, unique=True)
     code = models.CharField(max_length=9, unique=True, verbose_name='código')
     dni = models.CharField(max_length=8, unique=True)
-    cell_phone = models.CharField(max_length=9, verbose_name='Num. de celular')
-    cell_phone2 = models.CharField(max_length=9, null=True, blank=True, verbose_name='Num. de celular 2')
+    cell_phone = models.CharField(validators=[phone_regex] , max_length=9, verbose_name='Num. de celular')
+    cell_phone2 = models.CharField(max_length=9, null=True, blank=True, verbose_name='Num. de celular 2 (opcional)')
     address = models.CharField(max_length=100, verbose_name='dirección')
     references = models.TextField(max_length=200, verbose_name='referencias')
     district = models.CharField(max_length=100, verbose_name='distrito')

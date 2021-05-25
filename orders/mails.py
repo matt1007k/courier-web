@@ -41,13 +41,18 @@ class Mail:
 
 
     @staticmethod
-    def send_complete_order(detail, email):
+    def send_complete_order(detail, email, request):
         subject = 'Tu pedido ha sido enviado'
         template = get_template('orders/mails/complete-order.html')
         current_year = datetime.now().year
+        domain = get_current_site(request)
+        protocol = request.scheme
+
         content = template.render({
             'detail': detail,
             'current_year': current_year,
+            'domain': domain,
+            'protocol': protocol,
         })
 
         message = EmailMultiAlternatives(

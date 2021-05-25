@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.views.generic import DeleteView, DetailView
 from django.urls import reverse 
 
-from .models import AssignDeliveryAddress, AssignOriginAddress, Detail, UnassignDeliveryAddress
+from .models import AssignDeliveryAddress, AssignOriginAddress, Detail, TrackingOrder, UnassignDeliveryAddress
 from addresses.models import Address
 
 from .forms import DetailForm, DetailModelForm, PackageDeliveredModelForm, PackageStatusModelForm
@@ -107,6 +107,10 @@ def origin_map_view(request, pk):
     template_name = 'details/origin-map.html'
     detail = Detail.objects.get(pk=pk) 
     if not detail.is_delivered and request.user.is_driver:
+        TrackingOrder.objects.create(
+            detail=detail,
+            location='El motorizado está en camino de recojer tu paquete'
+        )
         detail.on_routed()
 
     if detail.is_assign_origin:
@@ -127,6 +131,10 @@ def destiny_map_view(request, pk):
     detail = Detail.objects.get(pk=pk) 
     if not detail.is_delivered and request.user.is_driver:
         detail.on_routed()
+        TrackingOrder.objects.create(
+            detail=detail,
+            location='El motorizado está en camino de entregar tu paquete'
+        )
     if detail.is_assign_delivery:
         driver = AssignDeliveryAddress.objects.filter(detail=detail).first().driver
     else:
@@ -144,6 +152,10 @@ def received_package_view(request, pk):
     if request.method == 'GET':
         detail = Detail.objects.get(pk=pk)
         detail.received()
+        TrackingOrder.objects.create(
+            detail=detail,
+            location='El paquete fue entregado al motorizado'
+        )
         UnassignDeliveryAddress.objects.create(
             detail=detail
         )
@@ -183,6 +195,10 @@ def package_delivered_view(request, pk):
         form.detail = detail
         form.driver = request.user.driver if request.user.is_driver else None
         form.save()
+        TrackingOrder.objects.create(
+            detail=detail,
+            location='El paquete fue entregado'
+        )
         detail.delivered()
         messages.success(request, 'El paquete fue registrado como entregado')
         return redirect('orders:deliveries')
@@ -202,6 +218,22 @@ class PackageDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         context = super().get_context_data(**kwargs)
         context['title'] = 'Detalles del paquete'
         return context
+
+
+@login_required()
+@permission_required('details.view_trackingorder', raise_exception=True)
+def package_tracking_view(request, tracking_code):
+    template_name = 'details/tracking.html'
+    detail = get_object_or_404(Detail, tracking_code=tracking_code)
+    if request.user.is_client:
+        title = 'Seguimiento mi paquete'
+    else:
+        title = 'Seguimiento del paquete'
+
+    return render(request, template_name, context={
+        'detail': detail,
+        'title': title
+    })
 
 @login_required()
 def change_status_view(request, pk):
