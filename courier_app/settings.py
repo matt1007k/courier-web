@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'driver_payments'
 ]
 
-INSTALLED_APPS += ('naomi',)
+# INSTALLED_APPS += ('naomi',)
 
 
 MIDDLEWARE = [
@@ -164,7 +164,7 @@ REST_FRAMEWORK = {
 
 # Real time
 ASGI_APPLICATION = 'courier_app.asgi.application'
-
+# 
 # Cache with redis
 CHANNEL_LAYERS = {
     'default': {
@@ -184,9 +184,9 @@ CHANNEL_LAYERS = {
 # EMAIL_HOST_PASSWORD = config('USER_MAIL_PASSWORD')
 # EMAIL_USE_TLS = True
 
-if DEBUG:
-    EMAIL_BACKEND = "naomi.mail.backends.naomi.NaomiBackend"
-    EMAIL_FILE_PATH = "/mnt/c/Users/nomad1007/Documents/Code/courier-web/mailtest/tmp"
+# if DEBUG:
+#     EMAIL_BACKEND = "naomi.mail.backends.naomi.NaomiBackend"
+#     EMAIL_FILE_PATH = "/mnt/c/Users/nomad1007/Documents/Code/courier-web/mailtest/tmp"
 
 
 try:
