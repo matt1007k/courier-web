@@ -162,21 +162,64 @@ class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin,
         context['title'] = 'Entrega de paquetes'
         return context
 
-    def query(self):
-        return self.request.GET.get('q')
+    def query_driver(self):
+        return self.request.GET.get('driver')
 
-    def query_date(self):
-        return self.request.GET.get('date')
+    def query_date_from(self):
+        return self.request.GET.get('date_from')
 
-    def query_status(self):
-        return self.request.GET.get('status')
+    def query_date_to(self):
+        return self.request.GET.get('date_to')
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            object_list = self.request.user.driver.assigndeliveryaddress_set.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-id')
+            object_list = self.request.user.driver.assigndeliveryaddress_set.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
         else:
-            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.RECEIVED).order_by('-id')
+            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
+
+        object_list = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
         return object_list
+
+class ReporteAssignDeliveryAddressView(View):
+    def query_driver(self):
+        return self.request.GET.get('driver')
+
+    def query_date_from(self):
+        return self.request.GET.get('date_from')
+
+    def query_date_to(self):
+        return self.request.GET.get('date_to')
+
+    def get(self, request, *args, **kwargs):
+        try:
+            template_name = 'orders/assign/report/deliveries.html'
+            object_list = AssignDeliveryAddress.objects.filter(detail__status=Detail.PackageStatus.PENDING)
+            deliveries = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
+            
+            context={
+                'filename': 'test',
+                'date': datetime.now().date(),
+                'logo': 'img/logo.png',
+                'query': self.query_date_from(),
+                'deliveries': deliveries
+            }
+            response = HttpResponse(content_type='application/pdf')
+            # response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
+            template = get_template(template_name)
+            html = template.render(context)
+
+            pisa_status = pisa.CreatePDF(
+                html, 
+                dest=response,
+                link_callback=link_callback
+            )
+            if pisa_status.err:
+                return HttpResponse('We had some errors <pre>' + html + '</pre>')
+            return response
+
+        except Exception as e:
+            return e
+        return HttpResponseRedirect(reverse_lazy('orders:origins'))
 
 class UnassignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'details.view_unassignoriginaddress'

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de recojo de pedidos</title>
+    <title>Reporte de entrega de pedidos</title>
     <style>
         .header{
            margin-bottom: 30px;
@@ -60,7 +60,7 @@
                 <img src="{{ logo }}" class="logo" />
             </td>
             <td>
-                <h2 class="title text-center">Lista de recojos</h2>
+                <h2 class="title text-center">Lista de entregas</h2>
             </td>
             <td>
                 <p class="text-right">{{ date }}</p>
@@ -71,34 +71,34 @@
         <thead>
             <tr>
                 <th>Detalle del pedido</th>
-                <th>Dirección de recojo</th>
+                <th>Dirección de envío</th>
                 <th>¿Quién te atenderá? </th>
             </tr>
         </thead>
         <tbody>
-            {% for origin in origins %}
+            {% for destiny in deliveries %}
             <tr>
                 <td>
-                    <p class="tracking-code">{{ origin.detail.get_tracking_code_text }}</p>
+                    <p class="tracking-code">{{ destiny.detail.get_tracking_code_text }}</p>
                     <p class="text-muted">Motorizado</p>
                     <p class="driver">
-                        {{ origin.driver.full_name }}
+                        {{ destiny.driver.full_name }}
                     </p>
                 </td>
                 <td>
-                    <p class="driver">{{ origin.detail.address_origin.address }}</p>
+                    <p class="driver">{{ destiny.detail.address_destiny.address }}</p>
                     <p class="text-muted">
-                        {{ origin.detail.address_origin.address_city }}
+                        {{ destiny.detail.address_destiny.address_city }}
                     </p>
-                    <p class="text-muted"># puerta/Mz/Piso: {{ origin.detail.address_origin.address_detail }}</p>
+                    <p class="text-muted"># puerta/Mz/Piso: {{ destiny.detail.address_destiny.address_detail }}</p>
                     <p class="text-muted">
-                        Referencia: {{ origin.detail.address_origin.reference }}
+                        Referencia: {{ destiny.detail.address_destiny.reference }}
                     </p>
                 </td>
                 <td>
-                    <p class="driver">{{ origin.detail.address_origin.full_name }}</p>
-                    <p class="text-muted">Celular: {{ origin.detail.address_origin.cell_phone }}</p>
-                    <p class="text-muted">Nota: {{ origin.detail.description }}</p>
+                    <p class="driver">{{ destiny.detail.address_destiny.full_name }}</p>
+                    <p class="text-muted">Celular: {{ destiny.detail.address_destiny.cell_phone }}</p>
+                    <p class="text-muted">Nota: {{ destiny.detail.description }}</p>
                 </td>
             </tr>
             {% endfor %}

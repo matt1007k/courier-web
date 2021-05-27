@@ -93,8 +93,7 @@
                 <div class="text-body">Motorizado</div>
                 <h6>{{ object.driver.full_name }}</h6>
                 <p class="flex items-center">
-                    <i class="bx bx-user-pin bx-xs" style="margin-right: 5px;"></i>
-                    <span>{{ object.detail.order.client.full_name }}</span>
+                    {{ object.created_at }}
                 </p>
             </div>
             <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">

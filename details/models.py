@@ -250,11 +250,34 @@ class AssignOriginAddress(models.Model):
         verbose_name = 'asignar dirección de entrega'
         verbose_name_plural = 'direcciones de entrega asignadas'
 
+class AssignDeliveryAddressQueryset(models.QuerySet):
+    def search_driver(self, query):
+        if is_valid_queryparams(query):
+            filters = (Q(driver__dni__icontains=query) | Q(driver__code__icontains=query) | Q(driver__first_name__icontains=query) | Q(driver__last_name__icontains=query))
+            return self.filter(filters)
+        return self
+
+    def search_date_from(self, query_date):
+        if is_valid_queryparams(query_date):
+            return self.filter(created_at__gte=query_date)
+        return self
+        
+    def search_date_to(self, query_date):
+        if is_valid_queryparams(query_date):
+            return self.filter(created_at__lt=query_date)
+        return self
+
+
+class AssignDeliveryAddressManager(models.Manager):
+    pass
+
 class AssignDeliveryAddress(models.Model):
     detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del paquete')
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
     admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
+
+    objects = AssignDeliveryAddressManager.from_queryset(AssignDeliveryAddressQueryset)()
 
     def __str__(self) -> str:
         return self.detail.tracking_code

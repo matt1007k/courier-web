@@ -1,6 +1,6 @@
 from django.urls import path 
 
-from .views import AssignDeliveryAddressListView, DetailOrderView, OrderListView, AssignOriginAddressListView, ReporteAssignOriginAddressView, UnassignDeliveryAddressListView, UnassignOriginAddressListAPIView, UnassignOriginAddressListView, add_addresses_view, assign_deliveries_to_driver_view, assign_origins_to_driver_view, cancel_order_view, create_order_view, get_client_view, payment_success_view, payment_view, return_unassign_delivery_view, tracking_order_view, return_unassign_origin_view
+from .views import AssignDeliveryAddressListView, DetailOrderView, OrderListView, AssignOriginAddressListView, ReporteAssignDeliveryAddressView, ReporteAssignOriginAddressView, UnassignDeliveryAddressListView, UnassignOriginAddressListAPIView, UnassignOriginAddressListView, add_addresses_view, assign_deliveries_to_driver_view, assign_origins_to_driver_view, cancel_order_view, create_order_view, get_client_view, payment_success_view, payment_view, return_unassign_delivery_view, tracking_order_view, return_unassign_origin_view
 from details.views import create_detail_view, update_detail_view
 
 app_name = 'orders'
@@ -11,6 +11,7 @@ urlpatterns = [
     path('origins/', AssignOriginAddressListView.as_view(), name='origins'),
     path('origins/report/', ReporteAssignOriginAddressView.as_view(), name='origins-report'),
     path('deliveries/', AssignDeliveryAddressListView.as_view(), name='deliveries'),
+    path('deliveries/report/', ReporteAssignDeliveryAddressView.as_view(), name='deliveries-report'),
     path('unassign-origins/', UnassignOriginAddressListView.as_view(), name='unassign-origins'),
     path('assign-origins/', assign_origins_to_driver_view, name='assign-origins'),
     path('<int:pk>/return-unassign-origin/', return_unassign_origin_view, name="return-unassign-origin"),
