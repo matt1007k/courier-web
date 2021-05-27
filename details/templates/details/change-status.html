@@ -38,6 +38,10 @@
             </div>
             {% endif %}
             {% endfor %}
+            <div class="form-group">
+                <label for="location">Observación del paquete</label>
+                <textarea name="location" id="locatin" required placeholder="Ingresar una observación" cols="30" rows="2"></textarea>
+            </div>
             <div class="mt-6 actions right">
                 <a href="{% url 'orders:index' %}" class="btn btn-default">Regresar</a>
                 <button type="submit" class="btn btn-primary">Cambiar</button>

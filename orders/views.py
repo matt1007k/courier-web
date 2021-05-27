@@ -1,20 +1,25 @@
 import json
 import ast
 import threading
+
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from courier_app.utils import link_callback
+
+from django.urls import reverse_lazy
 from details.paginations import LargeResultsSetPagination
 from details.serializers import UnAssignOrignAddressSerializer
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.serializers import serialize
 from rest_framework.generics import ListAPIView
 from orders.mails import Mail
 from drivers.models import Driver
 from typing import Any, Dict
 from django.contrib import messages
-from django.db.models import Q
 from django.shortcuts import redirect, render
 from details.models import AssignDeliveryAddress, AssignOriginAddress, Detail, TrackingOrder, UnassignDeliveryAddress, UnassignOriginAddress
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, View
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -85,22 +90,64 @@ class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, L
         context['title'] = 'Recojo de paquetes'
         return context
 
-    def query(self):
-        return self.request.GET.get('q')
+    def query_driver(self):
+        return self.request.GET.get('driver')
 
-    def query_date(self):
-        return self.request.GET.get('date')
+    def query_date_from(self):
+        return self.request.GET.get('date_from')
 
-    def query_status(self):
-        return self.request.GET.get('status')
+    def query_date_to(self):
+        return self.request.GET.get('date_to')
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
-            object_list = self.request.user.driver.assignoriginaddress_set.all().order_by('-id')
+            object_list = self.request.user.driver.assignoriginaddress_set.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-id')
         else:
-            object_list = self.model.objects.all().order_by('-id')
+            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-id')
+
+        object_list = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
         return object_list
+
+class ReporteAssignOriginAddressView(View):
+    def query_driver(self):
+        return self.request.GET.get('driver')
+
+    def query_date_from(self):
+        return self.request.GET.get('date_from')
+
+    def query_date_to(self):
+        return self.request.GET.get('date_to')
+
+    def get(self, request, *args, **kwargs):
+        try:
+            template_name = 'orders/assign/report/origins.html'
+            object_list = AssignOriginAddress.objects.filter(detail__status=Detail.PackageStatus.PENDING)
+            origins = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
+            
+            context={
+                'filename': 'test',
+                'logo': 'img/logo.png',
+                'query': self.query_date_from(),
+                'origins': origins
+            }
+            response = HttpResponse(content_type='application/pdf')
+            # response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
+            template = get_template(template_name)
+            html = template.render(context)
+
+            pisa_status = pisa.CreatePDF(
+                html, 
+                dest=response,
+                link_callback=link_callback
+            )
+            if pisa_status.err:
+                return HttpResponse('We had some errors <pre>' + html + '</pre>')
+            return response
+
+        except Exception as e:
+            return e
+        return HttpResponseRedirect(reverse_lazy('orders:origins'))
+
 
 class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'details.view_assigndeliveryaddress'
@@ -124,10 +171,9 @@ class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin,
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            # object_list = self.request.user.driver.order_set.filter(status=self.query_status() or Order.OrderStatus.REGISTERED).order_by('-id')
-            object_list = self.request.user.driver.assigndeliveryaddress_set.all().order_by('-id')
+            object_list = self.request.user.driver.assigndeliveryaddress_set.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-id')
         else:
-            object_list = self.model.objects.all().order_by('-id')
+            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.RECEIVED).order_by('-id')
         return object_list
 
 class UnassignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -167,7 +213,7 @@ class UnassignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixi
         return object_list
 
 @login_required()
-@permission_required('orders.add_order', login_url='/orders')
+@permission_required('orders.add_order', raise_exception=True)
 def create_order_view(request):
     order = get_or_create_order(request) 
         
@@ -177,7 +223,7 @@ def create_order_view(request):
     })
 
 @login_required()
-@permission_required('orders.view_order', login_url='/orders')
+@permission_required('orders.view_order', raise_exception=True)
 def cancel_order_view(request):
     if request.method == 'GET':
         delete_order(request) 
@@ -216,21 +262,23 @@ def payment_view(request):
                 detail.payed(
                     tracking_code = get_generate_tracking_code(),
                 )
-                thread = threading.Thread(
-                    target=Mail.send_complete_order,
-                    args=(detail, detail.address_origin.email, request)
-                )
-                thread.start()
-                thread2 = threading.Thread(
-                    target=Mail.send_complete_order,
-                    args=(detail, detail.address_destiny.email, request)
-                )
-                thread2.start()
+                # thread = threading.Thread(
+                #     target=Mail.send_complete_order,
+                #     args=(detail, detail.address_origin.email, request)
+                # )
+                # thread.start()
+                # thread2 = threading.Thread(
+                #     target=Mail.send_complete_order,
+                #     args=(detail, detail.address_destiny.email, request)
+                # )
+                # thread2.start()
                 # Mail.send_complete_order(detail, detail.address_destiny.email, request)
                 TrackingOrder.objects.create(
                     detail=detail,
                     location='Pendiente a recojer en el dirección ingresada.'
                 )
+                if not detail.is_unassign_delivery:
+                    UnassignDeliveryAddress.objects.create(detail=detail)
                 if not detail.is_unassign_origin:
                     UnassignOriginAddress.objects.create(detail=detail)
             return redirect('orders:payment-success') 
@@ -320,6 +368,7 @@ def assign_origins_to_driver_view(request):
                     driver=driver,
                     admin=request.user if request.user.is_administrator else None
                 )
+                detail.pended()
                 UnassignOriginAddress.objects.filter(detail=detail).first().delete()
         messages.success(request, 'Direccion(es) de recojo asignada(s) con éxito')
         return redirect("orders:unassign-origins")
@@ -342,6 +391,7 @@ def assign_deliveries_to_driver_view(request):
                     driver=driver,
                     admin=request.user if request.user.is_administrator else None
                 )
+                detail.pended()
                 UnassignDeliveryAddress.objects.filter(detail=detail).first().delete()
         messages.success(request, 'Direccion(es) de entrega asignada(s) con éxito')
         return redirect("orders:unassign-deliveries")

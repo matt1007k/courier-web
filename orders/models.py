@@ -30,7 +30,7 @@ class Order(models.Model):
     sub_total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     promo_code = models.OneToOneField(PromoCode, null=True, blank=True, on_delete=models.CASCADE)
     business_name = models.CharField(max_length=150, null=True, blank=True, verbose_name='razón social')
-    ruc = models.CharField(validators=[ruc_regex], max_length=10, null=True, blank=True, verbose_name='RUC')
+    ruc = models.CharField(validators=[ruc_regex], max_length=11, null=True, blank=True, verbose_name='RUC')
 
     def __str__(self) -> str:
         return self.client.full_name()
@@ -55,21 +55,51 @@ class Order(models.Model):
             self.update_totals()
             promo_code.use()
 
+    def apply_promo_code_special(self, promo_code):
+        if self.promo_code is None:
+            self.promo_code = promo_code
+            self.save()
+
+            for detail in self.detail_set.all():
+                detail.apply_special_promo_to_price_rate(self.promo_code.special)
+            self.update_totals()
+            promo_code.use()
+
     def get_sub_total(self):
         return round(self.sub_total, 2)
 
     def get_igv(self):
         return round(self.igv, 2)
 
+    def get_format_total(self):
+        return round(self.total, 2)
+
     def get_discount(self):
-        if self.promo_code:
+        if self.promo_code and self.promo_code.discount > 0:
             discount = (self.get_total() * decimal.Decimal((self.promo_code.discount / 100))) 
             return round(float(discount), 2)
 
         return 0
 
+    def get_discount_special(self):
+        if self.promo_code and self.promo_code.special > 0:
+            return round(float(self.get_total_previous_special() - self.get_total()), 2) 
+
+    def get_price_rate_previous_list(self):
+        if self.promo_code and self.promo_code.special > 0:
+            return list(self.detail_set.values_list('price_rate_previous', flat=True))
+        return []
+
+    def get_price_rate_list(self):
+        if self.promo_code and self.promo_code.special > 0:
+            return list(self.detail_set.values_list('price_rate', flat=True))
+        return []
+
     def get_total_previous(self):
-        return self.total + decimal.Decimal(self.get_discount())
+        return round(float(self.total + decimal.Decimal(self.get_discount())), 2)
+
+    def get_total_previous_special(self):
+        return sum([ detail.price_rate_previous for detail in self.detail_set.all() ])
 
     def update_totals(self):
         self.update_total()

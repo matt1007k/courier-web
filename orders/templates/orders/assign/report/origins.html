@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de recojo de pedidos</title>
+    <style>
+       .logo{
+           margin-bottom: 20px;
+       } 
+       table {
+           border: 1px solid rgb(230, 230, 230);
+       }
+       table tr{
+           padding: 3px 2px;
+       }
+    </style>
+</head>
+<body>
+    <img src="{{ logo }}" class="logo" />
+    <p>{{ query }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Motorizado</th>
+                <th>detail</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for origin in origins %}
+            <tr>
+                <td>{{ origin.driver.full_name }}</td>
+                <td>{{ origin.detail.get_tracking_code_text }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

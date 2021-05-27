@@ -68,6 +68,7 @@ class Detail(models.Model):
     address_destiny = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='address_destiny',verbose_name='dirección de destino')
     distance = models.DecimalField(max_digits=10, decimal_places=1, verbose_name='distancia', default=0)
     price_rate = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Precio de tarifa', default=0)
+    price_rate_previous = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Precio de tarifa anterior (Cod. promo especial)', default=0)
     status = models.CharField(max_length=50, choices=PackageStatus.choices, default=PackageStatus.PENDING, verbose_name='estado')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
 
@@ -179,6 +180,11 @@ class Detail(models.Model):
     def created_at_naturaltime(self):
         return naturaltime(self.created_at)
 
+    def apply_special_promo_to_price_rate(self, special):
+        self.price_rate_previous = self.price_rate
+        self.price_rate = special
+        self.save()
+
     @property
     def is_delivered(self):
         return self.status == Detail.PackageStatus.DELIVERED
@@ -203,10 +209,34 @@ class Detail(models.Model):
         verbose_name = "detalle"
         verbose_name_plural = "detalles"
 
+class AssignOriginAddressQueryset(models.QuerySet):
+    def search_driver(self, query):
+        if is_valid_queryparams(query):
+            filters = (Q(driver__dni__icontains=query) | Q(driver__code__icontains=query) | Q(driver__first_name__icontains=query) | Q(driver__last_name__icontains=query))
+            return self.filter(filters)
+        return self
+
+    def search_date_from(self, query_date):
+        if is_valid_queryparams(query_date):
+            return self.filter(created_at__gte=query_date)
+        return self
+        
+    def search_date_to(self, query_date):
+        if is_valid_queryparams(query_date):
+            return self.filter(created_at__lt=query_date)
+        return self
+
+
+class AssignOriginAddressManager(models.Manager):
+    pass
+
 class AssignOriginAddress(models.Model):
     detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del paquete')
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
     admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
+
+    objects = AssignOriginAddressManager.from_queryset(AssignOriginAddressQueryset)()
 
     def __str__(self) -> str:
         return self.detail.tracking_code
@@ -224,6 +254,7 @@ class AssignDeliveryAddress(models.Model):
     detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='detalles del paquete')
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
     admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
 
     def __str__(self) -> str:
         return self.detail.tracking_code

@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import validate_integer
 
 class PromoCodeManager(models.Manager):
 
@@ -14,7 +14,8 @@ class PromoCodeManager(models.Manager):
 
 class PromoCode(models.Model):
     code = models.CharField(max_length=50, unique=True, verbose_name='código')
-    discount = models.IntegerField(default=0, validators=[MinValueValidator(1), MaxValueValidator(100)], verbose_name='porcentaje de descuento')
+    discount = models.IntegerField(default=0, validators=[validate_integer], verbose_name='porcentaje de descuento')
+    special = models.IntegerField(default=0, validators=[validate_integer], verbose_name='descuento especial S/')
     valid_from = models.DateTimeField(verbose_name='fecha de inicio')
     valid_to = models.DateTimeField(verbose_name='fecha de vencimiento')
     used = models.BooleanField(default=False, verbose_name='usado')

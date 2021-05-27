@@ -204,7 +204,12 @@
                         <div class="rate">
                             <div class="price flex items-center">
                                 <span class="text-muted mr-1">S/.</span>
-                                <div class="h5 m-0">{{ detail.price_rate|unlocalize }}</div>
+                                <div class="h5 m-0" id="price-rate">{{ detail.price_rate|unlocalize }}</div>
+                            </div>
+                            <div id="price-rate-previous-wrapper" style="display: {% if detail.price_rate_previous %}grid;{% else %}none;{% endif %}">
+                                <span class="font-medium text-right text-danger text-small"
+                                    style="text-decoration: line-through">S/. <span id="price-rate-previous">{{ detail.price_rate_previous|unlocalize }}</span>
+                                </span>
                             </div>
                             <p class="text-small m-0">Precio de tarifa</p>
                         </div>
@@ -238,15 +243,28 @@
                             <h6 class="text-danger">Descuento</h6>
                             <div class="price h6 font-semibold text-danger flex justity-end items-center m-0">
                                 <span class="text-base font-medium text-danger m-0 mr-1">-S/.</span>
-                                <span id="discount">{{ order.get_discount|unlocalize }}</span>
+                                <span id="discount">
+                                    {% if order.get_discount_special > 0 %}
+                                        {{ order.get_discount_special|unlocalize }}
+                                    {% else %}
+                                        {{ order.get_discount|unlocalize }}
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
                         <div id="total-previous-wrapper" class="order-row"
                             style="display: {% if order.promo_code %}grid;{% else %}none;{% endif %}">
                             <span class="font-medium text-danger text-small">Total anterior</span>
                             <span class="font-medium text-right text-danger text-small"
-                                style="text-decoration: line-through">S/. <span id="total-previous">{{
-                                    order.get_total_previous|unlocalize }}</span></span>
+                                style="text-decoration: line-through">S/. <span id="total-previous">
+                                    {% if order.promo_code %}
+                                        {% if order.promo_code.special > 0 %}
+                                        {{ order.get_total_previous_special|unlocalize }}
+                                        {% else %}
+                                        {{ order.get_total_previous|unlocalize }}
+                                        {% endif %}
+                                    {% endif %}
+                                </span></span>
                         </div>
 
                         <div class="order-row mt-4">
@@ -261,7 +279,7 @@
 
                     <div class="form-group mt-5">
                         <input type="text" class="input" name="promo-code" id="promo-code"
-                            placeholder="Ingrese cupón de promoción" value="{{ order.promo_code.code }}" {% if order.promo_code %}readonly{% endif %}>
+                            placeholder="Ingrese el cupón de promoción" value="{{ order.promo_code.code }}" {% if order.promo_code %}readonly{% endif %}>
                         {% if order.promo_code %}
                         <div class="mt-2 text-success">
                             Cupón de promoción aplicada
@@ -310,7 +328,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="ruc">RUC</label>
-                                <input type="text" class="input" maxlength="10" id="ruc" name="ruc">
+                                <input type="text" class="input" maxlength="11" id="ruc" name="ruc">
                             </div>
                         </div>
                     </div>
@@ -335,6 +353,8 @@
     const sub_total = document.getElementById('subtotal');
     const discount_wrapper = document.getElementById('discount-wrapper');
     const total_previous_wrapper = document.getElementById('total-previous-wrapper');
+    const price_rate_previous_wrapper = document.querySelectorAll('#price-rate-previous-wrapper');
+    const price_rate_element = document.querySelectorAll('#price-rate');
     btnAplyCode.addEventListener('click', function (ev) {
         ev.preventDefault();
         const code = inputPromoCode.value;
@@ -347,6 +367,18 @@
                         sub_total.innerText = data.sub_total;
                         code.value = data.code;
                         code.readOnly = true;
+                        if (data.price_rate_previous_list.length > 0){
+                            data.price_rate_previous_list.forEach((price_previous, index) => {
+                                price_rate_previous_wrapper[index].style.display = 'grid';
+                                var pricePreviousElement = price_rate_previous_wrapper[index].querySelector('#price-rate-previous');
+                                pricePreviousElement.innerHTML = price_previous;
+                            });
+                        }
+                        if (data.price_rate_list.length > 0){
+                            data.price_rate_list.forEach((price_rate, index) => {
+                                price_rate_element[index].innerHTML = price_rate;
+                            });
+                        }
                         if (messagePromoCode.classList.contains('text-danger'))
                             messagePromoCode.classList.remove('text-danger');
                         messagePromoCode.classList.add('text-success');

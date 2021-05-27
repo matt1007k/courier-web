@@ -13,7 +13,7 @@ class Mail:
 
     @staticmethod
     def send_verify_account_email(user, request):
-        subject = 'Activar tu cuenta'
+        subject = 'Activación de cuenta'
         template = get_template('auth/mails/verify-account.html')
         current_year = datetime.now().year
         uid = urlsafe_base64_encode(force_bytes(user.pk)) 

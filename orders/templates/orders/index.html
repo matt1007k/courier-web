@@ -51,6 +51,7 @@
                         <div class="form-group">
                             <label for="status">Estado</label>
                             <select name="status" id="status" class="input">
+                                <option value="">-- seleccionar estado --</option>
                                 {% for cstatus in statuses %}
                                 <option value="{{ cstatus }}" {% if status == cstatus %}selected{% endif %}>{{ cstatus.label }}</option>
                                 {% endfor %}

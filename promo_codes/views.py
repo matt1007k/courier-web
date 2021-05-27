@@ -1,4 +1,4 @@
-import decimal
+import json
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from .models import PromoCode
@@ -16,14 +16,24 @@ def validate_code_view(request):
             'status': False
         }, status=404)
 
-    order.apply_promo_code(promo_code)
+    if promo_code.discount > 0:
+        order.apply_promo_code(promo_code)
+        total_previous = order.get_total_previous()
+        discount = order.get_discount()
+        
+    if promo_code.special > 0:
+        order.apply_promo_code_special(promo_code)
+        total_previous = order.get_total_previous_special()
+        discount = order.get_discount_special()
 
     return JsonResponse(data={
         'status': True,
         'code': promo_code.code,
-        'discount': order.get_discount(),
-        'total_previous': order.get_total_previous(),
-        'sub_total': round(float(order.sub_total), 2),
-        'igv': round(float(order.igv), 2),
-        'total': order.total
+        'discount': discount,
+        'total_previous': total_previous,
+        'sub_total': order.get_sub_total(),
+        'igv': order.get_igv(),
+        'price_rate_previous_list': order.get_price_rate_previous_list(),
+        'price_rate_list': order.get_price_rate_list(),
+        'total': order.get_format_total()
     }, status=200)

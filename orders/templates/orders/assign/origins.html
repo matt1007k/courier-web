@@ -10,74 +10,56 @@
         <h4>{{ title }}</h4>
     </div>
     <div class="right">
-        <!-- <div x-data="{ isOpen: false }" class="container-modal">
+        {% if request.user.is_administrator %}
+        {% if object_list.count > 0 and 'driver' in request.GET %}
+        <a href="{% url 'orders:origins-report' %}?driver={{ request.GET.driver }}&date_from={{ request.GET.date_from }}&date_to={{ request.GET.date_to }}" class="btn btn-default btn-small">
+            <i class='bx bxs-file-pdf bx-sm'></i>
+            <span>Descargar PDF</span>
+        </a>
+        {% endif %}
+        <div x-data="{ isOpen: false }" class="container-modal">
             <button @click="isOpen = true" class="btn btn-link btn-small">
-            <svg
-            class="filter"
-            width="24"
-            height="24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                    d="M8 20a4 4 0 01-3.875-3H2v-2h2.126A4 4 0 118 20zm0-6a2 2 0 102 2.09v.4V16a2 2 0 00-2-2zm14 3h-9v-2h9v2zm-9-5a4 4 0 01-3.874-3H2V7h7.126A4 4 0 1113 12zm0-6a2 2 0 102 2.09v.4V8a2 2 0 00-2-2zm9 3h-4V7h4v2z"
-                    fill="#2E3A59"
-                />
-            </svg>
+               <i class="bx bx-library bx-sm"></i> 
+               <span>Filtrar reporte</span>
             </button>
-            <div 
-                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
-                class="modal modal-right">
-                <div 
-                    class="modal-content card" style="width: 400px" 
-                    @click.away="isOpen = false" 
-                >
+            <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal modal-right">
+                <div class="modal-content card" style="width: 400px; overflow: auto;" @click.away="isOpen = false">
                     <div class="head">
-                        <h6>Búsqueda avanzada</h6>
+                        <h6>Filtrar reporte</h6>
                         <div class="close">
                             <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
-                                <i class='bx bx-x bx-sm' ></i>
+                                <i class='bx bx-x bx-sm'></i>
                             </button>
                         </div>
                     </div>
                     <form method='GET' class="form-modal">
                         <div class="form-group">
-                            <input type='search' name='q' placeholder="¿Qué estás buscando?" value='{{ request.GET.q }}' class="input">
+                            <label for="driver">Motorizado</label>
+                            <input type='search' name='driver' placeholder="Buscar por datos del motorizado"
+                                value='{{ request.GET.driver }}' class="input">
+                        </div>
+                        <h5 class="mt-2 mb-2">Rango de fechas</h5>
+                        <div class="form-group">
+                            <label for="date_from">Fecha de</label>
+                            <input type="date" class="input" name="date_from" id="date_from" value="{{ request.GET.date_from }}">
                         </div>
                         <div class="form-group">
-                            <label for="date">Fecha de registro</label>
-                            <input type="date" class="input" name="date" id="date" value="{{ request.GET.date }}">
+                            <label for="date_to">Fecha hasta</label>
+                            <input type="date" class="input" name="date_to" id="date_to" value="{{ request.GET.date_to }}">
                         </div>
-                        <div class="form-group">
-                            <label for="status">Estado</label>
-                            <select name="status" id="status" class="input">
-                                <option value="">Seleccionar el estado</option>
-                                <option value="{{ statuses.REGISTERED }}" {% if status == 'REGISTERED'%}selected{% endif %}>Entregado</option>
-                                <option value="{{ statuses.ON_ROUTE }}" {% if status == 'ON_ROUTE'%}selected{% endif %}>En Ruta</option>
-                                <option value="{{ statuses.DELIVERED }}" {% if status == 'DELIVERED'%}selected{% endif %}>Entregado</option>
-                                <option value="{{ statuses.UNDELIVERED }}" {% if status == 'UNDELIVERED'%}selected{% endif %}>No Entregado</option>
-                                <option value="{{ statuses.REPROGRAMMED }}" {% if status == 'REPROGRAMMED'%}selected{% endif %}>Reprogramado</option>
-                            </select>
-                        </div>
-                        
                         <div class="actions right">
-                            <button type='submit' class="btn btn-primary">Buscar</button>
+                            <button type='submit' class="btn btn-primary">Filtrar</button>
                         </div>
-                    </form> 
+                    </form>
                 </div>
             </div>
-        </div> -->
+        </div>
+        {% endif %}
+
     </div>
 </div>
 {% endblock content_head %}
 {% block content %}
-<!-- <div class="filter-list space-x-2">
-    <a href="{% url 'orders:index' %}?status={{ statuses.REGISTERED }}" class="btn btn-{% if status == statuses.REGISTERED %}primary{% else %}link{% endif %} btn-small">Registrado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.ON_ROUTE }}" class="btn btn-{% if status == statuses.ON_ROUTE %}primary{% else %}link{% endif %} btn-small">En Ruta</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.DELIVERED }}" class="btn btn-{% if status == statuses.DELIVERED %}primary{% else %}link{% endif %} btn-small">Entregado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.UNDELIVERED }}" class="btn btn-{% if status == statuses.UNDELIVERED %}primary{% else %}link{% endif %} btn-small">No Entregado</a>
-    <a href="{% url 'orders:index' %}?status={{ statuses.REPROGRAMMED }}" class="btn btn-{% if status == statuses.REPROGRAMMED %}primary{% else %}link{% endif %} btn-small">Reprogramado</a>
-</div> -->
 <div class="mb-10 order-list-grid">
     <div class="order-list-head">
         <div class="order-list-head-item">
@@ -108,10 +90,12 @@
             </div>
             <div class="content" style="align-items: flex-start;">
                 <p class="text-small text-muted font-normal">{{ object.detail.get_tracking_code_text }}</p>
-                <h6>{{ object.detail.order.client.full_name }}</h6>
-                <div class="order-detail">
-                    <p>{{ object.detail.order.created_at|naturaltime }}</p>
-                </div>
+                <div class="text-body">Motorizado</div>
+                <h6>{{ object.driver.full_name }}</h6>
+                <p class="flex items-center">
+                    <i class="bx bx-user-pin bx-xs" style="margin-right: 5px;"></i>
+                    <span>{{ object.detail.order.client.full_name }}</span>
+                </p>
             </div>
             <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">
                 <i class='bx bx-dots-horizontal-rounded bx-sm'></i>

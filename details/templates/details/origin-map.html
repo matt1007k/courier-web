@@ -64,7 +64,7 @@
 </div>
 <div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
 <div id="detail" style="display: none;">{{detail|jsonify}}</div>
-<div id="driver" style="display: none;">{{driver|jsonify}}</div>
+<div id="driver" style="display: none;">{% if driver %}{{driver|jsonify}}{% else %}[]{% endif %}</div>
 <div id="is-driver" style="display: none;" data-user="{{request.user.is_driver}}"></div>
 {% endblock content %}
 

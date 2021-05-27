@@ -130,7 +130,7 @@ def default_view(request, pk):
 def get_address_client_view(request, slug):
     if request.method == 'GET':
         q = request.GET.get('q')
-        filters = Q(address__icontains=q) | Q(district__icontains=q) | Q(city__icontains=q)
+        filters = (Q(address__icontains=q) | Q(district__icontains=q) | Q(city__icontains=q) | Q(full_name__icontains=q))
         client = Client.objects.get(slug=slug)
         qs = Address.objects.filter(client=client).filter(filters)[:5]
         data = serialize('json', qs)

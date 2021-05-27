@@ -155,10 +155,7 @@ def received_package_view(request, pk):
         TrackingOrder.objects.create(
             detail=detail,
             location='El paquete fue entregado al motorizado'
-        )
-        UnassignDeliveryAddress.objects.create(
-            detail=detail
-        )
+       )
 
         messages.success(request, 'El paquete ha sido recojido')
         return redirect('orders:origins')
@@ -245,6 +242,10 @@ def change_status_view(request, pk):
 
     if request.method == 'POST' and form_class.is_valid():
         form_class.save()
+        TrackingOrder.objects.create(
+            detail=detail,
+            location=request.POST.get('location'),
+        )
         messages.success(request, 'El estado del paquete ha sido cambiado')
         return redirect('orders:index')
 

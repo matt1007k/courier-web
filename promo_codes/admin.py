@@ -3,7 +3,7 @@ from django.contrib import admin
 
 
 class PromoCodeAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'discount', 'valid_from', 'valid_to', 'used')
+    list_display = ('__str__', 'discount', 'special', 'valid_from', 'valid_to', 'used')
     # exclude = ['code']
 
 admin.site.register(PromoCode, PromoCodeAdmin)
