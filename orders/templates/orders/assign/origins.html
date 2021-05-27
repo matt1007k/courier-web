@@ -12,7 +12,7 @@
     <div class="right">
         {% if request.user.is_administrator %}
         {% if object_list.count > 0 and 'driver' in request.GET %}
-        <a href="{% url 'orders:origins-report' %}?driver={{ request.GET.driver }}&date_from={{ request.GET.date_from }}&date_to={{ request.GET.date_to }}" class="btn btn-default btn-small">
+        <a href="{% url 'orders:origins-report' %}?driver={{ request.GET.driver }}&date_from={{ request.GET.date_from }}&date_to={{ request.GET.date_to }}" class="btn btn-default btn-small" target="_blank">
             <i class='bx bxs-file-pdf bx-sm'></i>
             <span>Descargar PDF</span>
         </a>

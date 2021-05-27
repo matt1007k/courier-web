@@ -1,6 +1,7 @@
 import json
 import ast
 import threading
+from datetime import datetime
 
 from django.template.loader import get_template
 from xhtml2pdf import pisa
@@ -103,7 +104,7 @@ class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, L
         if self.request.user.is_driver:
             object_list = self.request.user.driver.assignoriginaddress_set.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-id')
         else:
-            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-id')
+            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
 
         object_list = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
         return object_list
@@ -126,6 +127,7 @@ class ReporteAssignOriginAddressView(View):
             
             context={
                 'filename': 'test',
+                'date': datetime.now().date(),
                 'logo': 'img/logo.png',
                 'query': self.query_date_from(),
                 'origins': origins
