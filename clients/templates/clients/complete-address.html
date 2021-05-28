@@ -157,12 +157,12 @@
           zoom: 17
         });
         const geocoder = new google.maps.Geocoder();
-        const infowindow = new google.maps.InfoWindow();
-        this.currentPosition(geocoder, infowindow);
+        const infoWindow = new google.maps.infoWindow();
+        this.currentPosition(geocoder, infoWindow);
 
         map.addListener("click", (mapsMouseEvent) => {
           this.address.position = mapsMouseEvent.latLng,
-            this.geocodeLatLng(geocoder, map, infowindow);
+            this.geocodeLatLng(geocoder, map, infoWindow);
         });
       },
     }

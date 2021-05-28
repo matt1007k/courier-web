@@ -308,17 +308,16 @@ def payment_view(request):
                 detail.payed(
                     tracking_code = get_generate_tracking_code(),
                 )
-                # thread = threading.Thread(
-                #     target=Mail.send_complete_order,
-                #     args=(detail, detail.address_origin.email, request)
-                # )
-                # thread.start()
-                # thread2 = threading.Thread(
-                #     target=Mail.send_complete_order,
-                #     args=(detail, detail.address_destiny.email, request)
-                # )
-                # thread2.start()
-                # Mail.send_complete_order(detail, detail.address_destiny.email, request)
+                thread = threading.Thread(
+                    target=Mail.send_complete_order,
+                    args=(detail, detail.address_origin.email, request)
+                )
+                thread.start()
+                thread2 = threading.Thread(
+                    target=Mail.send_complete_order,
+                    args=(detail, detail.address_destiny.email, request)
+                )
+                thread2.start()
                 TrackingOrder.objects.create(
                     detail=detail,
                     location='Pendiente a recojer en el dirección ingresada.'
@@ -393,7 +392,7 @@ def tracking_order_view(request):
                     'location': tracking.location 
                 }) 
         else:
-            trackings_dict = None
+            trackings_dict = []
         detail_dict = { 
                 'tracking_code': detail.tracking_code,
                 'address_origin_full_name': detail.address_origin.full_name, 

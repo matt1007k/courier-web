@@ -137,11 +137,11 @@
                 icon: "{% static 'icon/order-icon.svg' %}"
             });
             map.setCenter(latLng);
-            const infowindow = new google.maps.InfoWindow({
+            const infoWindow = new google.maps.infoWindow({
                 content: address_destiny_content,
             });
             marker.addListener("click", () => {
-                infowindow.open(map, marker);
+                infoWindow.open(map, marker);
             });
         {% endif %}
     }
@@ -162,17 +162,17 @@
                 var marker_origin = makeMarker(leg.start_location, "{% static 'icon/driver-icon.png' %}", origin_address, map);
                 var marker_destiny = makeMarker(leg.end_location, "{% static 'icon/order-icon.svg' %}", destiny_address, map);
                 map.setCenter(leg.start_location);
-                const infowindowOrigin = new google.maps.InfoWindow({
+                const infoWindowOrigin = new google.maps.infoWindow({
                     content: address_origin_content,
                 });
-                const infowindowDestiny = new google.maps.InfoWindow({
+                const infoWindowDestiny = new google.maps.infoWindow({
                     content: address_destiny_content,
                 });
                 marker_origin.addListener("click", () => {
-                    infowindowOrigin.open(map, marker_origin);
+                    infoWindowOrigin.open(map, marker_origin);
                 });
                 marker_destiny.addListener("click", () => {
-                    infowindowDestiny.open(map, marker_destiny);
+                    infoWindowDestiny.open(map, marker_destiny);
                 });
             } else {
                 directionsDisplay.setMap(null);

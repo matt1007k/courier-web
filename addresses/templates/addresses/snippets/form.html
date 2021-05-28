@@ -82,7 +82,7 @@
         this.isOpen = false;
 
       },
-      geocodeLatLng(geocoder, map, infowindow) {
+      geocodeLatLng(geocoder, map, infoWindow) {
         geocoder.geocode({ location: this.address.position }, (results, status) => {
           if (status === "OK") {
             if (results[0]) {
@@ -92,8 +92,8 @@
                 position: this.address.position,
                 map: map,
               });
-              infowindow.setContent(results[0].formatted_address);
-              infowindow.open(map, marker);
+              infoWindow.setContent(results[0].formatted_address);
+              infoWindow.open(map, marker);
             } else {
               window.alert("No results found");
             }
@@ -131,12 +131,12 @@
           zoom: 17
         });
         const geocoder = new google.maps.Geocoder();
-        const infowindow = new google.maps.InfoWindow();
-        this.currentPosition(geocoder, infowindow);
+        const infoWindow = new google.maps.infoWindow();
+        this.currentPosition(geocoder, infoWindow);
 
         map.addListener("click", (mapsMouseEvent) => {
           this.address.position = mapsMouseEvent.latLng,
-            this.geocodeLatLng(geocoder, map, infowindow);
+            this.geocodeLatLng(geocoder, map, infoWindow);
         });
       },
     }
