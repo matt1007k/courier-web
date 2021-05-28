@@ -15,9 +15,7 @@ body{
 header{
     background-color: #195FB5;
     height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 15px 0;
 }
 header img{
     height: 70px;
@@ -34,15 +32,18 @@ p{
     color: rgba(0, 0, 0, .7);
     line-height: 1.5;
     font-size: 15px;
+    font-family: 'Rubik', Arial, Helvetica, sans-serif;
 }
 h5{
     font-weight: bold;
     font-size: 1.2em;
+    font-family: 'Rubik', Arial, Helvetica, sans-serif;
 }
 h6{
     font-weight: 500;
     font-size: 1em;
     margin-bottom: 5px;
+    font-family: 'Rubik', Arial, Helvetica, sans-serif;
 }
 ul{
     margin-bottom: 10px;
@@ -51,6 +52,8 @@ ul li{
     margin-left: 1.5em;
     color: rgba(0, 0, 0, .7);
     line-height: 1.5;
+    font-size: 15px;
+    font-family: 'Rubik', Arial, Helvetica, sans-serif;
 }
 .text-muted{
     color: rgba(0, 0, 0, .7) !important;
@@ -77,9 +80,5 @@ ul li{
     margin-bottom: 15px;
 }
 footer{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 35px 0;
 }
