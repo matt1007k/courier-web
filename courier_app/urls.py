@@ -23,6 +23,8 @@ from django.contrib.auth import views as auth_views
 from .views import dashboard
 
 handler404 = 'pages.views.error_404' #DEBUG = False production
+handler403 = 'pages.views.error_403' #DEBUG = False production
+handler500 = 'pages.views.error_500' #DEBUG = False production
 
 urlpatterns = [
     path('', include('pages.urls', namespace="index")),
