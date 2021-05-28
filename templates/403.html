@@ -1,13 +1,13 @@
 {% extends 'layouts/auth.html' %}
 {% block title %}
-    <title>Cuy Click Perú - Página no encontrada</title>
+    <title>Cuy Click Perú - Sin acceso a la página</title>
 {% endblock title %}
 {% load static %}
 {% block content %}
     <div class="error__wrapper">
         <div class="error__content">
-          <h1>404</h1>
-          <h5>Página no encontrada</h5>
+          <h1>403</h1>
+          <h5>Sin acceso a la página</h5>
           {% if request.user.is_authenticated %}
           <a href="{% url 'dash' %}" class="btn btn-primary btn-rounded btn-small">Regresar al inicio</a>
           {% else %}
