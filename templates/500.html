@@ -15,9 +15,7 @@
           {% endif %}
         </div>
         {% if exception %}
-        <div class="alert alert-danger">
-          {{ exception }}
-        </div>
+        {{exception}}
         {% endif %}
         <div class="error__img">
           <img src="{% static 'img/decoration/arrows_bottom.png' %}" alt="Arrows bottom">

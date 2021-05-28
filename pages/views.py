@@ -11,6 +11,7 @@ def error_403(request, exception):
         data = {}
         return render(request,'errors/403.html', data)
 
-def error_500(request, exception):
-        data = {'exception': exception}
+def error_500(request, exception=None):
+        data = {}
         return render(request,'errors/500.html', data)
+        
