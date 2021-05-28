@@ -19,8 +19,8 @@
     color: white;
 }
 .icon-secondary-default{
-    background: rgba(var(--secondary-color), .2);
-    color: rgb(var(--secondary-color));
+    background: rgba(var(--secondary-color), .2) !important;
+    color: white;
 }
 .icon-success{
     background: rgb(var(--success-color));
@@ -28,7 +28,7 @@
 }
 .icon-success-default{
     background: rgba(var(--success-color), .2);
-    color: rgb(var(--success-color));
+    color: white;
 }
 .icon-warning{
     background: rgb(var(--accent-color));

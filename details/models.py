@@ -2,9 +2,10 @@ import decimal
 from pages.utils import is_valid_queryparams
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from typing import Dict
-from django.db.models import query
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from django.utils.formats import localize
+from django.utils.timezone import localtime
 
 from django.db import models
 
@@ -185,6 +186,9 @@ class Detail(models.Model):
         self.price_rate = special
         self.save()
 
+    def get_delivered_data(self):
+        return self.packagedelivered_set.first()
+
     @property
     def is_delivered(self):
         return self.status == Detail.PackageStatus.DELIVERED
@@ -334,6 +338,12 @@ class TrackingOrder(models.Model):
 
     def __str__(self) -> str:
         return self.detail.tracking_code
+
+    def created_at_naturaltime(self):
+        return naturaltime(self.created_at)
+
+    def created_at_localtime_localize(self):
+        return localize(localtime(self.created_at))
 
     class Meta:
         verbose_name = 'Seguimiento de pedido'

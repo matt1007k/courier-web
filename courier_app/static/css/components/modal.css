@@ -12,6 +12,8 @@
 }
 .modal-content.card{
     border-radius: 0;
+    overflow-x: auto;
+    max-height: 100vh;
 }
 .modal-content .head{
     display: flex;

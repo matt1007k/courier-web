@@ -102,9 +102,6 @@
     }
 }
 @media (min-width: 1200px){
-    .filter-list a{
-        min-width: 140px;
-    }
     .order-list-grid .order-list-head, .order-list-head.checkbox{
         color: var(--text-secondary-color);
         font-size: 14px;

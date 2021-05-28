@@ -51,7 +51,7 @@
                         <div class="form-group">
                             <label for="status">Estado</label>
                             <select name="status" id="status" class="input">
-                                <option value="">-- seleccionar estado --</option>
+                                <option value="">Todos</option>
                                 {% for cstatus in statuses %}
                                 <option value="{{ cstatus }}" {% if status == cstatus %}selected{% endif %}>{{ cstatus.label }}</option>
                                 {% endfor %}
@@ -59,6 +59,7 @@
                         </div>
 
                         <div class="actions right">
+                            <a href="{% url 'orders:index' %}" class="btn btn-default">Limpiar filtros</a>
                             <button type='submit' class="btn btn-primary">Buscar</button>
                         </div>
                     </form>
@@ -132,6 +133,7 @@
 {% endblock content_head %}
 {% block content %}
 <div class="filter-list">
+    <a href="{% url 'orders:index' %}" class="btn btn-{% if not 'status' in request.GET %}primary{% else %}link{% endif %} btn-rounded btn-small">Todos</a>
     {% for cstatus in statuses %}
     <a href="{% url 'orders:index' %}?status={{ cstatus }}" class="btn btn-{% if status == cstatus %}primary{% else %}link{% endif %} btn-rounded btn-small">{{ cstatus.label }}</a>
     {% endfor %}

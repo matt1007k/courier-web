@@ -12,7 +12,7 @@
     <div class="right modal-container" x-data="{ isOpen: false }">
         <a class="btn btn-link btn-xsmall" data-balloon-pos="down" aria-label="Formas de pago" @click="isOpen = true">
             <i class='bx bx-help-circle bx-sm'></i>
-            <span>¿Cómo puedo pagar?</span>
+            <span>¿Cómo debo pagar?</span>
         </a>
         <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
             <div class="modal-content card" style="width: 600px" @click.away="isOpen = false">
@@ -27,27 +27,39 @@
                 <div class="form-modal">
                     <h5>Los depósitos se realizan a:</h6> 
 
-                    <h6>Meredith Botta Palacios (Gerente General)</h6>
-                    <p>E -COURIER INVERSIONES EIRL</p>
-                    
-
-                    <h6 class="mt-2">💳 Cuenta INTERBANK Soles</h6>
-                    <p>Num. cuenta: 0113113801509</p>
-                    <div class="subheading mb-2">A nombre de: Meredith Botta Palacios</div>  
-
-                    <h6 class="mt-2">💳 Cuenta BCP Soles</h6>
-                    <p>Num. cuenta: 19395798059013</p>
-                    <p>CCI: 00219319579805901317</p>
-                    <div class="subheading mb-2">A nombre de: E-Courier inversiones EIRL</div>  
-
-                    <h6 class="mt-4 mb-2">TAMBIÉN TENEMOS</h6>
-
-                    <h6 class="mt-2">📍Yape: 923948049</h6>
-                    <p class="m-2 subheading">A Nombre de: Ecourier Inversiones EIRL</p>
-                    
-                    <h6 class="mt-2">📍Plim: 923948049</h6>
-                    <p class="m-2 subheading">A Nombre de: Meredith Botta Palacios</p>
-
+                    <h6>Representante de la Empresa: Meredith Botta </h6>
+                    <p>RUC: 20605386521</p>
+                    <p>Razón Social: E -COURIER INVERSIONES EIRL</p>
+                    <p>Nombre Comercial: CuyClick Perú</p>
+                    <div class="payment__method_wrapper mt-4">
+                        <div class="payment__method_row">
+                          <div class="payment__method_col">
+                            <h6 class="mb-2 text-center">INTERBANK</h6>
+                            <h6>a: MEREDITH BOTTA</h6>
+                            <p># Cuenta Soles:0113113801509</p>
+                            <p># Cuenta CCI:00301101311380150947</p>
+                          </div>
+                          <div class="payment__method_col">
+                            <h6 class="mb-2 text-center">BCP</h6>
+                            <h6>A: E-COURIER INVERSIONES EIRL</h6>
+                            <p># Cuenta Soles:0113113801509</p>
+                            <p># Cuenta CCI:00301101311380150947</p>
+                          </div>
+                        </div>
+                        <div class="payment__method_row">
+                          <div class="payment__method_col">
+                            <p>A: MEREDITH BOTTA</p>
+                            <h6>#: 923948049</h6>
+                            <h6 class="text-center mb-4">ESTE SE VA CAMBIAR</h6>
+                            <img alt="Yape" src="{% static 'img/payment/yape.jpeg' %}">
+                          </div>
+                          <div class="payment__method_col">
+                            <p>A: MEREDITH BOTTA</p>
+                            <h6 class="mb-4">#: 923948049</h6>
+                            <img alt="Plin" src="{% static 'img/payment/plin.jpeg' %}">
+                          </div>
+                        </div>
+                      </div>
                 </div>
 
             </div>

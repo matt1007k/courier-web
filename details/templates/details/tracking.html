@@ -61,10 +61,78 @@
                         <p class="text-small m-0">Precio de tarifa</p>
                     </div>
                 </div>
+                {% if detail.is_delivered %}
+                <div class="mt-4">
+                    <h6>Imágenes de la entrega</h6>
+                    <div class="mt-2">
+                        <div class="modal-container" x-data="{ isOpen: false }">
+                            <div class="cursor-pointer" @click="isOpen = true">
+                                <img class="w-full" src="{{ detail.get_delivered_data.image.url }}" alt="Imagen 1">
+                            </div>
+                            <div 
+                                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                                class="modal">
+                                <div 
+                                    class="modal-content card" style="width: 600px" 
+                                    @click.away="isOpen = false" 
+                                >
+                                    <div class="head">
+                                        <h6>Imagen 1</h6>
+                                        <div class="close">
+                                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                                <i class='bx bx-x bx-sm' ></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-modal" style="overflow: auto;">
+                                        <img src="{{ detail.get_delivered_data.image.url }}" style="width: 100%" alt="Imagen 1">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-container" x-data="{ isOpen: false }">
+                            <div class="cursor-pointer" @click="isOpen = true">
+                                <img class="w-full" src="{{ detail.get_delivered_data.image2.url }}" alt="Imagen 2">
+                            </div>
+                            <div 
+                                x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen"
+                                class="modal">
+                                <div 
+                                    class="modal-content card" style="width: 600px" 
+                                    @click.away="isOpen = false" 
+                                >
+                                    <div class="head">
+                                        <h6>Imagen 2</h6>
+                                        <div class="close">
+                                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                                <i class='bx bx-x bx-sm' ></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-modal" style="overflow: auto;">
+                                        <img src="{{ detail.get_delivered_data.image2.url }}" style="width: 100%" alt="Imagen 2">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <h6>Observación o nota</h6>
+                            {% if detail.get_delivered_data.description %}
+                            <p>{{ detail.get_delivered_data.description }}</p>
+                            {% else %}
+                            <p>Sin nota</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             <div class="order-right">
                 <h5>{{ title }}</h5>
                 {% if detail.trackings.count > 0 %}
+                    <h6>Hola!</h6>
                     {% for tracking in detail.trackings.all %}
                     <div class="mb-4">
                         <h6>{{ tracking.location }}</h6>

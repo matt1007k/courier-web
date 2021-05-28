@@ -133,7 +133,7 @@ def destiny_map_view(request, pk):
         detail.on_routed()
         TrackingOrder.objects.create(
             detail=detail,
-            location='El motorizado está en camino de entregar tu paquete'
+            location='El motorizado está en camino de entregar tu pedido. (Nos comunicaremos para confirmar la entrega)'
         )
     if detail.is_assign_delivery:
         driver = AssignDeliveryAddress.objects.filter(detail=detail).first().driver
@@ -154,7 +154,7 @@ def received_package_view(request, pk):
         detail.received()
         TrackingOrder.objects.create(
             detail=detail,
-            location='El paquete fue entregado al motorizado'
+            location='El pedido fue entregado al motorizado'
        )
 
         messages.success(request, 'El paquete ha sido recojido')
@@ -194,8 +194,7 @@ def package_delivered_view(request, pk):
         form.save()
         TrackingOrder.objects.create(
             detail=detail,
-            location='El paquete fue entregado'
-        )
+            location='¡El pedido fue entregado con Éxito!\n¡Gracias por confiar en CuyClick!')
         detail.delivered()
         messages.success(request, 'El paquete fue registrado como entregado')
         return redirect('orders:deliveries')
@@ -223,9 +222,9 @@ def package_tracking_view(request, tracking_code):
     template_name = 'details/tracking.html'
     detail = get_object_or_404(Detail, tracking_code=tracking_code)
     if request.user.is_client:
-        title = 'Seguimiento mi paquete'
+        title = 'Seguimiento de mi pedido'
     else:
-        title = 'Seguimiento del paquete'
+        title = 'Seguimiento del pedido'
 
     return render(request, template_name, context={
         'detail': detail,

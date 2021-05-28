@@ -35,6 +35,24 @@
                         <p id="distance"></p>
                     </div>
                 </div>
+                <div class="mt-2" x-data="{ isOpen: false }">
+                    <button class="btn btn-primary btn-small" @click.prevent="isOpen = true">Ver historial de seguimiento</button>
+                    <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+                        <div class="modal-content card" style="width: 600px" @click.away="isOpen = false">
+                            <div class="head">
+                                <h6>Seguimiento de mi pedido</h6>
+                                <div class="close">
+                                    <button @click.prevent="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                        <i class='bx bx-x bx-sm'></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-modal">
+                                <div id="tracking-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
         <div class="card card-tracking">
@@ -59,6 +77,7 @@
         loadScript();
 
         var form = document.querySelector('#tracking-form');
+        var tracking_content_element = document.querySelector('#tracking-content');
         form.addEventListener('submit', queryTrackingOrder)
 
         function queryTrackingOrder(ev) {
@@ -94,6 +113,7 @@
                             directionsDisplay
                         );
                         showContentTracking(data.detail);
+                        showTrackingContent(data.trackings);
                     } else {
                         textMessage.innerHTML = 'El número de seguimiento no existe';
                         textMessage.classList.add('text-danger');
@@ -122,6 +142,22 @@
             else if (detail.status == 'REPR') statusClass = 'success';
 
             return statusClass;
+        }
+        function showTrackingContent(trackings){
+            if (trackings.length > 0){
+                var tracking_content = '<h6>Hola!</h6>';
+                trackings.forEach((tracking) => {
+                    tracking_content += `
+                        <div class="mb-4">
+                            <h6>${ tracking.location }</h6>
+                            <div class="text-small">
+                                ${ tracking.created_at }
+                            </div>
+                        </div>
+                    `;
+                });
+                tracking_content_element.innerHTML = tracking_content;
+            }
         }
     })()
     function displayRoute(origin_address, destiny_address, directionsService, directionsDisplay) {

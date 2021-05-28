@@ -30,6 +30,7 @@ def login_view(request):
         if user:
             if not user.is_email_verified:
                 messages.success(request, 'Hemos enviado un correo, para verificar tu correo electrónico')
+                logout(request)
                 return redirect('auth:login')
             login(request, user)
             messages.success(request, 'Bienvenido {}'.format(user.username))
@@ -91,6 +92,7 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
                 args=(self.request.user, self.request)
             )
             thread.start()
+            logout(self.request)
             messages.success(self.request, 'Te hemos enviado un correo, para activar y verificar tu correo electrónico')
             return reverse('auth:login')
         messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))

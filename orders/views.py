@@ -8,6 +8,7 @@ from xhtml2pdf import pisa
 from courier_app.utils import link_callback
 
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from details.paginations import LargeResultsSetPagination
 from details.serializers import UnAssignOrignAddressSerializer
 from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -40,7 +41,7 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Pedidos'
         context['statuses'] = Detail.PackageStatus
-        context['status'] = self.query_status() or Detail.PackageStatus.PENDING
+        context['status'] = self.query_status() or None
         self.request.session['order_id'] = None
         return context
 
@@ -61,14 +62,14 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.user.is_client:
-            object_list = self.request.user.client.detail_set.exclude(tracking_code=None).filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
+            object_list = self.request.user.client.detail_set.exclude(tracking_code=None).order_by('-id')
         elif self.request.user.is_driver:
             clients = self.request.user.driver.get_clients()
             object_list = Detail.objects.none()
             for client in clients:
-                object_list = object_list | client.detail_set.exclude(tracking_code=None).filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
+                object_list = object_list | client.detail_set.exclude(tracking_code=None).order_by('-id')
         else:
-            object_list = self.model.objects.exclude(tracking_code=None).filter(status=self.query_status() or Detail.PackageStatus.PENDING).order_by('-id')
+            object_list = self.model.objects.exclude(tracking_code=None).order_by('-id')
         
         if is_valid_queryparams(self.query_status()):
             object_list = object_list.filter(status=self.query_status())
@@ -348,10 +349,21 @@ def tracking_order_view(request):
     if request.method == 'GET':
         tracking_code = request.GET.get('tracking_code')
         detail = Detail.objects.filter(tracking_code=tracking_code).first()
+        trackings = detail.trackings.all().order_by('created_at')
         if detail is None:
             return JsonResponse({
                 'status': False,
             }, status=404)
+        
+        if trackings.count() > 0:
+            trackings_dict = []
+            for tracking in trackings:
+                trackings_dict.append({
+                    'created_at': tracking.created_at_localtime_localize(),
+                    'location': tracking.location 
+                }) 
+        else:
+            trackings_dict = None
         detail_dict = { 
                 'tracking_code': detail.tracking_code,
                 'address_origin_full_name': detail.address_origin.full_name, 
@@ -370,7 +382,8 @@ def tracking_order_view(request):
             }
         order_json = json.dumps({
             'status': True,
-            'detail': detail_dict 
+            'detail': detail_dict,
+            'trackings': trackings_dict
         })
         return HttpResponse(order_json, content_type="application/json")
 
@@ -406,7 +419,7 @@ def assign_origins_to_driver_view(request):
             if not detail.is_assign_origin:
                 TrackingOrder.objects.create(
                     detail=detail,
-                    location='Motorizado asignado para recojer el paquete'
+                    location='El motorizado ha sido asignado para recoger tu pedido'
                 )
                 AssignOriginAddress.objects.create(
                     detail=detail,
@@ -429,7 +442,7 @@ def assign_deliveries_to_driver_view(request):
             if not detail.is_assign_delivery:
                 TrackingOrder.objects.create(
                     detail=detail,
-                    location='Motorizado asignado para entregar el paquete'
+                    location='El motorizado ha sido asignado para entregar tu pedido'
                 )
                 AssignDeliveryAddress.objects.create(
                     detail=detail,
@@ -449,7 +462,7 @@ def return_unassign_origin_view(request, pk):
         if not detail.is_unassign_origin:
             TrackingOrder.objects.create(
                 detail=detail,
-                location='Se reprogramo el recojo del paquete'
+                location='Se reprogramo el recojo de tu paquete'
             )
             detail.reprogrammed()
             UnassignOriginAddress.objects.create(
@@ -469,7 +482,7 @@ def return_unassign_delivery_view(request, pk):
         if not detail.is_unassing_delivery:
             TrackingOrder.objects.create(
                 detail=detail,
-                location='Se reprogramo la entrega del paquete'
+                location='Se reprogramo la entrega de tu paquete'
             )
             detail.reprogrammed()
             UnassignDeliveryAddress.objects.create(

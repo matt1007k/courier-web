@@ -1,0 +1,21 @@
+.payment__method_wrapper{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+.payment__method_row{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+.payment__method_col{
+    padding: 10px;
+    border: 1px solid var(--btn-default-color);
+}
+.payment__method_col img{
+    width: 100%;
+}
+
+@media (min-width: 768px){
+    .payment__method_row{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

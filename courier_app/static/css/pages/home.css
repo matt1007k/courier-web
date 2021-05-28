@@ -143,7 +143,7 @@
     height: 100%;
     object-fit: cover;
     transform: translateY(8px);
-    aspect-ratio: 4 / 3;
+    /* aspect-ratio: 4 / 3; */
 }
 
 @media (min-width: 768px){
@@ -165,7 +165,7 @@
         width: 80%;
     }
     .card-tracking{
-        margin-top: 80px;
+        margin-top: 30px;
         margin-bottom: 0px;
     }
     .content__tracking-search{
@@ -189,7 +189,7 @@
     }
     .card__tracking-img img{
         transform: translateY(0);
-        aspect-ratio: 16 / 9;
+        /* aspect-ratio: 16 / 9; */
     }
 }
 @media (min-width: 1024px){
