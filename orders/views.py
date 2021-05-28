@@ -13,7 +13,7 @@ from details.paginations import LargeResultsSetPagination
 from details.serializers import UnAssignOrignAddressSerializer
 from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.serializers import serialize
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, get_object_or_404
 from orders.mails import Mail
 from drivers.models import Driver
 from typing import Any, Dict
@@ -344,6 +344,36 @@ def payment_success_view(request):
     return render(request, template_name, context={
         'order': order
     })
+
+class ReportRotuladoView(View):
+    def get(self, request, *args, **kwargs):
+        try:
+            template_name = 'orders/report/rotulado.html'
+            order = get_object_or_404(Order, pk=self.kwargs['pk']) 
+            
+            context={
+                'filename': 'rotulado',
+                'date': datetime.now().date(),
+                'logo': 'img/logo.png',
+                'order': order,
+            }
+            response = HttpResponse(content_type='application/pdf')
+            # response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
+            template = get_template(template_name)
+            html = template.render(context)
+
+            pisa_status = pisa.CreatePDF(
+                html, 
+                dest=response,
+                link_callback=link_callback
+            )
+            if pisa_status.err:
+                return HttpResponse('We had some errors <pre>' + html + '</pre>')
+            return response
+
+        except Exception as e:
+            return e
+        return HttpResponseRedirect(reverse_lazy('orders:origins'))
 
 def tracking_order_view(request):
     if request.method == 'GET':

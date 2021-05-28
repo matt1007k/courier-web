@@ -1,6 +1,6 @@
 from django.urls import path 
 
-from .views import AssignDeliveryAddressListView, DetailOrderView, OrderListView, AssignOriginAddressListView, ReporteAssignDeliveryAddressView, ReporteAssignOriginAddressView, UnassignDeliveryAddressListView, UnassignOriginAddressListAPIView, UnassignOriginAddressListView, add_addresses_view, assign_deliveries_to_driver_view, assign_origins_to_driver_view, cancel_order_view, create_order_view, get_client_view, payment_success_view, payment_view, return_unassign_delivery_view, tracking_order_view, return_unassign_origin_view
+from .views import AssignDeliveryAddressListView, DetailOrderView, OrderListView, AssignOriginAddressListView, ReportRotuladoView, ReporteAssignDeliveryAddressView, ReporteAssignOriginAddressView, UnassignDeliveryAddressListView, UnassignOriginAddressListAPIView, UnassignOriginAddressListView, add_addresses_view, assign_deliveries_to_driver_view, assign_origins_to_driver_view, cancel_order_view, create_order_view, get_client_view, payment_success_view, payment_view, return_unassign_delivery_view, tracking_order_view, return_unassign_origin_view
 from details.views import create_detail_view, update_detail_view
 
 app_name = 'orders'
@@ -28,4 +28,5 @@ urlpatterns = [
     path('payment-success/', payment_success_view, name="payment-success"),
     path('tracking-order/', tracking_order_view),
     path('<int:pk>/', DetailOrderView.as_view(), name='detail'),
+    path('<int:pk>/rotulado/', ReportRotuladoView.as_view(), name='rotulado'),
 ]
