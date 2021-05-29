@@ -18,13 +18,13 @@ def validate_code_view(request):
 
     if promo_code.discount > 0:
         order.apply_promo_code(promo_code)
-        total_previous = order.get_total_previous()
-        discount = order.get_discount()
+        # total_previous = order.get_total_previous()
+        # discount = order.get_discount()
         
     if promo_code.special > 0:
         order.apply_promo_code_special(promo_code)
-        total_previous = order.get_total_previous_special()
-        discount = order.get_discount_special()
+        # total_previous = order.get_total_previous_special()
+        # discount = order.get_discount_special()
 
     return JsonResponse({
         'status': True,
