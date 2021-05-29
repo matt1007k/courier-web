@@ -26,14 +26,21 @@ def validate_code_view(request):
         total_previous = order.get_total_previous_special()
         discount = order.get_discount_special()
 
-    return JsonResponse(data={
+    return JsonResponse({
         'status': True,
-        'code': promo_code.code,
-        'discount': discount,
-        'total_previous': total_previous,
-        'sub_total': order.get_sub_total(),
-        'igv': order.get_igv(),
-        'price_rate_previous_list': order.get_price_rate_previous_list(),
-        'price_rate_list': order.get_price_rate_list(),
-        'total': order.get_format_total()
+        'is_discount': promo_code.discount > 0,
+        'is_special': promo_code.special > 0,
+        'order_id': order.pk
     }, status=200)
+
+    # return JsonResponse(data={
+    #     'status': True,
+    #     'code': promo_code.code,
+    #     'discount': discount,
+    #     'total_previous': total_previous,
+    #     'sub_total': order.get_sub_total(),
+    #     'igv': order.get_igv(),
+    #     'price_rate_previous_list': order.get_price_rate_previous_list(),
+    #     'price_rate_list': order.get_price_rate_list(),
+    #     'total': order.get_format_total()
+    # }, status=200)
