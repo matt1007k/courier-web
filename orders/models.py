@@ -28,7 +28,7 @@ class Order(models.Model):
     payed_image = models.ImageField(upload_to='orders/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen del pago realizado')
     igv = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     sub_total = models.DecimalField(default=0, max_digits=8, decimal_places=2)
-    promo_code = models.OneToOneField(PromoCode, null=True, blank=True, on_delete=models.CASCADE)
+    promo_code = models.ForeignKey(PromoCode, null=True, blank=True, on_delete=models.CASCADE, related_name='orders', verbose_name='código de promoción')
     business_name = models.CharField(max_length=150, null=True, blank=True, verbose_name='razón social')
     ruc = models.CharField(validators=[ruc_regex], max_length=11, null=True, blank=True, verbose_name='RUC')
 
