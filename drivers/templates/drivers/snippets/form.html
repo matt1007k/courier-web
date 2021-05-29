@@ -138,7 +138,7 @@
           zoom: 17
         });
         const geocoder = new google.maps.Geocoder();
-        const infoWindow = new google.maps.infoWindow();
+        const infoWindow = new google.maps.InfoWindow();
         this.currentPosition(geocoder, infoWindow);
 
         map.addListener("click", (mapsMouseEvent) => {
