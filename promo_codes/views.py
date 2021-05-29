@@ -6,14 +6,16 @@ from .models import PromoCode
 from orders.utils import get_or_create_order
 
 def validate_code_view(request):
-    # order = get_or_create_order(request)
+    order = get_or_create_order(request)
+
+    code = request.GET.get('code')
+    promo_code = PromoCode.objects.get_valid(code)
+
     return JsonResponse({
-        'status': True
+        'status': True,
+        'promocode': promo_code.code,
+        'order_id': order.pk
     }, status=200)
-
-    # code = request.GET.get('code')
-    # promo_code = PromoCode.objects.get_valid(code)
-
     # if promo_code is None:
     #     return JsonResponse({
     #         'status': False

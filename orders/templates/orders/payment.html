@@ -407,7 +407,7 @@
                         messagePromoCode.classList.add('text-danger');
                         messagePromoCode.innerText = 'Cupón de promoción no válido';
                     }
-                });
+                }).catch(error => console.log(error));
 
         } else {
             messagePromoCode.classList.add('text-danger');
