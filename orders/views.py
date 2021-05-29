@@ -6,6 +6,7 @@ from datetime import datetime
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from courier_app.utils import link_callback
+from qr_code.qrcode.utils import ContactDetail
 
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -310,12 +311,12 @@ def payment_view(request):
                 )
                 thread = threading.Thread(
                     target=Mail.send_complete_order,
-                    args=(detail, detail.address_origin.email, request)
+                    args=(detail, detail.address_origin.full_name, detail.address_origin.email, request)
                 )
                 thread.start()
                 thread2 = threading.Thread(
                     target=Mail.send_complete_order,
-                    args=(detail, detail.address_destiny.email, request)
+                    args=(detail, detail.address_destiny.full_name, detail.address_destiny.email, request)
                 )
                 thread2.start()
                 TrackingOrder.objects.create(
@@ -349,15 +350,15 @@ class ReportRotuladoView(View):
         try:
             template_name = 'orders/report/rotulado.html'
             order = get_object_or_404(Order, pk=self.kwargs['pk']) 
-            
+
             context={
-                'filename': 'rotulado',
+                'filename': 'rotulado-{}'.format(order.pk),
                 'date': datetime.now().date(),
                 'logo': 'img/logo.png',
                 'order': order,
             }
             response = HttpResponse(content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
+            response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
             template = get_template(template_name)
             html = template.render(context)
 

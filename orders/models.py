@@ -33,7 +33,7 @@ class Order(models.Model):
     ruc = models.CharField(validators=[ruc_regex], max_length=11, null=True, blank=True, verbose_name='RUC')
 
     def __str__(self) -> str:
-        return self.client.full_name()
+        return str(self.pk)
 
     def get_index_path(self):
         return reverse('orders:index')

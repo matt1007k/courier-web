@@ -68,13 +68,13 @@ def menu_items(request):
             'path': reverse('orders:deliveries'),
             'permission': request.user.has_perm('details.view_assigndeliveryaddress') and not request.user.is_client,
         },
-        {
-            'title': 'Reporte',
-            'icon': 'bx-library',
-            'img': None,
-            'path': '#',
-            'permission': None,
-        },
+        # {
+        #     'title': 'Reporte',
+        #     'icon': 'bx-library',
+        #     'img': None,
+        #     'path': '#',
+        #     'permission': None,
+        # },
     ]
     return { 
         'menu_list': menu_list

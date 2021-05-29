@@ -5,69 +5,81 @@
 {% load static %}
 {% load env_extras %}
 {% block content %}
-<div class="content__tracking-search">
-    <div class="tracking__map" id="map">
-    </div>
-    <div class="content__form">
-        <form id="tracking-form">
-            <h5 class="mb-6 font-bold">Dale seguimiento a tu pedido</h5>
-            <div class="form-group-search">
-                <input type="search" class="input input-outline" name="tracking_code"
-                    placeholder="Ingresa tu # tracking">
-                <i class="input-icon bx bx-search bx-sm"></i>
+<div style="position: relative; overflow: hidden;">
+    <img src="{% static 'img/decoration/arrow_big.png' %}" alt="Arrow big" class="arrow__big" />
+    <img src="{% static 'img/decoration/arrows_bottom.png' %}" alt="Arrows bottom" class="arrows__bottom" />
+    <img src="{% static 'img/decoration/arrow_right.png' %}" alt="Arrows right" class="arrow__right" />
+ 
+    <div class="container">
+
+        <div class="content__tracking-search">
+            <div class="tracking__map">
+                <div id="map"></div>
             </div>
-            <div class="font-medium" id="message" style="margin-top: -20px;display: none;"></div>
-            <div class="actions full">
-                <button class="btn btn-secondary btn-small btn-rounded">
-                    Buscar
-                </button>
-            </div>
-            <div class="mt-4" id="content" style="display: none;">
-                <div class="detail-package">
-                    <div class="detail-package__row">
-                        <h6>Estado</h6>
-                        <div style="justify-self: end;">
-                            <span id="status" class="badge"></span>
-                        </div>
+            <div class="content__form">
+                <form id="tracking-form">
+                    <h5 class="mb-6 font-bold">Dale seguimiento a tu pedido</h5>
+                    <div class="form-group-search">
+                        <input type="search" class="input input-outline" name="tracking_code"
+                            placeholder="Ingresa tu # tracking">
+                        <i class="input-icon bx bx-search bx-sm"></i>
                     </div>
-                    <div class="detail-package__row">
-                        <h6>Distancia</h6>
-                        <p id="distance"></p>
+                    <div class="font-medium" id="message" style="margin-top: -20px;display: none;"></div>
+                    <div class="actions full">
+                        <button class="btn btn-secondary btn-small btn-rounded">
+                            Buscar
+                        </button>
                     </div>
-                </div>
-                <div class="mt-2" x-data="{ isOpen: false }">
-                    <button class="btn btn-primary btn-small" @click.prevent="isOpen = true">Ver historial de seguimiento</button>
-                    <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
-                        <div class="modal-content card" style="width: 600px" @click.away="isOpen = false">
-                            <div class="head">
-                                <h6>Seguimiento de mi pedido</h6>
-                                <div class="close">
-                                    <button @click.prevent="isOpen = false" class="btn btn-default btn-circle btn-small">
-                                        <i class='bx bx-x bx-sm'></i>
-                                    </button>
+                    <div class="mt-4" id="content" style="display: none;">
+                        <div class="detail-package">
+                            <div class="detail-package__row">
+                                <h6>Estado</h6>
+                                <div style="justify-self: end;">
+                                    <span id="status" class="badge"></span>
                                 </div>
                             </div>
-                            <div class="form-modal">
-                                <div id="tracking-content"></div>
+                            <div class="detail-package__row">
+                                <h6>Distancia</h6>
+                                <p id="distance"></p>
+                            </div>
+                        </div>
+                        <div class="mt-2" x-data="{ isOpen: false }">
+                            <button class="btn btn-primary btn-small" @click.prevent="isOpen = true">Ver historial de seguimiento</button>
+                            <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal">
+                                <div class="modal-content card" style="width: 600px" @click.away="isOpen = false">
+                                    <div class="head">
+                                        <h6>Seguimiento de mi pedido</h6>
+                                        <div class="close">
+                                            <button @click.prevent="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                                <i class='bx bx-x bx-sm'></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-modal">
+                                        <div id="tracking-content"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </form>
+                <div class="card card-tracking">
+                    <div class="card__tracking-content">
+                        <h5 class="mb-5">Ingresa para realizar un pedido</h5>
+                        <a href="{% url 'auth:login' %}" class="btn btn-secondary btn-small btn-rounded">
+                            Ingresar ahora
+                        </a>
+                    </div>
+                    <div class="card__tracking-img">
+                        <img src="{% static 'img/cuyclick-service.PNG' %}" alt="CuyClick - Service">
+                    </div>
                 </div>
             </div>
-        </form>
-        <div class="card card-tracking">
-            <div class="card__tracking-content">
-                <h5 class="mb-5">Ingresa para realizar un pedido</h5>
-                <a href="{% url 'auth:login' %}" class="btn btn-secondary btn-small btn-rounded">
-                    Ingresar ahora
-                </a>
-            </div>
-            <div class="card__tracking-img">
-                <img src="{% static 'img/cuyclick-service.PNG' %}" alt="CuyClick - Service">
-            </div>
         </div>
+
     </div>
 </div>
+
 <div id="key" data-value="{% get_env_var 'GOOGLE_MAP_KEY' %}"></div>
 {% endblock content %}
 

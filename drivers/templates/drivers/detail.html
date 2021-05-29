@@ -31,7 +31,7 @@
 
 {% if request.user.is_authenticated and request.user == object.user %}
 <div class="profile-actions">
-    <a href="#" class="btn btn-primary btn-small">Editar cuenta</a> 
+    <!-- <a href="#" class="btn btn-primary btn-small">Editar cuenta</a>  -->
     {% if object.vehicle %}
     <a href="{% url 'drivers:update-vehicle' object.vehicle.pk %}?next={{ request.path }}" class="btn btn-link btn-small">
       Editar moto
@@ -49,12 +49,12 @@
     <div class="col">
         <div class="card profile-count mb-4">
             <div class="text-center">
-                <h3>{{ object.orders_count }}</h3>
-                <div class="text-small text-uppercase font-medium">Pedidos</div>
+                <h3>{{ object.orders_delivered_count }}</h3>
+                <div class="text-small text-uppercase font-medium">Pedidos entregados</div>
             </div>
             <div class="text-center">
                 <h3>{{ object.clients_count }}</h3>
-                <div class="text-small text-uppercase font-medium">Clientes atendidos</div>
+                <div class="text-small text-uppercase font-medium">Clientes</div>
             </div>
         </div> 
         <div class="mb-4 card driver-avatars">

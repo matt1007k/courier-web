@@ -99,7 +99,7 @@
                     {% endif %}
                   </div>
                   <div>
-                    <div class="text-heading">{{ driver.code }}</div>
+                    <div class="subheading">Código {{ driver.code }}</div>
                     <h6>{{ driver.full_name }}</h6>
                     <p>DNI {{ driver.dni }}</p>
                   </div>
@@ -121,7 +121,7 @@
             </div>
             <div class="table-list-col actions m-0">
               {% if perms.drivers.view_driver %}
-                <a href="{% url 'drivers:detail' driver.slug %}" class="btn btn-link btn-small">Ver</a>
+                <a href="{% url 'drivers:detail' driver.slug %}?next={{ request.path|safe }}" class="btn btn-link btn-small">Ver</a>
               {% endif %}
               {% if perms.drivers.change_driver %}
                 <a href="{% url 'drivers:update' driver.slug %}" class="btn btn-link btn-small">Editar</a>

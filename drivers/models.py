@@ -1,9 +1,9 @@
-from clients.models import Client
 import uuid
 from django.db import models
 from django.db.models.fields.related import OneToOneField
 
 from authentication.models import User
+from clients.models import Client
 
 from django.utils.text import slugify
 from django.db.models.signals import pre_save
@@ -31,8 +31,8 @@ class Driver(models.Model):
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
-    def orders_count(self):
-        return self.order_set.count()
+    def orders_delivered_count(self):
+        return self.assigndeliveryaddress_set.filter(detail__status='EN').count()
 
     def get_clients(self):
         return Client.objects.filter(driver_code=self.code)

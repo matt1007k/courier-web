@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_inlinecss',
     'rest_framework',
     'channels',
+    'qr_code',
 
     'pages',
     'authentication',
@@ -180,7 +181,6 @@ CHANNEL_LAYERS = {
 
 # EMAIL_HOST = 'smtp.googlemail.com'
 # EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'cliente.cuyclick@gmail.com'
 # EMAIL_HOST_USER = 'mattfor17@gmail.com'
 # EMAIL_HOST_PASSWORD = config('USER_MAIL_PASSWORD')
 # EMAIL_USE_TLS = True

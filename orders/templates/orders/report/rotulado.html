@@ -1,3 +1,4 @@
+{% load qr_code %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,23 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rotutalo - {{ order.pk }}</title>
     <style>
+        body{
+            font-size: 11px;
+        }
         .header{
            margin-bottom: 30px;
         }
        .logo{
-           width: 120px;
+           width: 150px;
        } 
        .title{
-           font-size: x-large;
+           color: black;
+           font-size: 14px;
+           font-weight: 500;
        }
-       .table-content {
+       .subtitle{
+           color: #195FB5;
+           font-size: 20px;
+           font-weight: 500;
+       }
+       .block {
            border: 1px solid rgb(230, 230, 230);
-       }
-       .table-content thead tr{
-           padding: 5px 13px;
-       }
-       .table-content tbody tr{
-           padding: 10px 12px;
        }
        .text-center{
            text-align: center;
@@ -36,8 +41,14 @@
        .text-muted{
            color:rgb(75, 75, 75);
        }
+       .text-body{
+           font-size: 12px;
+       }
        .font-medium{
             font-weight: 500;
+       }
+       .font-bold{
+            font-weight: 700;
        }
 
        .driver{
@@ -51,55 +62,90 @@
            padding: 0;
            font-size: 11px;
        }
+       .mb-4{
+           margin-bottom: 40px;
+       }
+       .page{
+           page-break-after: always;
+       }
     </style>
 </head>
 <body>
+{% for detail in order.detail_set.all %}
+<div class="page">
     <table class="header">
         <tr>
             <td>
                 <img src="{{ logo }}" class="logo" />
             </td>
             <td>
-                <h2 class="title text-center">Rotulado</h2>
+                <h2 class="title">N° TRACKING: <span class="tracking-code">{{ detail.tracking_code }}</span></h2>
             </td>
             <td>
                 <p class="text-right">{{ date }}</p>
             </td>
         </tr>
     </table>
-    <h5>{{ order.pk }}</h5>
-    <table class="table-content">
-        <thead>
-            <tr>
-                <th>Detalle del pedido</th>
-                <th>Dirección de envío</th>
-                <th>¿Quién te atenderá? </th>
-            </tr>
-        </thead>
+    <div class="subtitle">¿Dónde recojeremos tu pedido?</div>
+    <table class="table-content mb-4">
         <tbody>
-            {% for detail in order.detail_set.all %}
             <tr>
-                <td>
-                    <p class="tracking-code">{{ detail.get_tracking_code_text }}</p>
-                </td>
-                <td>
-                    <p class="driver">{{ detail.address_destiny.address }}</p>
-                    <p class="text-muted">
-                        {{ detail.address_destiny.address_city }}
-                    </p>
-                    <p class="text-muted"># puerta/Mz/Piso: {{ detail.address_destiny.address_detail }}</p>
-                    <p class="text-muted">
-                        Referencia: {{ detail.address_destiny.reference }}
-                    </p>
-                </td>
-                <td>
-                    <p class="driver">{{ detail.address_destiny.full_name }}</p>
-                    <p class="text-muted">Celular: {{ detail.address_destiny.cell_phone }}</p>
-                    <p class="text-muted">Nota: {{ detail.description }}</p>
-                </td>
+                <td style="width: 18%;" class="font-medium text-muted">Nombre o marca </td>
+                <td style="width: 82%;" class="text-body text-left">{{ detail.address_origin.full_name }}</td>
             </tr>
-            {% endfor %}
+            <tr> 
+                <td class="font-medium text-muted">Celular</td>
+                <td class="text-body">{{ detail.address_origin.cell_phone }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-muted">Dirección</td>
+                <td class="text-body">{{ detail.address_origin.address_complete }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-muted">Referencia</td>
+                <td class="text-body">{{ detail.address_origin.reference }}</td>
+            </tr>
         </tbody>
     </table>
+
+    <div class="subtitle">¿A donde llevaremos tu pedido?</div>
+    <table class="table-content-2 mb-4" style="width: 100% !important">
+        <tbody>
+            <tr>
+                <td style="width: 18%;" class="font-medium text-muted">Nombre completo</td>
+                <td style="width: 82%;" class="text-body text-left">{{ detail.address_destiny.full_name }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-muted">Celular</td>
+                <td class="text-body">{{ detail.address_destiny.cell_phone }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-muted">Dirección</td>
+                <td class="text-body">{{ detail.address_destiny.address_complete }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-muted">Referencia</td>
+                <td class="text-body">{{ detail.address_destiny.reference }}</td>
+            </tr>
+            <tr>
+                <td class="font-medium text-muted">Nota</td>
+                <td class="text-body">{{ detail.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+            <tr>
+                <td style="width: 75%;">
+                </td>
+                <td style="width: 25%;" class="text-right">
+                    <h5 class="text-center" style="padding: 3px 0; margin: 0; color: white; background-color: #F15B23;">Código QR</h5>
+                    {% qr_from_text detail.tracking_code size=10 image_format="png" error_correction="L" %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endfor %}
 </body>
 </html>

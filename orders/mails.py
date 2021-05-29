@@ -41,7 +41,7 @@ class Mail:
 
 
     @staticmethod
-    def send_complete_order(detail, email, request):
+    def send_complete_order(detail, full_name, email, request):
         subject = 'Tu pedido ha sido enviado'
         template = get_template('orders/mails/complete-order.html')
         current_year = datetime.now().year
@@ -49,6 +49,7 @@ class Mail:
         protocol = request.scheme
 
         content = template.render({
+            'full_name': full_name,
             'detail': detail,
             'current_year': current_year,
             'domain': domain,
