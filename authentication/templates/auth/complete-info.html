@@ -51,6 +51,9 @@
   <div class="container-auth medium" style="padding-top: 0;">
     {% include "partials/message.html" %}
 
+    <div class="mt-2 mb-2">
+        <p>Usar el código del motorizado: <b>CUYCLICKPERU</b></p>
+    </div>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}
