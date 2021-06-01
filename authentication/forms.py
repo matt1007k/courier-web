@@ -1,13 +1,15 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import fields
+from django.contrib.auth.validators import ASCIIUsernameValidator
+
 User = get_user_model()
 
 
 class RegisterForm(forms.Form):
     username = forms.CharField(required=True, min_length=4, max_length=50,
                             label='Nombre de usuario',
+                            validators=[ASCIIUsernameValidator],
                             widget=forms.TextInput(attrs={
                                 'class': 'input'
                             }))

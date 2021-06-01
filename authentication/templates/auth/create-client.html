@@ -15,17 +15,32 @@
 <div class="card card-form mb-10">
   <form method="post">
     {% csrf_token %} {% for field in form %}
-    <div class="form-group">
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}
-      {% for error in field.errors %}
-      <div class="text-invalid">
-        {{ error }}
-      </div>
-      {% endfor %}
+      {% if field.field.widget.input_type == 'password' %}
+        <div class="form-group-password">
+          {{ field.label_tag }}
+          {{ field }}
+          <div id="show-password">mostrar</div>
+          {% if field.errors %}
+            {% for error in field.errors %}
+            <div class="text-invalid">
+              {{ error }}
+            </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+          {% for error in field.errors %}
+          <div class="text-invalid">
+            {{ error }}
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
       {% endif %}
-    </div>
     {% endfor %}
     <div class="actions right mt-5">
       <a href="{% url 'clients:index' %}" class="btn btn-default">Cancelar</a>

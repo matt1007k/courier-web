@@ -1,4 +1,4 @@
-import json
+import threading
 from typing import Any, Dict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http.response import HttpResponse
@@ -16,6 +16,7 @@ from .models import Driver, Vehicle
 from authentication.models import User
 
 from .utils import generate_driver_code
+from orders.mails import Mail
 
 class DriverListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'drivers/index.html'
@@ -42,12 +43,6 @@ class DriverListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         elif self.query_date():
             filters = Q(created_at__date=self.query_date())
             object_list = self.model.objects.filter(filters)
-        # elif self.query():
-        #     filters = Q(dni__icontains=self.query()) | Q(last_name__icontains=self.query()) | Q(first_name__icontains=self.query()) | Q(cell_phone__icontains=self.query())
-        #     object_list = self.model.objects.filter(filters)
-        # elif self.query_date():
-        #     filters = Q(created_at__date=self.query_date())
-        #     object_list = self.model.objects.filter(filters)
         else:
             object_list = self.model.objects.all().order_by('-id')
         return object_list
@@ -183,6 +178,11 @@ def payment_account_create_view(request, slug):
         form = form_class.save(commit=False)
         form.driver = driver
         form.save()
+        thread = threading.Thread(
+            target=Mail.send_verify_account_email,
+            args=(driver.user, request)
+        )
+        thread.start()
         messages.success(request, "Motorizado registrado con éxito")
         return redirect('drivers:index')
 

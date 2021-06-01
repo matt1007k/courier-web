@@ -49,7 +49,7 @@ def logout_view(request):
     return redirect('auth:login')
 
 def register_view(request):
-    form = RegisterForm(request.POST or None)
+    form = CustomUserForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         user = form.save()
         if user:
@@ -57,10 +57,10 @@ def register_view(request):
             user.groups.add(client_group)
             login(request, user)
             return redirect('auth:complete-info')
-    else:
+    # else:
         # Append css class to every field that contains errors.
-        for field in form.errors:
-            form[field].field.widget.attrs['class'] += ' is-invalid'
+        # for field in form.errors:
+        #     form[field].field.widget.attrs['class'] += ' is-invalid'
         
     return render(request, 'auth/register.html', context={
         'form': form

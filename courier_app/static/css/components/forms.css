@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
 }
-.form-group label {
+.form-group label, .form-group-password label {
     font-weight: 500;
     margin-bottom: 10px;
     color: rgba(var(--title-color), .8);
@@ -57,7 +57,7 @@
     color: rgb(var(--danger-color));
     margin-top: 5px;
 }
-.form-group-search{
+.form-group-search, .form-group-password{
     position: relative;
     margin-bottom: 30px;
     max-width: 100%;
@@ -68,7 +68,22 @@
     top: 14px;
     left: 14px;
 }
-
+.form-group-password #show-password{
+    position: absolute;
+    cursor: pointer;
+    background: rgb(131, 162, 248);
+    color: white;
+    padding: 3px 4px;
+    border-radius: 4px;
+    top: 35px;
+    right: 14px;
+}
+.form-group-password #show-password.active{
+    background: rgb(var(--primary-page-color));
+}
+.form-group-search input[type="password"]{
+    padding: 14px 40px 14px 18px !important;
+}
 .form-group-search input[type="search"]{
     padding: 14px 18px 14px 40px !important;
 }

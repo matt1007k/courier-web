@@ -10,11 +10,12 @@
     {% csrf_token %}
     <div class="form-group">
       <label for="emai">Correo electrónico</label>
-      <input type="email" name="email" class="input" value="{{ request.POST.email }}" required/>
+      <input type="email" name="email" id="email" class="input" value="{{ request.POST.email }}" required/>
     </div>
-    <div class="form-group">
+    <div class="form-group-password">
       <label for="password">Contraseña</label>
-      <input type="password" name="password" class="input" required/>
+      <input type="password" id="password" name="password" class="input" required/>
+      <div id="show-password">mostrar</div>
     </div>
     <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
   </form>
