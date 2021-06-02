@@ -103,9 +103,10 @@ class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, L
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            object_list = self.request.user.driver.assignoriginaddress_set.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-id')
+            object_list = self.request.user.driver.assignoriginaddress_set.order_by('-created_at')
         else:
-            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
+            # object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
+            object_list = self.model.objects.order_by('-created_at')
 
         object_list = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
         return object_list
@@ -174,9 +175,9 @@ class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin,
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            object_list = self.request.user.driver.assigndeliveryaddress_set.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
+            object_list = self.request.user.driver.assigndeliveryaddress_set.order_by('-created_at')
         else:
-            object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
+            object_list = self.model.objects.order_by('-created_at')
 
         object_list = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
         return object_list
