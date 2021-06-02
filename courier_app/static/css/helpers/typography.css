@@ -101,6 +101,12 @@ p, .text-base{
 .text-uppercase{
     text-transform: uppercase;
 }
+.text-truncate{
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 @media (min-width: 640px) { 
 
 }

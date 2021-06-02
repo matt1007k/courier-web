@@ -1,7 +1,11 @@
+import calendar
 import os
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.core.validators import RegexValidator
+
+from django.utils.translation import gettext as _
+from datetime import datetime
 
 phone_regex = RegexValidator(regex=r'^\+?1?\d{9,9}$', message="El núm. de celular no es válido, el formato válido es: 999999999")
 
@@ -37,3 +41,21 @@ def link_callback(uri, rel):
                 'media URI must start with %s or %s' % (sUrl, mUrl)
         )
     return path
+    
+
+def get_date_now():
+    now = datetime.now()
+    day_name = _(calendar.day_name[0])
+    month_name = _(calendar.month_name[3])
+
+    date_now = "{}, {} de {}".format(day_name, now.day, month_name)
+    
+    return date_now
+
+def get_title_now(request):
+    if request.user.is_client:
+        title = 'Resumen de hoy'
+    else:
+        title = 'Ganancias de hoy'
+    return title
+    

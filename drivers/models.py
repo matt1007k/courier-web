@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from django.db import models
 from django.db.models.fields.related import OneToOneField
 
@@ -33,6 +34,18 @@ class Driver(models.Model):
 
     def orders_delivered_count(self):
         return self.assigndeliveryaddress_set.filter(detail__status='EN').count()
+
+    def get_orders_origin_address(self):
+        return self.assignoriginaddress_set.all()
+
+    def get_orders_origin_address(self):
+        return self.assignoriginaddress_set.all()
+
+    def get_orders_origin_address_today(self):
+        return self.get_orders_origin_address().filter(created_at__gte=datetime.now().strftime('%Y-%m-%d'))
+    
+    def get_total_price_rate_orders_origin_address_today(self):
+        return sum([assign.detail.price_rate for assign in self.get_orders_origin_address_today()])
 
     def get_clients(self):
         return Client.objects.filter(driver_code=self.code)

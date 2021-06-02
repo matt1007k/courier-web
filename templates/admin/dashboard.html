@@ -2,11 +2,138 @@
 {% block title %}
 <title>Cuy Click Perú - {{ title }}</title>
 {% endblock title %}
+{% load static %}
 
 {% block content %}
     <h5 class="font-medium">Hola {{ request.user.username }},</h5>
     <h3>Bienvenido</h3>
-    <div class="card" style="margin-top: 40px">
-        <h6>Pronto...</h6>
-    </div>
+
+    <!-- <div class="content__wrapper">
+        <div class="grid-dash__driver">
+          <div class="card payment__now">
+            <div class="icon__position">
+              <div class="icon icon-secondary icon-circle">
+                <i class="bx bxl-paypal bx-sm"></i>
+              </div>
+            </div>
+            <h4 class="text-center mb-4">{{ now_summary.title }}</h4>
+            <h6 class="text-secondary font-medium mb-4">{{ now_summary.date_now }}</h6>
+            <div class="detail__now">
+              <h3>S/ {{ now_summary.total }}</h3>
+              <div class="count__now">
+                <h4>5</h4>
+                <p class="text-small">Pedidos</p>
+              </div>
+            </div>
+          </div>
+          <div class="dash__count__wrapper">
+            <div class="card card__order">
+              <div class="card__order__head">
+                <div class="icon icon-secondary-default icon-sm icon-circle">
+                  <img src="{% static 'icon/order-icon.svg' %}" alt="Icon order">
+                </div>
+                <a href="" class="text-white">
+                  <i class='bx bx-chevron-right bx-sm'></i>
+                </a>
+              </div>
+              <div class="w-full">
+                <h4>520</h4>
+                <p class="text-small">Pedidos entregados</p>
+              </div>
+            </div>
+            <div class="card card__client">
+              <div class="card__order__head">
+                <div class="icon icon-secondary-default icon-sm icon-circle">
+                  <i class="bx bx-user-pin"></i>
+                </div>
+                <a href="" class="text-white">
+                  <i class='bx bx-chevron-right bx-sm'></i>
+                </a>
+              </div>
+              <div class="w-full">
+                <h4>21</h4>
+                <p class="text-small">Clientes asociados</p>
+              </div>
+            </div>
+            <div class="card card__payment">
+              <div class="card__order__head">
+                <div class="icon icon-secondary-default icon-sm icon-circle">
+                  <i class="bx bx-credit-card"></i>
+                </div>
+                <a href="" class="text-white">
+                  <i class='bx bx-chevron-right bx-sm'></i>
+                </a>
+              </div>
+              <div class="w-full">
+                <h4>S/ 2540</h4>
+                <p class="text-small">Pagos recibidos</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h6>Últimos pedidos asignados</h6>
+            <p>Los últimos pedidos de hoy</p>
+            <div class="dash__order__list">
+              <div class="dash__order__item">
+                  <div class="icon icon-rounded icon-warning-default">
+                    <img src="{% static 'icon/order-icon.svg' %}" alt="Icon Order">
+                  </div>
+                  <div class="dash__order__content">
+                    <div class="text-small subheading"># TRACKING CC123045245</div>
+                    <h6>Juan Rojas Licas</h6>
+                    <p>Jiron Educacion 144-170, Cercado de Lima 15416</p>
+                  </div>
+              </div>
+            </div>
+            <div class="actions full">
+              <a href="" class="btn btn-primary">Ver todos</a>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h6>Últimos pedidos asignados</h6>
+            <p>Los últimos pedidos de hoy</p>
+            <div class="dash__order__list">
+              <div class="dash__order__item">
+                <div class="dash__content__wrapper">
+                  <div class="icon icon-rounded icon-warning-default">
+                    <img src="{% static 'icon/order-icon.svg' %}" alt="Icon Order">
+                  </div>
+                  <div class="dash__order__content">
+                    <div class="text-small subheading"># TRACKING CC123045245</div>
+                    <h6>Juan Rojas Licas</h6>
+                    <p>Jiron Educacion 144-170, Cercado de Lima 15416</p>
+                  </div>
+                </div>
+                <div class="status">
+                  <span class="badge badge-warning">PE</span>
+                </div>
+              </div>
+              <div class="dash__order__item">
+                <div class="dash__content__wrapper">
+                  <div class="icon icon-rounded icon-warning-default">
+                    <i class="bx bx-user-pin"></i>
+                  </div>
+                  <div class="dash__order__content">
+                    <div class="text-small subheading"># TRACKING CC123045245</div>
+                    <h6>Juan Rojas Licas</h6>
+                    <p>Jiron Educacion 144-170, Cercado de Lima 15416</p>
+                  </div>
+                </div>
+                <div class="status">
+                  <span class="badge badge-warning">PE</span>
+                </div>
+              </div>
+            </div>
+            <div class="actions full">
+              <a href="" class="btn btn-primary">Ver todos</a>
+            </div>
+          </div>
+        </div>
+    </div> -->
+
+    <div class="card mt-4">Pronto....</div>
+
 {% endblock content %}

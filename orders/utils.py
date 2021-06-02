@@ -1,5 +1,7 @@
+from datetime import datetime
 from .models import Order
 from clients.models import Client
+from details.models import AssignOriginAddress
 
 def get_or_create_order(request):
     user = request.user if request.user.is_authenticated else None
@@ -55,3 +57,15 @@ def fields_destiny_form(detail):
         'distance': detail.distance,
     }
     return fields
+
+
+def get_total_orders_now(request):
+    if request.user.is_driver:
+        total = request.user.driver.get_total_price_rate_orders_origin_address_today() 
+        # total = request.user.driver.assignoriginaddress_set.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d')).count()
+    else:
+        total = sum([order.total for order in Order.objects.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d'))])
+    return round(total, 0)
+    
+def get_count_orders_now():
+    return Order.objects.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d')).count()
