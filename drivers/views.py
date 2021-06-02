@@ -124,6 +124,7 @@ class DriverDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
         return context
 
     def get_success_url(self) -> str:
+        self.object.user.delete()
         messages.success(self.request, "Registro eliminado con éxito")
         return reverse('drivers:index')
 
