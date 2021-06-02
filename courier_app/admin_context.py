@@ -6,7 +6,7 @@ static_url = settings.STATIC_URL
 def menu_items(request):
     menu_list = [
         {
-            'title': 'Dashboard',
+            'title': 'Mi tienda' if request.user.is_authenticated and request.user.is_client else 'Dashboard',
             'icon': 'bx-line-chart',
             'img': None,
             'path': reverse('dash'),
