@@ -40,6 +40,9 @@ class Client(models.Model):
     def full_name(self) -> str:
         return "{} {}".format(self.first_name, self.last_name)
 
+    def get_last_addresses(self, take=5):
+        return self.address_set.all().order_by('-id')[:take] 
+
     class Meta:
         verbose_name = "cliente"
         verbose_name_plural = "clientes"

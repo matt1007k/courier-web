@@ -58,4 +58,5 @@ def get_title_now(request):
     else:
         title = 'Ganancias de hoy'
     return title
+
     

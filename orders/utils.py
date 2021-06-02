@@ -2,6 +2,7 @@ from datetime import datetime
 from .models import Order
 from clients.models import Client
 from details.models import AssignOriginAddress
+from django.urls import reverse
 
 def get_or_create_order(request):
     user = request.user if request.user.is_authenticated else None
@@ -69,3 +70,21 @@ def get_total_orders_now(request):
     
 def get_count_orders_now():
     return Order.objects.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d')).count()
+
+def get_list_right(request):
+    data = {
+        'driver_title': 'Recojo de pedidos',
+        'driver_description': 'Los últimos recojos de pedidos de hoy',
+        'driver_origins': request.user.driver.get_last_orders_origin_address(5) if request.user.is_driver else None,
+        'driver_more_path': reverse('orders:origins'),
+        'client_title': 'Mis últimas direcciones',
+        'client_description': 'Las últimas direcciones registradas',
+        'client_addresses': request.user.client.get_last_addresses(5) if request.user.is_client else None,
+        'client_more_path': reverse('addresses:index'),
+        'admin_title': 'Últimos clientes',
+        'admin_description': 'Los últimos clientes registrados',
+        'admin_clients': Client.objects.all().order_by('-id')[:5],
+        'admin_more_path': reverse('clients:index')
+    }
+
+    return data

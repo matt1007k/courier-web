@@ -6,7 +6,6 @@ from datetime import datetime
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from courier_app.utils import link_callback
-from qr_code.qrcode.utils import ContactDetail
 
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _

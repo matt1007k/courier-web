@@ -1,0 +1,17 @@
+{% if detail.status == 'PE' %}
+<span class="badge badge-warning">{{ detail.status }}</span>
+{% elif detail.status == 'RE' %}
+<span class="badge badge-success">{{ detail.status }}</span>
+{% elif detail.status == 'AL' %}
+<span class="badge badge-primary">{{ detail.status }}</span>
+{% elif detail.status == 'ER' %}
+<span class="badge badge-secondary">{{ detail.status }}</span>
+{% elif detail.status == 'EN' %}
+<span class="badge badge-success">{{ detail.status }}</span>
+{% elif detail.status == 'NEN' %}
+<span class="badge badge-warning">{{ detail.status }}</span>
+{% elif detail.status == 'REPR' %}
+<span class="badge badge-success">{{ detail.status }}</span>
+{% else %}
+<span class="badge badge-warning">{{ detail.status }}</span>
+{% endif %}

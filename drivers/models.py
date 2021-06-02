@@ -35,8 +35,8 @@ class Driver(models.Model):
     def orders_delivered_count(self):
         return self.assigndeliveryaddress_set.filter(detail__status='EN').count()
 
-    def get_orders_origin_address(self):
-        return self.assignoriginaddress_set.all()
+    def get_last_orders_origin_address(self, take=None):
+        return self.assignoriginaddress_set.all().order_by('-created_at')[:take]
 
     def get_orders_origin_address(self):
         return self.assignoriginaddress_set.all()

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from .utils import get_date_now, get_title_now
-from orders.utils import get_total_orders_now
+from orders.utils import get_total_orders_now, get_list_right
 
 @login_required()
 def dashboard(request):
@@ -12,6 +12,7 @@ def dashboard(request):
             'title': get_title_now(request),
             'date_now': get_date_now(),
             'total': get_total_orders_now(request) 
-        }
+        },
+        'list_right': get_list_right(request)
     }
     return render(request, 'admin/dashboard.html', context=context)
