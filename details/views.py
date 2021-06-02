@@ -157,7 +157,7 @@ def received_package_view(request, pk):
             location='El pedido fue entregado al motorizado'
        )
 
-        messages.success(request, 'El paquete ha sido recojido')
+        messages.success(request, 'El paquete ha sido recogido')
         return redirect('orders:origins')
 
 @login_required()
