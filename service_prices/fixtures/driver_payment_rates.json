@@ -1,6 +1,6 @@
 [
 {
-    "model": "driver_payments.driverpaymentrate",
+    "model": "service_prices.driverpaymentrate",
     "pk": 1,
     "fields": {
         "min": 1,
@@ -9,7 +9,7 @@
     }
 },
 {
-    "model": "driver_payments.driverpaymentrate",
+    "model": "service_prices.driverpaymentrate",
     "pk": 2,
     "fields": {
         "min": 51,
@@ -18,7 +18,7 @@
     }
 },
 {
-    "model": "driver_payments.driverpaymentrate",
+    "model": "service_prices.driverpaymentrate",
     "pk": 3,
     "fields": {
         "min": 101,
@@ -27,7 +27,7 @@
     }
 },
 {
-    "model": "driver_payments.driverpaymentrate",
+    "model": "service_prices.driverpaymentrate",
     "pk": 4,
     "fields": {
         "min": 201,
@@ -36,7 +36,7 @@
     }
 },
 {
-    "model": "driver_payments.driverpaymentrate",
+    "model": "service_prices.driverpaymentrate",
     "pk": 5,
     "fields": {
         "min": 401,

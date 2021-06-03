@@ -1,0 +1,117 @@
+
+{% if request.user.is_driver %}
+<div class="card card__order">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <img src="{{ summary_count.driver_icon1 }}" alt="{{ summary_count.driver_title1 }}">
+        </div>
+        <a href="{{ summary_count.driver_more_path1 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.driver_count1 }}</h4>
+        <p class="text-small">{{ summary_count.driver_title1 }}</p>
+    </div>
+</div>
+<div class="card card__client">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <i class="bx {{ summary_count.driver_icon2 }}"></i>
+        </div>
+        <a href="{{ summary_count.driver_more_path2 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.driver_count2 }}</h4>
+        <p class="text-small">{{ summary_count.driver_title2 }}</p>
+    </div>
+</div>
+<div class="card card__payment">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <i class="bx {{ summary_count.driver_icon3 }}"></i>
+        </div>
+        <a href="{{ summary_count.driver_more_path3 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.driver_count3 }}</h4>
+        <p class="text-small">{{ summary_count.driver_title3 }}</p>
+    </div>
+</div>
+{% elif request.user.is_client %}
+<div class="card card__order">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <img src="{{ summary_count.client_icon1 }}" alt="{{ summary_count.client_title1 }}">
+        </div>
+        <a href="{{ summary_count.client_more_path1 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.client_count1 }}</h4>
+        <p class="text-small">{{ summary_count.client_title1 }}</p>
+    </div>
+</div>
+<div class="card card__client">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <i class="bx {{ summary_count.client_icon2 }}"></i>
+        </div>
+        <a href="{{ summary_count.client_more_path2 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.client_count2 }}</h4>
+        <p class="text-small">{{ summary_count.client_title2 }}</p>
+    </div>
+</div>
+{% else %}
+<div class="card card__order">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <img src="{{ summary_count.admin_icon1 }}" alt="{{ summary_count.admin_title1 }}">
+        </div>
+        <a href="{{ summary_count.admin_more_path1 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.admin_count1 }}</h4>
+        <p class="text-small">{{ summary_count.admin_title1 }}</p>
+    </div>
+</div>
+<div class="card card__client">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <i class="bx {{ summary_count.admin_icon2 }}"></i>
+        </div>
+        <a href="{{ summary_count.admin_more_path2 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.admin_count2 }}</h4>
+        <p class="text-small">{{ summary_count.admin_title2 }}</p>
+    </div>
+</div>
+<div class="card card__payment">
+    <div class="card__order__head">
+        <div class="icon icon-secondary-default icon-sm icon-circle">
+            <i class="bx {{ summary_count.admin_icon3 }}"></i>
+        </div>
+        <a href="{{ summary_count.admin_more_path3 }}" class="text-white">
+            <i class='bx bx-chevron-right bx-sm'></i>
+        </a>
+    </div>
+    <div class="w-full">
+        <h4>{{ summary_count.admin_count3 }}</h4>
+        <p class="text-small">{{ summary_count.admin_title3 }}</p>
+    </div>
+</div>
+{% endif %}

@@ -10,9 +10,9 @@ def get_generate_tracking_code():
     hour = add_zero_to_number(now.hour)
     minute = add_zero_to_number(now.minute)
     seg = add_zero_to_number(now.second)
-    rand_interger = randint(0, 9)
+    rand_integer = randint(1, 9)
 
-    code_text = '{}{}{}{}'.format(year, month, minute, seg + rand_interger)
+    code_text = '{}{}{}{}'.format(year, month, minute, str(seg + rand_integer))
 
     return 'CC{}'.format(code_text)
 

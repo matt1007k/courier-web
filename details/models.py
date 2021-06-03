@@ -1,4 +1,5 @@
 import decimal
+from datetime import datetime
 from pages.utils import is_valid_queryparams
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from typing import Dict
@@ -158,6 +159,8 @@ class Detail(models.Model):
     def received(self):
         self.status = Detail.PackageStatus.RECEIVED
         self.save()
+        if self.is_assign_origin:
+            self.get_assign_origin().received()
 
     def wakehoused(self):
         self.status = Detail.PackageStatus.WAREHOUSE
@@ -166,6 +169,8 @@ class Detail(models.Model):
     def delivered(self):
         self.status = Detail.PackageStatus.DELIVERED
         self.save()
+        if self.is_assign_delivery:
+            self.get_assign_delivery().received()
 
     def undelivered(self):
         self.status = Detail.PackageStatus.UNDELIVERED
@@ -185,6 +190,12 @@ class Detail(models.Model):
         self.price_rate_previous = self.price_rate
         self.price_rate = special
         self.save()
+
+    def get_assign_origin(self):
+        return self.assignoriginaddress_set.first()
+
+    def get_assign_delivery(self):
+        return self.assigndeliveryaddress_set.first()
 
     def get_delivered_data(self):
         return self.packagedelivered_set.first()
@@ -239,6 +250,8 @@ class AssignOriginAddress(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
     admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
+    is_received = models.BooleanField(default=False, verbose_name='esta recepcionado')
+    date_received = models.DateTimeField(null=True, blank=True, verbose_name='fecha de recepción')
 
     objects = AssignOriginAddressManager.from_queryset(AssignOriginAddressQueryset)()
 
@@ -248,6 +261,11 @@ class AssignOriginAddress(models.Model):
     def update_driver(self, driver, admin):
         self.driver = driver
         self.admin = admin
+        self.save()
+
+    def received(self):
+        self.is_received = True
+        self.date_received = datetime.now()
         self.save()
 
     class Meta:
@@ -280,6 +298,8 @@ class AssignDeliveryAddress(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name='motorizado')
     admin = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='administrador')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
+    is_delivered = models.BooleanField(default=False, verbose_name='esta entregado')
+    date_delivered = models.DateTimeField(null=True, blank=True, verbose_name='fecha de entrega')
 
     objects = AssignDeliveryAddressManager.from_queryset(AssignDeliveryAddressQueryset)()
 
@@ -290,6 +310,11 @@ class AssignDeliveryAddress(models.Model):
     def update_driver(self, driver, admin):
         self.driver = driver
         self.admin = admin
+        self.save()
+
+    def delivered(self):
+        self.is_delivered = True
+        self.date_delivered = datetime.now()
         self.save()
 
     class Meta:

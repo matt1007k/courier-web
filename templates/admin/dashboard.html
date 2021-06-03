@@ -8,173 +8,37 @@
     <h5 class="font-medium">Hola {{ request.user.username }},</h5>
     <h3>Bienvenido</h3>
 
-    <!-- <div class="content__wrapper mb-10">
+    <div class="content__wrapper mb-10">
         <div class="grid-dash__driver">
-          <div class="card payment__now">
-            <div class="icon__position">
-              <div class="icon icon-secondary icon-circle">
-                <i class="bx bxl-paypal bx-sm"></i>
+          <div class="payment__now">
+            <div class="card">
+              <div class="icon__position">
+                <div class="icon icon-secondary icon-circle">
+                  <i class="bx bxl-paypal bx-sm"></i>
+                </div>
               </div>
-            </div>
-            <h4 class="text-center mb-4">{{ now_summary.title }}</h4>
-            <h6 class="text-secondary font-medium mb-4">{{ now_summary.date_now }}</h6>
-            <div class="detail__now">
-              <h3>S/ {{ now_summary.total }}</h3>
-              <div class="count__now">
-                <h4>5</h4>
-                <p class="text-small">Pedidos</p>
+              <h4 class="text-center mb-4">{{ now_summary.title }}</h4>
+              <h6 class="text-secondary font-medium mb-4">{{ now_summary.date_now }}</h6>
+              <div class="detail__now">
+                <h3>S/ {{ now_summary.total }}</h3>
+                <div class="count__now">
+                  <h4>{{ now_summary.count }}</h4>
+                  <p class="text-small">{{ now_summary.title_order }}</p>
+                </div>
               </div>
             </div>
           </div>
           <div class="dash__count__wrapper">
-            <div class="card card__order">
-              <div class="card__order__head">
-                <div class="icon icon-secondary-default icon-sm icon-circle">
-                  <img src="{% static 'icon/order-icon.svg' %}" alt="Icon order">
-                </div>
-                <a href="" class="text-white">
-                  <i class='bx bx-chevron-right bx-sm'></i>
-                </a>
-              </div>
-              <div class="w-full">
-                <h4>520</h4>
-                <p class="text-small">Pedidos entregados</p>
-              </div>
-            </div>
-            <div class="card card__client">
-              <div class="card__order__head">
-                <div class="icon icon-secondary-default icon-sm icon-circle">
-                  <i class="bx bx-user-pin"></i>
-                </div>
-                <a href="" class="text-white">
-                  <i class='bx bx-chevron-right bx-sm'></i>
-                </a>
-              </div>
-              <div class="w-full">
-                <h4>21</h4>
-                <p class="text-small">Clientes asociados</p>
-              </div>
-            </div>
-            <div class="card card__payment">
-              <div class="card__order__head">
-                <div class="icon icon-secondary-default icon-sm icon-circle">
-                  <i class="bx bx-credit-card"></i>
-                </div>
-                <a href="" class="text-white">
-                  <i class='bx bx-chevron-right bx-sm'></i>
-                </a>
-              </div>
-              <div class="w-full">
-                <h4>S/ 2540</h4>
-                <p class="text-small">Pagos recibidos</p>
-              </div>
-            </div>
+            {% include 'admin/snippets/summary-count.html' %}
           </div>
 
-          {% if request.user.is_administrator %}
-          <div class="card">
-            <h6>{{ list_right.admin_title }}</h6>
-            <p>Los últimos pedidos de hoy</p>
-            <div class="dash__order__list">
-              <div class="dash__order__item">
-                  <div class="icon icon-rounded icon-warning-default">
-                    <img src="{% static 'icon/order-icon.svg' %}" alt="Icon Order">
-                  </div>
-                  <div class="dash__order__content">
-                    <div class="text-small subheading"># TRACKING CC123045245</div>
-                    <h6>Juan Rojas Licas</h6>
-                    <p>Jiron Educacion 144-170, Cercado de Lima 15416</p>
-                  </div>
-              </div>
-            </div>
-            <div class="actions full">
-              <a href="{{ list_right.admin_more_path }}" class="btn btn-primary">Ver todos</a>
-            </div>
-          </div>
-          {% endif %}
+          {% include 'admin/snippets/list-left.html' %}
         </div>
         <div>
-          {% if request.user.is_administrator %}
-            <div class="card">
-                <h6>{{ list_right.admin_title }}</h6>
-                <p>{{ list_right.admin_description }}</p>
-                <div class="dash__order__list">
-                    {% for client in list_right.admin_clients %}
-                    <div class="dash__order__item">
-                        <div class="dash__content__wrapper">
-                            <div class="icon icon-rounded icon-danger-default">
-                                <i class="bx bx-user-pin"></i>
-                            </div>
-                            <div class="dash__order__content">
-                                <div class="text-small subheading"># CEL {{ client.address_default.cell_phone }}</div>
-                                <h6>{{ client.full_name }}</h6>
-                                <p>{{ client.address_default.address_complete }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="actions full">
-                    <a href="{{ list_right.admin_more_path }}" class="btn btn-primary">Ver todos</a>
-                </div>
-            </div>
-            {% endif %}
-            {% if request.user.is_driver %}
-            <div class="card">
-                <h6>{{ list_right.driver_title }}</h6>
-                <p>{{ list_right.driver_description }}</p>
-                <div class="dash__order__list">
-                    {% for origin in list_right.driver_origins %}
-                    <div class="dash__order__item">
-                        <div class="dash__content__wrapper">
-                            <div class="icon icon-rounded icon-warning-default">
-                                <img src="{% static 'icon/order-icon.svg' %}" alt="Icon Order">
-                            </div>
-                            <div class="dash__order__content">
-                                <div class="text-small subheading">{{ origin.detail.get_tracking_code_text }}</div>
-                                <h6>{{ origin.detail.address_origin.full_name }}</h6>
-                                <p>{{ origin.detail.address_origin.address_complete }}</p>
-                            </div>
-                        </div>
-                        <div class="status">
-                            {% include 'details/snippets/status-short.html' with detail=origin.detail %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="actions full">
-                    <a href="{{ list_right.driver_more_path }}" class="btn btn-primary">Ver todos</a>
-                </div>
-            </div>
-            {% endif %}
-            {% if request.user.is_client %}
-            <div class="card">
-                <h6>{{ list_right.client_title }}</h6>
-                <p>{{ list_right.client_description }}</p>
-                <div class="dash__order__list">
-                    {% for address in list_right.client_addresses %}
-                    <div class="dash__order__item">
-                        <div class="dash__content__wrapper">
-                            <div class="icon icon-rounded icon-primary-default">
-                                <div class="bx bx-current-location"></div>
-                            </div>
-                            <div class="dash__order__content">
-                                <div class="text-small subheading">{{ address.full_name }}</div>
-                                <h6>{{ address.address }}</h6>
-                                <p>{{ address.address_city }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="actions full">
-                    <a href="{{ list_right.client_more_path }}" class="btn btn-primary">Ver todas</a>
-                </div>
-            </div>
-            {% endif %}
+          {% include 'admin/snippets/list-right.html' %}
         </div>
-    </div> -->
+    </div>
 
-    <div class="card mt-4">Pronto....</div>
+    <!-- <div class="card mt-4">Pronto....</div> -->
 
 {% endblock content %}

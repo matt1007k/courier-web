@@ -1,0 +1,89 @@
+{% load static %}
+{% if request.user.is_client %}
+<div class="card">
+    <h6>{{ list_right.client_title }}</h6>
+    <p>{{ list_right.client_description }}</p>
+    <div class="dash__order__list">
+        {% if list_right.client_addresses.count > 0 %}
+        {% for address in list_right.client_addresses %}
+        <div class="dash__order__item">
+            <div class="dash__content__wrapper">
+                <div class="icon icon-rounded icon-primary-default">
+                    <div class="bx bx-current-location"></div>
+                </div>
+                <div class="dash__order__content">
+                    <div class="text-small subheading">{{ address.full_name }}</div>
+                    <h6>{{ address.address }}</h6>
+                    <p>{{ address.address_city }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="mt-2 text-small">Sin direcciones registradas</p>
+        {% endif %}
+    </div>
+    <div class="actions full">
+        <a href="{{ list_right.client_more_path }}" class="btn btn-primary">Ver todas</a>
+    </div>
+</div>
+{% elif request.user.is_driver %}
+<div class="card">
+    <h6>{{ list_right.driver_title }}</h6>
+    <p>{{ list_right.driver_description }}</p>
+    <div class="dash__order__list">
+        {% if list_right.driver_origins.count > 0 %}
+        {% for origin in list_right.driver_origins %}
+        <div class="dash__order__item">
+            <div class="dash__content__wrapper">
+                <div class="icon icon-rounded icon-warning-default">
+                    <img src="{% static 'icon/order-icon.svg' %}" alt="Icon Order">
+                </div>
+                <div class="dash__order__content">
+                    <div class="text-small subheading">{{ origin.detail.get_tracking_code_text }}</div>
+                    <h6>{{ origin.detail.address_origin.full_name }}</h6>
+                    <p>{{ origin.detail.address_origin.address_complete }}</p>
+                </div>
+            </div>
+            <div class="status">
+                {% include 'details/snippets/status-short.html' with detail=origin.detail %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="mt-2 text-small">Sin pedidos asignados</p>
+        {% endif %}
+    </div>
+    <div class="actions full">
+        <a href="{{ list_right.driver_more_path }}" class="btn btn-primary">Ver todos</a>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <h6>{{ list_right.admin_title }}</h6>
+    <p>{{ list_right.admin_description }}</p>
+    <div class="dash__order__list">
+        {% if list_right.admin_clients.count > 0 %}
+        {% for client in list_right.admin_clients %}
+        <div class="dash__order__item">
+            <div class="dash__content__wrapper">
+                <div class="icon icon-rounded icon-danger-default">
+                    <i class="bx bx-user-pin"></i>
+                </div>
+                <div class="dash__order__content">
+                    <div class="text-small subheading"># CEL {{ client.address_default.cell_phone }}</div>
+                    <h6>{{ client.full_name }}</h6>
+                    <p>{{ client.address_default.address_complete }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="mt-2 text-small">Sin clientes registrados</p>
+        {% endif %}
+    </div>
+    <div class="actions full">
+        <a href="{{ list_right.admin_more_path }}" class="btn btn-primary">Ver todos</a>
+    </div>
+</div>
+{% endif %}

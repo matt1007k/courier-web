@@ -1,8 +1,12 @@
 from datetime import datetime
+from drivers.models import Driver
 from .models import Order
 from clients.models import Client
-from details.models import AssignOriginAddress
+from details.models import AssignOriginAddress, Detail
 from django.urls import reverse
+from django.conf import settings
+
+static_url = settings.STATIC_URL
 
 def get_or_create_order(request):
     user = request.user if request.user.is_authenticated else None
@@ -62,19 +66,64 @@ def fields_destiny_form(detail):
 
 def get_total_orders_now(request):
     if request.user.is_driver:
-        total = request.user.driver.get_total_price_rate_orders_origin_address_today() 
-        # total = request.user.driver.assignoriginaddress_set.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d')).count()
+        total = request.user.driver.get_total_payment_today()
     else:
         total = sum([order.total for order in Order.objects.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d'))])
     return round(total, 0)
     
-def get_count_orders_now():
-    return Order.objects.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d')).count()
+def get_count_orders_now(request):
+    if request.user.is_driver:
+        count = request.user.driver.get_count_orders_today()
+    elif request.user.is_client:
+        count = request.user.client.detail_set.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d')).count()
+    else:
+        count = Detail.objects.filter(created_at__gte=datetime.now().strftime('%Y-%m-%d')).count()
+    return count
+
+def get_summary_count(request):
+    data = {
+        'driver_title1': 'Pedidos entregados',
+        'driver_icon1': '{}icon/order-icon.svg'.format(static_url),
+        'driver_count1': request.user.driver.get_orders_delivery_address().count() if request.user.is_authenticated and request.user.is_driver else '0',
+        'driver_more_path1': reverse('orders:deliveries'),
+        'driver_title2': 'Clientes asociados',
+        'driver_icon2': 'bx-user-pin',
+        'driver_count2': request.user.driver.clients_count() if request.user.is_authenticated and request.user.is_driver else '0',
+        'driver_more_path2': '',
+        'driver_title3': 'Pagos recibidos',
+        'driver_icon3': 'bx-credit-card',
+        'driver_count3': 'S/ {}'.format(request.user.driver.get_total_payments()) if request.user.is_authenticated and request.user.is_driver else 'S/ 0',
+        'driver_more_path3': '#',
+
+        'client_title1': 'Pedidos realizados',
+        'client_icon1': '{}icon/order-icon.svg'.format(static_url),
+        'client_count1': request.user.client.detail_set.count() if request.user.is_authenticated and request.user.is_client else '0',
+        'client_more_path1': reverse('orders:index'),
+        'client_title2': 'Direcciones',
+        'client_icon2': 'bx-current-location',
+        'client_count2': request.user.client.address_set.count() if request.user.is_authenticated and request.user.is_client else '0',
+        'client_more_path2': reverse('addresses:index'),
+
+        'admin_title1': 'Pedidos',
+        'admin_icon1': '{}icon/order-icon.svg'.format(static_url),
+        'admin_count1': Detail.objects.count(),
+        'admin_more_path1': reverse('orders:index'),
+        'admin_title2': 'Clientes',
+        'admin_icon2': 'bx-user-pin',
+        'admin_count2': Client.objects.count(),
+        'admin_more_path2': reverse('clients:index'),
+        'admin_title3': 'Motorizados',
+        'admin_icon3': 'bx-user-check',
+        'admin_count3': Driver.objects.count(),
+        'admin_more_path3': reverse('drivers:index'),
+    }
+
+    return data
 
 def get_list_right(request):
     data = {
-        'driver_title': 'Recojo de pedidos',
-        'driver_description': 'Los últimos recojos de pedidos de hoy',
+        'driver_title': 'Pedidos a recojer',
+        'driver_description': 'Los últimos pedidos a recojer',
         'driver_origins': request.user.driver.get_last_orders_origin_address(5) if request.user.is_driver else None,
         'driver_more_path': reverse('orders:origins'),
         'client_title': 'Mis últimas direcciones',

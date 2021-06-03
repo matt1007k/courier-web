@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from .models import Driver, Vehicle, PaymentAccount
-from driver_payments.models import DriverPayment, DriverPaymentRate
+from driver_payments.models import DriverPayment
+from service_prices.models import DriverPaymentRate
 
 class DriverAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'dni', 'address', 'user', 'created_at')

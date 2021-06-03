@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from django.db.models.signals import pre_save
 
 from courier_app.utils import phone_regex
+from service_prices.utils import apply_payment_rate
 
 class Driver(models.Model):
     user = OneToOneField(User, on_delete=models.CASCADE, verbose_name='usuario')
@@ -40,12 +41,35 @@ class Driver(models.Model):
 
     def get_orders_origin_address(self):
         return self.assignoriginaddress_set.all()
+        
+    def get_orders_delivery_address(self):
+        return self.assigndeliveryaddress_set.all()
 
-    def get_orders_origin_address_today(self):
-        return self.get_orders_origin_address().filter(created_at__gte=datetime.now().strftime('%Y-%m-%d'))
+    def get_orders_received_today(self):
+        return self.get_orders_origin_address().filter(is_received=True).filter(date_received__gte=datetime.now().strftime('%Y-%m-%d'))
     
-    def get_total_price_rate_orders_origin_address_today(self):
-        return sum([assign.detail.price_rate for assign in self.get_orders_origin_address_today()])
+    def get_orders_delivered_today(self):
+        return self.get_orders_delivery_address().filter(is_delivered=True).filter(date_delivered__gte=datetime.now().strftime('%Y-%m-%d'))
+
+    def get_total_price_rate_orders_received_today(self):
+        return sum([assign.detail.price_rate for assign in self.get_orders_received_today()])
+
+    def get_total_price_rate_orders_delivered_today(self):
+        return sum([assign.detail.price_rate for assign in self.get_orders_delivered_today()])
+    
+    def get_total_payment_today(self):
+        total = self.get_total_orders_today()
+        count = self.get_count_orders_today() 
+        return apply_payment_rate(total, count)
+
+    def get_total_orders_today(self):
+        return self.get_total_price_rate_orders_received_today() + self.get_total_price_rate_orders_delivered_today()
+
+    def get_count_orders_today(self):
+        return self.get_orders_received_today().count() + self.get_orders_delivered_today().count()
+
+    def get_total_payments(self):
+        return sum([payment.total for payment in self.driverpayment_set.all()])
 
     def get_clients(self):
         return Client.objects.filter(driver_code=self.code)
