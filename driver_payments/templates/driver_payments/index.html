@@ -1,0 +1,200 @@
+{% extends "layouts/admin.html" %}
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% load static %}
+{% load humanize %}
+{% load l10n %}
+{% block content_head %}
+<div class="content-head">
+    <div class="left">
+        <h4>{{ title }}</h4>
+    </div>
+    <div class="right">
+        {% if request.user.is_administrator %}
+        {% if object_list.count > 0 and 'driver' in request.GET %}
+        <a href="{% url 'driver_payments:index' %}?driver={{ request.GET.driver }}&date_from={{ request.GET.date_from }}&date_to={{ request.GET.date_to }}" class="btn btn-default btn-small" target="_blank">
+            <i class='bx bxs-file-pdf bx-sm'></i>
+            <span>Descargar PDF</span>
+        </a>
+        {% endif %}
+        <div x-data="{ isOpen: false }" class="container-modal">
+            <button @click="isOpen = true" class="btn btn-link btn-small">
+               <i class="bx bx-library bx-sm"></i> 
+               <span>Filtrar reporte</span>
+            </button>
+            <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpen" class="modal modal-right">
+                <div class="modal-content card" style="width: 400px; overflow: auto;" @click.away="isOpen = false">
+                    <div class="head">
+                        <h6>Filtrar reporte</h6>
+                        <div class="close">
+                            <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
+                                <i class='bx bx-x bx-sm'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <form method='GET' class="form-modal">
+                        <div class="form-group">
+                            <label for="driver">Motorizado</label>
+                            <input type='search' name='driver' placeholder="Buscar por datos del motorizado"
+                                value='{{ request.GET.driver }}' class="input">
+                        </div>
+                        <h5 class="mt-2 mb-2">Rango de fechas</h5>
+                        <div class="form-group">
+                            <label for="date_from">Fecha de</label>
+                            <input type="date" class="input" name="date_from" id="date_from" value="{{ request.GET.date_from }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="date_to">Fecha hasta</label>
+                            <input type="date" class="input" name="date_to" id="date_to" value="{{ request.GET.date_to }}">
+                        </div>
+                        <div class="actions right">
+                            <button type='submit' class="btn btn-primary">Filtrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+<div class="mb-10 order-list-grid">
+    <div class="order-list-head">
+        <div class="order-list-head-item">
+            Motorizado
+        </div>
+        <div class="order-list-head-item">
+            Total a pagar
+        </div>
+        <div class="order-list-head-item">
+            Cantidad de pedidos
+        </div>
+        <div class="order-list-head-item">
+          Estado
+        </div>
+        <div class="order-list-head-item" style="justify-self: end;">
+            Acciones
+        </div>
+    </div>
+
+    {% if object_list.count > 0 %}
+
+    {% for object in object_list %}
+
+    <div class="card card-normal order-list-row" x-data="{ isOpenSm: false, isOpenMd: false }">
+        <div class="order-list-col">
+            <div class="icon icon-warning-default rounded rounded-md">
+                <i class="bx bx-credit-card"></i>
+            </div>
+            <div class="content" style="align-items: flex-start;">
+                <p class="text-small text-muted font-normal">CÓDIGO {{ object.driver.code }}</p>
+                <h6>{{ object.driver.full_name }}</h6>
+                <p class="flex items-center">
+                    {{ object.created_at }}
+                </p>
+            </div>
+            <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">
+                <i class='bx bx-dots-horizontal-rounded bx-sm'></i>
+            </div>
+        </div>
+        <div class="order-list-col">
+            <h6>S/ {{ object.total|unlocalize }}</h6>
+        </div>
+        <div class="order-list-col text-center">
+            <h6>{{ object.count_orders }}</h6>
+        </div>
+        <div class="order-list-col">
+            <span class="badge badge-primary">Pagado</span>
+            <!-- {% include "details/snippets/status.html" with detail=object.detail %} -->
+        </div>
+
+        <div class="order-list-col dropdown" style="justify-self: end;">
+            <div class="cursor-pointer h6" @click="isOpenMd = !isOpenMd">
+                <i class='bx bx-dots-horizontal-rounded bx-sm'></i>
+            </div>
+            <div class="dropdown-menu right"
+                x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
+                @click.away="isOpenMd = false">
+                <!-- <a href="{{ object.detail.origin_map_path }}"
+                    class="dropdown-item-2">
+                    <span>Ver mapa</span>
+                    <i class='bx bx-map-pin bx-sm'></i>
+                </a> -->
+            </div>
+        </div>
+        <div x-show.transition.in.scale.opacity.100ms.out.scale.opacity.100ms="isOpenSm" class="modal modal-sheet">
+            <div class="modal-content card" style="width: 100%" @click.away="isOpenSm = false">
+                <div class="head">
+                    <h6>Acciones</h6>
+                    <div class="close">
+                        <button @click="isOpenSm = false" class="btn btn-default btn-circle btn-small">
+                            <i class='bx bx-x bx-sm'></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-modal">
+                    <div class="options">
+                        <!-- {% if perms.details.view_assignoriginaddress %}
+                        <a href="{{ object.detail.origin_map_path }}" class="option-item">
+                            <span>Ver mapa</span>
+                            <div class="icon ">
+                                <i class='bx bx-map-pin bx-sm'></i>
+                            </div>
+                        </a>
+                        {% endif %} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+    <div class="mb-10 table-list-bottom">
+        <div class="table-list-details">
+            <p>
+                Página
+                <span class="font-medium">{{ page_obj.number }}</span>
+                de
+                <span class="font-medium">{{ page_obj.paginator.num_pages }}</span>
+                -
+                Total
+                <span class="font-semibold">{{ object_list.count }}</span>
+                registros
+            </p>
+        </div>
+        <div class="pagination space-x">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-item">Anterior</a>
+            {% else %}
+            <a class="pagination-item disable">Anterior</a>
+            {% endif %}
+
+            {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+            <a class="pagination-item page-number active">{{ i }}</a>
+            {% else %}
+            <a href="?page={{ i }}" class="pagination-item page-number">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-item">Siguiente</a>
+            {% else %}
+            <a class="pagination-item disable">Siguiente</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card mb-10">
+        <p>
+            Sin registros...
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

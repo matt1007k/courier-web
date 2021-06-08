@@ -37,6 +37,7 @@ urlpatterns = [
     path('details/', include('details.urls', namespace='details')),
     path('promo-codes/', include('promo_codes.urls', namespace='promo_codes')),
     path('service-prices/', include('service_prices.urls', namespace='service_prices')),
+    path('driver-payments/', include('driver_payments.urls', namespace='driver_payments')),
     path('admin/', admin.site.urls),
 
     path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
