@@ -28,10 +28,10 @@ def login_view(request):
         password = request.POST.get('password')
         user = authenticate(username=email, password=password)
         if user:
-            if not user.is_email_verified:
-                messages.success(request, 'Hemos enviado un correo, para verificar tu correo electrónico')
-                logout(request)
-                return redirect('auth:login')
+            # if not user.is_email_verified:
+            #     messages.success(request, 'Hemos enviado un correo, para verificar tu correo electrónico')
+            #     logout(request)
+            #     return redirect('auth:login')
             login(request, user)
             messages.success(request, 'Bienvenido {}'.format(user.username))
             next_url = request.GET.get('next')
@@ -86,15 +86,15 @@ class CompleteAddressClientView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self) -> str:
-        if not self.request.user.is_email_verified:
-            thread = threading.Thread(
-                target=Mail.send_verify_account_email,
-                args=(self.request.user, self.request)
-            )
-            thread.start()
-            logout(self.request)
-            messages.success(self.request, 'Te hemos enviado un correo, para activar y verificar tu correo electrónico')
-            return reverse('auth:login')
+        # if not self.request.user.is_email_verified:
+        #     thread = threading.Thread(
+        #         target=Mail.send_verify_account_email,
+        #         args=(self.request.user, self.request)
+        #     )
+        #     thread.start()
+        #     logout(self.request)
+        #     messages.success(self.request, 'Te hemos enviado un correo, para activar y verificar tu correo electrónico')
+        #     return reverse('auth:login')
         messages.success(self.request, 'Bienvenido {}'.format(self.request.user.username))
         return reverse('dash')
     
