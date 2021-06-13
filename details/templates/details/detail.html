@@ -9,7 +9,7 @@
 {% block content_head %}
 <div class="content-head">
     <div class="left">
-        <a href="{% url 'orders:index' %}" class="btn btn-link btn-small">
+        <a href="{{ request.GET.next }}" class="btn btn-link btn-small">
             <i class='bx bx-left-arrow-alt bx-sm'></i>
         </a>
         <h4>{{ title }}</h4>
@@ -27,6 +27,7 @@
                         <h5>
                             {{ detail.get_tracking_code_text }}
                         </h5>
+                        {{ detail.created_at }}
                         {% include 'details/snippets/status.html' %}
                     </div>
                     <div class="mt-2">
@@ -251,7 +252,7 @@
         </div>
         
         <div class="mt-6 actions left">
-            <a href="{% url 'orders:index' %}" class="btn btn-default">Regresar</a>
+            <a href="{{ request.GET.next }}" class="btn btn-default">Regresar</a>
         </div>
     </div>
 </div>  

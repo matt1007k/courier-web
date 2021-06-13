@@ -125,11 +125,19 @@
             <div class="dropdown-menu right"
                 x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
                 @click.away="isOpenMd = false">
+                {% if perms.details.view_detail %}
+                <a href="{{ object.detail.get_detail_path }}?next={{ request.path }}" class="dropdown-item-2">
+                    <span>Ver detalles</span>
+                    <i class='bx bx-show bx-sm'></i>
+                </a>
+                {% endif %}
+                {% if perms.details.view_assigndeliveryaddress %}
                 <a href="{{ object.detail.destiny_map_path }}"
                     class="dropdown-item-2">
                     <span>Ver mapa</span>
                     <i class='bx bx-map-pin bx-sm'></i>
                 </a>
+                {% endif %}
                 {% if request.user.is_administrator %}
                 <a href="{% url 'orders:return-unassign-delivery' pk=object.detail.pk %}"
                     class="dropdown-item-2">
@@ -151,12 +159,20 @@
                 </div>
                 <div class="form-modal">
                     <div class="options">
+                        {% if perms.details.view_detail %}
+                        <a href="{{ object.detail.get_detail_path }}?next={{ request.path }}" class="option-item">
+                            <span>Ver detalles</span>
+                            <i class='bx bx-show bx-sm'></i>
+                        </a>
+                        {% endif %}
+                        {% if perms.details.view_assigndeliveryaddress %}
                         <a href="{{ object.detail.destiny_map_path }}" class="option-item">
                             <span>Ver mapa</span>
                             <div class="icon ">
                                 <i class='bx bx-map-pin bx-sm'></i>
                             </div>
                         </a>
+                        {% endif %}
                         {% if request.user.is_administrator %}
                         <a href="{% url 'orders:return-unassign-delivery' pk=object.detail.pk %}"
                             class="option-item">

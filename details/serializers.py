@@ -29,23 +29,15 @@ class OrderSerializer(ModelSerializer):
         fields = [
             "id",
             "client",
-            "tracking_code",
             "status",
             "total",
             "type_ticket",
-            "created_at_naturaltime",
             "payed_image",
             "igv",
             "sub_total",
             "promo_code",
-            "get_tracking_code_text",
         ]
 
-        def get_tracking_code_text(self):
-            return self.model.get_tracking_code_text()
-
-        def created_at_naturaltime(self):
-            return self.model.created_at_naturaltime()
 
 class AddressSerializer(ModelSerializer):
     client = ClientSerializer()
@@ -64,10 +56,14 @@ class AddressSerializer(ModelSerializer):
             "address_gps",
             "default",
             "client",
-            "address_city"
+            "address_city",
+            "address_complete"
         ]
         def address_city(self):
             return self.model.address_city()
+
+        def address_complete(self):
+            return self.model.address_complete()
 
 class DetailSerializer(ModelSerializer):
     order = OrderSerializer()
@@ -78,6 +74,7 @@ class DetailSerializer(ModelSerializer):
         model = Detail
         fields = [
             'id',
+            "tracking_code",
             'size',
             'contain',
             'value',
@@ -88,8 +85,16 @@ class DetailSerializer(ModelSerializer):
             'status',
             'order',
             'address_origin',
-            'address_destiny'
+            'address_destiny',
+            "created_at_naturaltime",
+            "get_tracking_code_text",
         ]
+
+        def get_tracking_code_text(self):
+            return self.model.get_tracking_code_text()
+
+        def created_at_naturaltime(self):
+            return self.model.created_at_naturaltime()
 
 
 class UnAssignOrignAddressSerializer(ModelSerializer):

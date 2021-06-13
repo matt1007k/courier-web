@@ -24,7 +24,7 @@ from django.db.models import Q
 class DetailQuerySet(models.QuerySet):
     def search_detail_and_client(self, query):
         if is_valid_queryparams(query):
-            filters = Q(tracking_code=query) | Q(client__first_name__icontains=query) | Q(client__last_name__icontains=query) | Q(client__cell_phone__icontains=query)
+            filters = Q(tracking_code__icontains=query) | Q(client__first_name__icontains=query) | Q(client__last_name__icontains=query) | Q(client__cell_phone__icontains=query)
             return self.filter(filters)
         return self
 
@@ -38,6 +38,16 @@ class DetailQuerySet(models.QuerySet):
         if is_valid_queryparams(query):
             filters = (Q(address_origin__address__icontains=query) | Q(address_origin__district__icontains=query) | Q(address_origin__full_name__icontains=query) | Q(address_origin__cell_phone__icontains=query))
             return self.filter(filters)
+        return self
+
+    def search_by_status(self, query):
+        if is_valid_queryparams(query):
+            return self.filter(status=query)
+        return self
+
+    def search_by_date(self, query):
+        if is_valid_queryparams(query):
+            return self.filter(created_at__date=query)
         return self
 
 class DetailManager(models.Manager):

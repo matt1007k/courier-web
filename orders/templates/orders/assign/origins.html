@@ -126,6 +126,12 @@
             <div class="dropdown-menu right"
                 x-show.transition.in.origin.bottom.right.scale.opacity.400ms.out.origin.top.right.scale.20="isOpenMd"
                 @click.away="isOpenMd = false">
+                {% if perms.details.view_detail %}
+                <a href="{{ object.detail.get_detail_path }}?next={{ request.path }}" class="dropdown-item-2">
+                    <span>Ver detalles</span>
+                    <i class='bx bx-show bx-sm'></i>
+                </a>
+                {% endif %}
                 {% if perms.details.view_assignoriginaddress %}
                 <a href="{{ object.detail.origin_map_path }}"
                     class="dropdown-item-2">
@@ -154,6 +160,12 @@
                 </div>
                 <div class="form-modal">
                     <div class="options">
+                        {% if perms.details.view_detail %}
+                        <a href="{{ object.detail.get_detail_path }}?next={{ request.path }}" class="option-item">
+                            <span>Ver detalles</span>
+                            <i class='bx bx-show bx-sm'></i>
+                        </a>
+                        {% endif %}
                         {% if perms.details.view_assignoriginaddress %}
                         <a href="{{ object.detail.origin_map_path }}" class="option-item">
                             <span>Ver mapa</span>
