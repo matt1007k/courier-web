@@ -1,6 +1,9 @@
 import React from 'react';
 import { DetailState } from '../../types/orders';
+
 import { DetailStatus } from './DetailStatus'
+import Dropdown from "../Overlay/Dropdown";
+import ModalBottom from "../Overlay/ModalBottom";
 
 interface OrderItemProps{
 	detail: DetailState;
@@ -19,9 +22,20 @@ const OrderItem: React.FC<OrderItemProps> = ({detail}) => (
                     <p>{ detail.created_at_naturaltime }</p>
                 </div>
             </div>
-            <div className="cursor-pointer icon-view h6">
-                <i className='bx bx-dots-horizontal-rounded bx-sm'></i>
-            </div>
+            <ModalBottom title="Acciones" target={
+                <div className="cursor-pointer icon-view h6">
+                    <i className='bx bx-dots-horizontal-rounded bx-sm'></i>
+                </div>
+            }>
+                <div className="options">
+                    <a href="#" className="option-item">
+                        <span>Ver detalles</span>
+                        <div className="icon ">
+                            <i className='bx bx-show bx-sm'></i>
+                        </div>
+                    </a>
+                </div>
+            </ModalBottom>
         </div>
         <div className="order-list-col">
             <div className="text-small">{ detail.address_origin.address_complete }</div>
@@ -43,9 +57,16 @@ const OrderItem: React.FC<OrderItemProps> = ({detail}) => (
             <DetailStatus status={detail.status} />
         </div>
         <div className="order-list-col" style={{ justifySelf: "end" }}>
-            <div className="cursor-pointer h6">
-                <i className='bx bx-dots-horizontal-rounded bx-sm'></i>
-            </div>
+            <Dropdown target={
+                    <div className="cursor-pointer h6">
+                        <i className='bx bx-dots-horizontal-rounded bx-sm'></i>
+                    </div>
+                }>
+                <a href="#" className="dropdown-item-2">
+                    <span>Seguimiento</span>
+                    <i className='bx bx-list-check bx-sm'></i>
+                </a>
+            </Dropdown>
         </div>
     </div>	
 );

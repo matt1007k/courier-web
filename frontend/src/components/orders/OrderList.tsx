@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { render } from "react-dom";
+import { get } from "../../utils/request";
 
 import { DetailState } from "../../types/orders";
 import { PaginationState } from "../../types/pagination";
 
 import OrderItem from "./OrderItem";
 import { FilterStatus } from "./FilterStatus";
-import Pagination from '../Navigation/Pagination'
-import { get } from "../../utils/request";
+import Pagination from '../Navigation/Pagination';
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<DetailState[]>([])
