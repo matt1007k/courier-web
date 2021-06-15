@@ -7,11 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rotutalo - {{ order.pk }}</title>
     <style>
+        @page {
+            size: letter landscape;
+            background-image: url('{{ ui }}');
+            margin: 1.3cm;
+            /* width: 100%; */
+            font-family: STSong-Light;
+        }
         body{
             font-size: 11px;
         }
         .header{
-           margin-bottom: 30px;
+           margin-bottom: 100px;
         }
        .logo{
            width: 150px;
@@ -68,6 +75,10 @@
        .page{
            page-break-after: always;
        }
+       .table-content-2 tbody tr td{
+           padding: 3px 5px 1px 55px;
+
+       }
     </style>
 </head>
 <body>
@@ -75,64 +86,60 @@
 <div class="page">
     <table class="header">
         <tr>
-            <td>
-                <img src="{{ logo }}" class="logo" />
+            <td style="width:70%">
+                &nbsp;
             </td>
             <td>
-                <h2 class="title">N° TRACKING: <span class="tracking-code">{{ detail.tracking_code }}</span></h2>
-            </td>
-            <td>
-                <p class="text-right">{{ date }}</p>
+                <h2 class="title">{{ detail.tracking_code }}</h2>
             </td>
         </tr>
     </table>
-    <div class="subtitle">¿Dónde recojeremos tu pedido?</div>
+    <div class="subtitle" style="margin-bottom: 1.3rem;">&nbsp;</div>
     <table class="table-content mb-4">
         <tbody>
             <tr>
-                <td style="width: 18%;" class="font-medium text-muted">Nombre o marca </td>
+                <td style="width: 18%;" class="font-medium text-muted"></td>
                 <td style="width: 82%;" class="text-body text-left">{{ detail.address_origin.full_name }}</td>
             </tr>
             <tr> 
-                <td class="font-medium text-muted">Celular</td>
+                <td class="font-medium text-muted"></td>
                 <td class="text-body">{{ detail.address_origin.cell_phone }}</td>
             </tr>
         </tbody>
     </table>
 
-    <div class="subtitle">¿A donde llevaremos tu pedido?</div>
+    <div class="subtitle" style="margin-bottom: .4rem;">&nbsp;</div>
     <table class="table-content-2 mb-4" style="width: 100% !important">
         <tbody>
-            <tr>
-                <td style="width: 18%;" class="font-medium text-muted">Nombre completo</td>
+            <tr style="margin-bottom: 1rem !important;">
+                <td style="width: 18%;" class="font-medium text-muted">&nbsp;</td>
                 <td style="width: 82%;" class="text-body text-left">{{ detail.address_destiny.full_name }}</td>
             </tr>
-            <tr>
-                <td class="font-medium text-muted">Celular</td>
-                <td class="text-body">{{ detail.address_destiny.cell_phone }}</td>
+            <tr style="padding-top: 1rem !important; height: 44px;">
+                <td class="font-medium text-muted"></td>
+                <td class="text-body">{{ detail.address_destiny.address_complete }}ss</td>
             </tr>
             <tr>
-                <td class="font-medium text-muted">Dirección</td>
-                <td class="text-body">{{ detail.address_destiny.address_complete }}</td>
+                <td class="font-medium text-muted"></td>
+                <td class="text-body">{{ detail.address_destiny.reference }}dd</td>
             </tr>
             <tr>
-                <td class="font-medium text-muted">Referencia</td>
-                <td class="text-body">{{ detail.address_destiny.reference }}</td>
+                <td class="font-medium text-muted"></td>
+                <td class="text-body">{{ detail.address_destiny.cell_phone }}df</td>
             </tr>
             <tr>
-                <td class="font-medium text-muted">Nota</td>
-                <td class="text-body">{{ detail.description }}</td>
+                <td class="font-medium text-muted"></td>
+                <td class="text-body">{{ detail.description }}dd</td>
             </tr>
         </tbody>
     </table>
-    <table>
+    <table style="margin-bottom: 1rem;">
         <tbody>
             <tr>
-                <td style="width: 75%;">
+                <td style="width: 70%;">
                 </td>
-                <td style="width: 25%;" class="text-right">
-                    <h5 class="text-center" style="padding: 3px 0; margin: 0; color: white; background-color: #F15B23;">Código QR</h5>
-                    {% qr_from_text detail.tracking_code size=10 image_format="png" error_correction="L" %}
+                <td style="width: 25%;" class="text-left">
+                    {% qr_from_text detail.tracking_code size=5 image_format="png" error_correction="L" %}
                 </td>
             </tr>
         </tbody>

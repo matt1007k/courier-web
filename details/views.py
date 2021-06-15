@@ -27,7 +27,7 @@ def create_detail_view(request):
     if request.method == 'POST' and info_form.is_valid() and origin_form.is_valid()  and destiny_form.is_valid():
         address_origin = Address.objects.update_or_create_address_origin(client, origin_form.cleaned_data)
         address_destiny = Address.objects.update_or_create_address_destiny(client, destiny_form.cleaned_data)
-        detail = Detail.objects.create(
+        Detail.objects.create(
             client=client,
             order=order, 
             size = request.POST.get('size'),
@@ -40,9 +40,8 @@ def create_detail_view(request):
             distance=request.POST.get('distance'),
             price_rate=request.POST.get('price_rate'),
         )
-        if not detail is None:
-            messages.success(request, 'La dirección de envío fue agregado con éxito.')
-            return redirect('orders:add-addresses')
+        messages.success(request, 'La dirección de envío fue agregado con éxito.')
+        return redirect('orders:add-addresses')
 
 
     return render(request, template, context={

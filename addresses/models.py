@@ -63,7 +63,7 @@ class Address(models.Model):
     full_name = models.CharField(max_length=100, verbose_name='nombre completo')
     email = models.CharField(validators=[validate_email],max_length=150, verbose_name='correo electrónico')
     cell_phone = models.CharField(validators=[phone_regex],max_length=9, verbose_name='num. de celular')
-    address = models.CharField(max_length=150, verbose_name='dirección')
+    address = models.CharField(max_length=150, null=True, blank=True, verbose_name='dirección')
     district = models.CharField(max_length=100, verbose_name='distrito')
     city = models.CharField(max_length=150, verbose_name='ciudad o País')
     reference = models.TextField(max_length=200, verbose_name='referencia')

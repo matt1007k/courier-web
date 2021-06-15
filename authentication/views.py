@@ -11,12 +11,18 @@ from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from .serializers import PermissionSerializer
+
 from django.utils.encoding import force_text
 from .utils import generate_token
 
 from django.contrib import messages
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from .models import User
 from .forms import CustomUserForm, RegisterForm
 from clients.forms import ClientRegisterForm
@@ -172,3 +178,18 @@ def activate_user(request, uidb64, token):
 
     return render(request, template_name, context={})
 
+class PermissionAuthListApiView(APIView):
+    permission_classes = [IsAuthenticated,]
+    def get(self, request):
+        auth = request.user
+        permission_auth = auth.user_permissions.all()
+        try:
+            permission_group = auth.groups.first().permissions.all()
+            sr = PermissionSerializer(permission_group | permission_auth, many=True)
+
+            return Response(sr.data)
+        except AttributeError:
+            print('errors')
+
+        sr = PermissionSerializer(permission_auth, many=True)
+        return Response(sr.data)

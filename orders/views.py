@@ -309,16 +309,18 @@ def payment_view(request):
                 detail.payed(
                     tracking_code = get_generate_tracking_code(),
                 )
-                thread = threading.Thread(
-                    target=Mail.send_complete_order,
-                    args=(detail, detail.address_origin.full_name, detail.address_origin.email, request)
-                )
-                thread.start()
-                thread2 = threading.Thread(
-                    target=Mail.send_complete_order,
-                    args=(detail, detail.address_destiny.full_name, detail.address_destiny.email, request)
-                )
-                thread2.start()
+                if detail.address_origin.email:
+                    thread = threading.Thread(
+                        target=Mail.send_complete_order,
+                        args=(detail, detail.address_origin.full_name, detail.address_origin.email, request)
+                    )
+                    thread.start()
+                if detail.address_destiny.email:
+                    thread2 = threading.Thread(
+                        target=Mail.send_complete_order,
+                        args=(detail, detail.address_destiny.full_name, detail.address_destiny.email, request)
+                    )
+                    thread2.start()
                 TrackingOrder.objects.create(
                     detail=detail,
                     location='Pendiente a recojer en el dirección ingresada.'
@@ -355,10 +357,11 @@ class ReportRotuladoView(View):
                 'filename': 'rotulado-{}'.format(order.pk),
                 'date': datetime.now().date(),
                 'logo': 'img/logo.png',
+                'ui': 'img/report/ui-rotulado.png',
                 'order': order,
             }
             response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
+            # response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
             template = get_template(template_name)
             html = template.render(context)
 
