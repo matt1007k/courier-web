@@ -19,7 +19,7 @@ const OrderItem: React.FC<OrderItemProps> = ({detail}) => (
                 <p className="text-small text-muted font-normal">{ detail.get_tracking_code_text }</p>
                 <h6>{ detail.order.client.full_name }</h6>
                 <div className="order-detail">
-                    <p>{ detail.created_at_naturaltime }</p>
+                    <p>{ detail.get_created_at_format }</p>
                 </div>
             </div>
             <ModalBottom title="Acciones" target={

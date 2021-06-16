@@ -8,17 +8,16 @@
     <title>Rotutalo - {{ order.pk }}</title>
     <style>
         @page {
-            size: letter landscape;
+            size: letter;
             background-image: url('{{ ui }}');
-            margin: 1.3cm;
-            /* width: 100%; */
+            margin: 2.1cm;
             font-family: STSong-Light;
         }
         body{
             font-size: 11px;
         }
         .header{
-           margin-bottom: 100px;
+           margin-bottom: 72px;
         }
        .logo{
            width: 150px;
@@ -76,7 +75,7 @@
            page-break-after: always;
        }
        .table-content-2 tbody tr td{
-           padding: 3px 5px 1px 55px;
+           padding: 0px 5px 0px 33px;
 
        }
     </style>
@@ -86,7 +85,7 @@
 <div class="page">
     <table class="header">
         <tr>
-            <td style="width:70%">
+            <td style="width:75%">
                 &nbsp;
             </td>
             <td>
@@ -94,12 +93,12 @@
             </td>
         </tr>
     </table>
-    <div class="subtitle" style="margin-bottom: 1.3rem;">&nbsp;</div>
-    <table class="table-content mb-4">
+    <div class="subtitle" style="margin-bottom: .5rem;">&nbsp;</div>
+    <table class="table-content" style="margin-bottom: 10px;">
         <tbody>
             <tr>
-                <td style="width: 18%;" class="font-medium text-muted"></td>
-                <td style="width: 82%;" class="text-body text-left">{{ detail.address_origin.full_name }}</td>
+                <td style="width: 15%;" class="font-medium text-muted"></td>
+                <td style="width: 85%;" class="text-body text-left">{{ detail.address_origin.full_name }}</td>
             </tr>
             <tr> 
                 <td class="font-medium text-muted"></td>
@@ -108,37 +107,41 @@
         </tbody>
     </table>
 
-    <div class="subtitle" style="margin-bottom: .4rem;">&nbsp;</div>
-    <table class="table-content-2 mb-4" style="width: 100% !important">
+    <div class="subtitle" style="margin-bottom: 18px;">&nbsp;</div>
+    <table class="table-content-2" style="width: 100% !important; margin-bottom: 55px;">
         <tbody>
-            <tr style="margin-bottom: 1rem !important;">
-                <td style="width: 18%;" class="font-medium text-muted">&nbsp;</td>
-                <td style="width: 82%;" class="text-body text-left">{{ detail.address_destiny.full_name }}</td>
+            <tr>
+                <td style="width: 10%;" class="font-medium text-muted">&nbsp;</td>
+                <td style="width: 90%;" class="text-body text-left">{{ detail.address_destiny.full_name }}</td>
             </tr>
-            <tr style="padding-top: 1rem !important; height: 44px;">
+            <tr style="height: 36px;">
                 <td class="font-medium text-muted"></td>
-                <td class="text-body">{{ detail.address_destiny.address_complete }}ss</td>
+                <td class="text-body">{{ detail.address_destiny.address_complete }}</td>
             </tr>
             <tr>
                 <td class="font-medium text-muted"></td>
-                <td class="text-body">{{ detail.address_destiny.reference }}dd</td>
+                <td class="text-body">{{ detail.address_destiny.reference }}</td>
             </tr>
             <tr>
                 <td class="font-medium text-muted"></td>
-                <td class="text-body">{{ detail.address_destiny.cell_phone }}df</td>
+                <td class="text-body">{{ detail.address_destiny.cell_phone }}</td>
             </tr>
             <tr>
                 <td class="font-medium text-muted"></td>
-                <td class="text-body">{{ detail.description }}dd</td>
+                {% if detail.description %}
+                <td class="text-body">{{ detail.description }}</td>
+                {% else %}
+                <td class="text-body">...</td>
+                {% endif %}
             </tr>
         </tbody>
     </table>
     <table style="margin-bottom: 1rem;">
         <tbody>
             <tr>
-                <td style="width: 70%;">
+                <td style="width: 77%;">
                 </td>
-                <td style="width: 25%;" class="text-left">
+                <td style="width: 23%;" class="text-left">
                     {% qr_from_text detail.tracking_code size=5 image_format="png" error_correction="L" %}
                 </td>
             </tr>

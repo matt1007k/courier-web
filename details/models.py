@@ -196,6 +196,12 @@ class Detail(models.Model):
     def created_at_naturaltime(self):
         return naturaltime(self.created_at)
 
+    def created_at_localtime_localize(self):
+        return localize(localtime(self.created_at))
+
+    def get_created_at_format(self):
+        return self.created_at_localtime_localize()
+
     def apply_special_promo_to_price_rate(self, special):
         self.price_rate_previous = self.price_rate
         self.price_rate = special

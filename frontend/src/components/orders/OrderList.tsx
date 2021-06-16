@@ -30,7 +30,6 @@ const OrderList: React.FC = () => {
       });
   }
 
-
   const changePage = (currentPage: number) => {
     loadData(currentPage, status);
   };

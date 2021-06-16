@@ -2,7 +2,7 @@ export interface DetailState{
 	id: number;
 	tracking_code: string;
 	contain: string;
-	created_at_naturaltime: string;
+	get_created_at_format: string;
 	description: string;
 	distance: string;
 	get_tracking_code_text: string;

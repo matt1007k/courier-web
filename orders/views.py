@@ -361,7 +361,7 @@ class ReportRotuladoView(View):
                 'order': order,
             }
             response = HttpResponse(content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
+            response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
             template = get_template(template_name)
             html = template.render(context)
 

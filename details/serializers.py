@@ -1,7 +1,7 @@
 from addresses.models import Address
 from clients.models import Client
 from orders.models import Order
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from details.models import UnassignOriginAddress, Detail
 
@@ -86,15 +86,15 @@ class DetailSerializer(ModelSerializer):
             'order',
             'address_origin',
             'address_destiny',
-            "created_at_naturaltime",
-            "get_tracking_code_text",
+            'get_created_at_format',
+            'get_tracking_code_text',
         ]
 
         def get_tracking_code_text(self):
             return self.model.get_tracking_code_text()
 
-        def created_at_naturaltime(self):
-            return self.model.created_at_naturaltime()
+        def get_created_at_format(self):
+            return self.model.get_created_at_format()
 
 
 class UnAssignOrignAddressSerializer(ModelSerializer):
