@@ -5,8 +5,6 @@
 {% load static %}
 {% load humanize %}
 {% block content_head %}
-{% endblock content_head %}
-{% block content %}
 <div class="content-head">
     <div class="left">
         <h4>{{ title }}</h4>
@@ -85,9 +83,11 @@
                     <div class="head">
                         <div class="flex items-center">
                             <h6 style="margin-right: 5px;">Nuevo pedido para</h6>
+                            {% if request.user.is_administrator %}
                             <a href="{% url 'auth:create-client' %}" class="btn btn-outline-secondary btn-circle btn-xsmall"  data-balloon-pos="down" aria-label="Nuevo cliente"> 
                                 <i class="bx bx-plus"></i>
                             </a>
+                            {% endif %}
                         </div>
                         <div class="close">
                             <button @click="isOpen = false" class="btn btn-default btn-circle btn-small">
@@ -132,10 +132,12 @@
 
     </div>
 </div>
-<div id="orders">
-</div>
+{% endblock content_head %}
+{% block content %}
+<!-- <div id="orders">
+</div> -->
 
-<!-- <div class="filter-list">
+<div class="filter-list">
     <a href="{% url 'orders:index' %}" class="btn btn-{% if not 'status' in request.GET %}primary{% else %}link{% endif %} btn-rounded btn-small">Todos</a>
     {% for cstatus in statuses %}
     <a href="{% url 'orders:index' %}?status={{ cstatus }}" class="btn btn-{% if status == cstatus %}primary{% else %}link{% endif %} btn-rounded btn-small">{{ cstatus.label }}</a>
@@ -312,7 +314,7 @@
         </p>
     </div>
     {% endif %}
-</div> -->
+</div>
 
 {% endblock content %}
 {% block scripts %}
