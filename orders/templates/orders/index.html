@@ -175,7 +175,7 @@
                 <p class="text-small text-muted font-normal">{{ detail.get_tracking_code_text }}</p>
                 <h6>{{ detail.order.client.full_name }}</h6>
                 <div class="order-detail">
-                    <p>{{ detail.order.created_at|naturaltime }}</p>
+                    <p>{{ detail.order.created_at }}</p>
                 </div>
             </div>
             <div class="cursor-pointer icon-view h6" @click="isOpenSm = true">

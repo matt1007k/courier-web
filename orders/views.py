@@ -103,9 +103,8 @@ class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, L
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            object_list = self.request.user.driver.assignoriginaddress_set.order_by('-created_at')
+            object_list = self.request.user.driver.assignoriginaddress_set.exclude(is_received=True).order_by('-created_at')
         else:
-            # object_list = self.model.objects.filter(detail__status=Detail.PackageStatus.PENDING).order_by('-created_at')
             object_list = self.model.objects.order_by('-created_at')
 
         object_list = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
@@ -124,7 +123,7 @@ class ReporteAssignOriginAddressView(View):
     def get(self, request, *args, **kwargs):
         try:
             template_name = 'orders/assign/report/origins.html'
-            object_list = AssignOriginAddress.objects.filter(detail__status=Detail.PackageStatus.PENDING)
+            object_list = AssignOriginAddress.objects.exclude(is_received=True)
             origins = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
             
             context={
@@ -175,7 +174,7 @@ class AssignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixin,
 
     def get_queryset(self):
         if self.request.user.is_driver:
-            object_list = self.request.user.driver.assigndeliveryaddress_set.order_by('-created_at')
+            object_list = self.request.user.driver.assigndeliveryaddress_set.exclude(is_delivered=True).order_by('-created_at')
         else:
             object_list = self.model.objects.order_by('-created_at')
 
@@ -195,7 +194,7 @@ class ReporteAssignDeliveryAddressView(View):
     def get(self, request, *args, **kwargs):
         try:
             template_name = 'orders/assign/report/deliveries.html'
-            object_list = AssignDeliveryAddress.objects.filter(detail__status=Detail.PackageStatus.PENDING)
+            object_list = AssignDeliveryAddress.objects.exclude(is_delivered=True)
             deliveries = object_list.search_driver(self.query_driver()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
             
             context={
