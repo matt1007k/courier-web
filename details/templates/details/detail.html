@@ -27,7 +27,7 @@
                         <h5>
                             {{ detail.get_tracking_code_text }}
                         </h5>
-                        {{ detail.created_at }}
+                        <span class="text-muted" style="margin-right: 5px;">{{ detail.created_at }}</span>
                         {% include 'details/snippets/status.html' %}
                     </div>
                     <div class="mt-2">
@@ -142,12 +142,13 @@
                 </div>
             </div>
             <div class="order-right">
-                {% include 'details/snippets/detail-summary.html' %}
+                {% include 'details/snippets/detail-summary.html' with order=detail.order %}
 
                 {% if not request.user.is_driver %}
                 <div class="form-group mt-5">
                     {% if detail.order.promo_code %}
-                        <div class="mt-2 text-success">
+                        <h6>Código de promoción aplicada</h6>
+                        <div class="text-success">
                             <p>{{ detail.order.promo_code.code }}</p>
                         </div>
                     {% else %}
