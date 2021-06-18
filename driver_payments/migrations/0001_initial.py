@@ -14,16 +14,17 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='DriverPaymentRate',
+            name='DriverPayment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('min', models.IntegerField(default=0, verbose_name='mínimo de pedidos')),
-                ('max', models.IntegerField(default=0, verbose_name='máximo de pedidos')),
-                ('percentage', models.IntegerField(default=0, verbose_name='porcentaje de pago')),
+                ('count_orders', models.IntegerField(default=0, verbose_name='total de pedidos')),
+                ('total', models.DecimalField(decimal_places=2, max_digits=7, verbose_name='total pagado')),
+                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='fecha del pago')),
+                ('driver', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='drivers.driver', verbose_name='motorizado')),
             ],
             options={
-                'verbose_name': 'tarifario de pago del motorizado',
-                'verbose_name_plural': 'tarifarios de pago del motorizado',
+                'verbose_name': 'pago del motorizado',
+                'verbose_name_plural': 'pagos del motorizado',
             },
         ),
     ]
