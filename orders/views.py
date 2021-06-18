@@ -1,5 +1,6 @@
 import json
 import ast
+from settings.models import Setting
 import threading
 from datetime import datetime
 
@@ -28,7 +29,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 from .utils import delete_order, get_or_create_order 
 from pages.utils import is_valid_queryparams
-from details.utils import get_generate_tracking_code
+from details.utils import get_generate_tracking_code, get_time_now
 from .models import Order
 
 class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -261,6 +262,19 @@ class UnassignDeliveryAddressListView(LoginRequiredMixin, PermissionRequiredMixi
 @login_required()
 @permission_required('orders.add_order', raise_exception=True)
 def create_order_view(request):
+    if request.user.is_client:
+        setting = Setting.objects.first() 
+        if setting is None:
+            messages.error(request, 'Falta una configuración, le recomedamos comunicarse con el administrador del sistema')
+            return redirect('orders:index')
+
+        if not get_time_now() >= setting.time_limit_to and (get_time_now() <= setting.time_limit_from or get_time_now() >= setting.time_limit_from):
+            setting.cannot_create_order()
+            messages.error(request, setting.message_origin)
+            return redirect('orders:index')
+        else:
+            setting.can_create_order()
+
     order = get_or_create_order(request) 
         
     return render(request, 'orders/create.html', context={

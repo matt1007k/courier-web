@@ -25,7 +25,7 @@ class OriginAddressForm(forms.Form):
     origin_full_name = forms.CharField(max_length=100, label='Nombre completo de la persona', widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    origin_email = forms.EmailField(validators=[validate_email],max_length=100, label='Correo electrónico' ,widget=forms.EmailInput(attrs={
+    origin_email = forms.EmailField(validators=[validate_email],max_length=100, required=False, label='Correo electrónico (opcional)' ,widget=forms.EmailInput(attrs={
         'class': 'input'
     }))
     origin_cell_phone = forms.CharField(validators=[phone_regex],max_length=9, label='Num. de celular' ,widget=forms.TextInput(attrs={
@@ -52,7 +52,7 @@ class DestinyAddressForm(forms.Form):
     destiny_full_name = forms.CharField(max_length=100, label='Nombre completo de la persona', widget=forms.TextInput(attrs={
         'class': 'input'
     }))
-    destiny_email = forms.EmailField(validators=[validate_email],max_length=100, label='Correo electrónico' ,widget=forms.EmailInput(attrs={
+    destiny_email = forms.EmailField(validators=[validate_email],max_length=100, required=False, label='Correo electrónico (opcional)' ,widget=forms.EmailInput(attrs={
         'class': 'input'
     }))
     destiny_cell_phone = forms.CharField(validators=[phone_regex],max_length=9, label='Num. de celular' ,widget=forms.TextInput(attrs={

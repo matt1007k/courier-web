@@ -15,6 +15,7 @@
     <div class="text-center">
         <h5>Pedido realizado con éxito</h5>
         <p>El detalle de tu pedido serán enviados al correo, de las personas que registrados en la dirección de envío, con el # TRACKING, podrás seguir la ubicación de tu pedido.</p>
+        <p class="text-small font-medium">NOTA: RECUERDE QUE EL ROTULADO Y EMBALADO ES RESPONSABILIDAD DEL CLIENTE.</p>
         <div class="actions right mt-6">
         <a href="{% url 'orders:index' %}" class="btn btn-primary">Ir a mis pedidos</a>
         <a href="{% url 'orders:rotulado' order.pk %}" class="btn btn-default">

@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'valorations',
     'promo_codes',
     'service_prices',
-    'driver_payments'
+    'driver_payments',
+    'settings'
 ]
 
 # INSTALLED_APPS += ('naomi',)

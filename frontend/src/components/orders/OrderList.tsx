@@ -74,4 +74,6 @@ const OrderList: React.FC = () => {
 export default OrderList;
 
 const container = document.getElementById("orders");
-render(<OrderList />, container);
+if (container){
+  render(<OrderList />, container);
+}
