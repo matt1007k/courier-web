@@ -61,7 +61,7 @@
                         <p class="text-small m-0">Precio de tarifa</p>
                     </div>
                 </div>
-                {% if detail.is_delivered %}
+                {% if detail.is_delivered and not request.user.is_client %}
                 <div class="mt-4">
                     <h6>Imágenes de la entrega</h6>
                     <div class="mt-2">
@@ -91,6 +91,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% if detail.get_delivered_data.image2 %}
                         <div class="modal-container" x-data="{ isOpen: false }">
                             <div class="cursor-pointer" @click="isOpen = true">
                                 <img class="w-full" src="{{ detail.get_delivered_data.image2.url }}" alt="Imagen 2">
@@ -117,6 +118,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                         <div class="mt-2">
                             <h6>Observación o nota</h6>
                             {% if detail.get_delivered_data.description %}

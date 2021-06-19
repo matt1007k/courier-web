@@ -180,11 +180,13 @@ class Detail(models.Model):
         self.status = Detail.PackageStatus.DELIVERED
         self.save()
         if self.is_assign_delivery:
-            self.get_assign_delivery().received()
+            self.get_assign_delivery().delivered()
 
     def undelivered(self):
         self.status = Detail.PackageStatus.UNDELIVERED
         self.save()
+        if self.is_assign_delivery:
+            self.get_assign_delivery().undelivered()
 
     def reprogrammed(self):
         self.status = Detail.PackageStatus.REPROGRAMMED
@@ -331,6 +333,11 @@ class AssignDeliveryAddress(models.Model):
     def delivered(self):
         self.is_delivered = True
         self.date_delivered = datetime.now()
+        self.save()
+
+    def undelivered(self):
+        self.is_delivered = False
+        self.date_delivered = None
         self.save()
 
     class Meta:

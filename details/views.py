@@ -106,11 +106,11 @@ def origin_map_view(request, pk):
     template_name = 'details/origin-map.html'
     detail = Detail.objects.get(pk=pk) 
     if not detail.is_delivered and request.user.is_driver:
+        detail.on_routed()
         TrackingOrder.objects.create(
             detail=detail,
             location='El motorizado está en camino de recojer tu paquete'
         )
-        detail.on_routed()
 
     if detail.is_assign_origin:
         driver = AssignOriginAddress.objects.filter(detail=detail).first().driver
