@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { render } from "react-dom";
 import { get } from "../../utils/request";
 
@@ -9,10 +9,14 @@ import OrderItem from "./OrderItem";
 import { FilterStatus } from "./FilterStatus";
 import Pagination from '../Navigation/Pagination';
 
+import { AuthContext, AuthContextProvider } from '../../context/AuthContext';
+import { getPermissions } from '../../api/authApi'
+
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<DetailState[]>([])
   const [status, setStatus] = useState<string>('');
   const [link, setLink] = useState<PaginationState>({page: 1, total: 0, lastPage: 0, perPage: 10, start: 0, end:10});
+  const { state, dispatch } = useContext(AuthContext);
 
 
   const loadData = (page: number = 1, status: string = '') => {
@@ -28,6 +32,7 @@ const OrderList: React.FC = () => {
           end: data.end
         });
       });
+    getPermissions(dispatch);
   }
 
   const changePage = (currentPage: number) => {
@@ -43,6 +48,7 @@ const OrderList: React.FC = () => {
 
   return (
     <>
+    {JSON.stringify(state.permissions)}
       <FilterStatus status={status} onStatus={filterByStatus} />
       <div className="mb-10 order-list-grid">
         <div className="order-list-head">
@@ -74,6 +80,8 @@ const OrderList: React.FC = () => {
 export default OrderList;
 
 const container = document.getElementById("orders");
-if (container){
-  render(<OrderList />, container);
-}
+render(
+  <AuthContextProvider>
+    <OrderList />
+  </AuthContextProvider>
+, container);
