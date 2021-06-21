@@ -1,12 +1,12 @@
-import { PermissionState } from '../types/auth'
+import { AuthState } from '../types/auth'
 
 export const FetchStart = () => ({
 	type: 'fetch_start',
 });
 
-export const FetchSuccess = (permissions: PermissionState) => ({
+export const FetchSuccess = (data: AuthState) => ({
 	type: 'fetch_success',
-	payload: permissions,
+	payload: data,
 });
 
 export const FetchError = (error: any) => ({

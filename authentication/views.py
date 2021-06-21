@@ -170,13 +170,24 @@ class PermissionAuthListApiView(APIView):
     def get(self, request):
         auth = request.user
         permission_auth = auth.user_permissions.all()
+        role = {
+            'is_admin': auth.is_administrator,     
+            'is_driver': auth.is_driver,     
+            'is_client': auth.is_client,     
+        }
         try:
             permission_group = auth.groups.first().permissions.all()
             sr = PermissionSerializer(permission_group | permission_auth, many=True)
 
-            return Response(sr.data)
+            return Response({
+                'permissions': sr.data,
+                'role': role
+            })
         except AttributeError:
             print('errors')
 
         sr = PermissionSerializer(permission_auth, many=True)
-        return Response(sr.data)
+        return Response({ 
+            'permissions': sr.data,
+            'role': role
+        })
