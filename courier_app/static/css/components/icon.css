@@ -20,7 +20,7 @@
 }
 .icon-secondary-default{
     background: rgba(var(--secondary-color), .2) !important;
-    color: white;
+    color: rgba(var(--secondary-color));
 }
 .icon-success{
     background: rgb(var(--success-color));

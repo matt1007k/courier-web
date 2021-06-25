@@ -1,0 +1,95 @@
+.budget__card{
+	width: 100%;
+	margin: 0 auto;
+}
+.budget__title, .budget__subtitle{
+	font-size: 12px;
+	font-weight: 600;
+	font-family: 'Montserrat', sans-serif;
+	text-transform: uppercase;
+	color: var(--text-secondary-color);
+}
+.budget__mount{
+	font-size: 24px;
+	font-weight: bold;
+	color: rgba(var(--title-color));
+}
+.budget__detail{
+	margin-top: 40px;
+}
+.budget__detail-entry, .budget__detail-expense{
+	width: 100%;
+	display: flex;
+	align-items:center;
+	justify-content: space-between;
+}
+.budget__detail-mount{
+	font-size: 18px;
+	font-weight: 600;
+	font-family: 'Montserrat', sans-serif;
+	color: rgba(var(--title-color));
+}
+.budget__detail-excol{
+	display: flex;
+	align-items: center;
+}
+.budget__detail-excol .budget__detail-mount{
+	margin-left: 10px;
+}
+.budget__list{
+	margin-top: 35px;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 40px;
+}
+
+.entry__title, .expense__title{
+	display: flex;
+	align-items: center;
+}
+.entry__title h5, .expense__title h5{
+	margin-bottom: 0;
+}
+.entry__title .bx, .expense__title .bx{
+	margin-left: 10px;
+}
+.entry__list, .expense__list{
+	margin-top: 30px;
+}
+.entry__item, .expense__item{
+	display: flex;
+	margin-bottom: 20px;
+}
+.entry__item:last-child, .expense__item:last-child {
+	margin-bottom: 0;
+}
+.entry__item .icon, .expense__item .icon{
+	width: 15%;
+}
+.entry__item .enmount, .expense__item .exmount{
+	width: 25%;
+	margin-left: 10px;
+}
+.entry__content, .expense__content{
+	width: 60%;
+	margin-left: 10px;
+}
+.entry__content p, .expense__content p{
+	font-size: 12px;
+}
+
+@media (min-width: 768px){
+	.budget__card{
+		width: 60%;
+		margin: 0 auto;
+	}
+}
+@media (min-width: 1024px){
+	.budget__card{
+		width: 40%;
+		margin: 0 auto;
+	}
+	.budget__list{
+		grid-template-columns: repeat(2, 1fr);
+	}
+}

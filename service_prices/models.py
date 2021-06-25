@@ -9,8 +9,12 @@ class ServicePrice(models.Model):
         return "S/.{}".format(round(self.price, 2))
 
     class Meta:
+        permissions = (
+            ("can_view_budget", "Puede ver el presupuesto"),
+        )
         verbose_name = 'precio del servicio'
         verbose_name_plural = 'precios del servicio'
+
 
 # EL PRECIO DEL SERVICIO SE CALCULA ASÍ.
 

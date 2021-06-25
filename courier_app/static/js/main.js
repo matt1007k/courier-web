@@ -16,4 +16,27 @@
     });
     });
 
+
+    // format price and percent 0.20 to 20.00%
+    var mountsEl = document.querySelectorAll('.mount');
+    var percentsEl = document.querySelectorAll('.percent');
+
+    const formatMount = (value) => {
+        if (typeof value != 'number') return;
+        var options = { style: 'currency', currency: 'PEN', minimumFractionDigits: 2};
+        return value.toLocaleString('es-PE', options);
+    }
+    const formatPercent = (value) => {
+        if (typeof value != 'number') return;
+        var options = { style: 'percent', minimumFractionDigits: 2 };
+        return value.toLocaleString('es-PE', options);
+    }
+
+    for (mountEl of mountsEl) {
+        mountEl.textContent = formatMount(+mountEl.textContent);
+    }
+    for (percentEl of percentsEl) {
+        percentEl.textContent = formatPercent(+percentEl.textContent);
+    }
+
 })()
