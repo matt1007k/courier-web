@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from django.contrib.auth import views as auth_views
-from .views import dashboard
+from .views import budget_view, dashboard
 
 handler404 = 'pages.views.error_404' #DEBUG = False production
 handler403 = 'pages.views.error_403' #DEBUG = False production
@@ -29,6 +29,7 @@ handler500 = 'pages.views.error_500' #DEBUG = False production
 urlpatterns = [
     path('', include('pages.urls', namespace="index")),
     path('dashboard/', dashboard, name="dash"),
+    path('budget/', budget_view, name="budget"),
     path('auth/', include('authentication.urls', namespace='auth')),
     path('addresses/', include('addresses.urls', namespace='addresses')),
     path('clients/', include('clients.urls', namespace='clients')),

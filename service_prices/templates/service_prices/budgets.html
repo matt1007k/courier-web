@@ -4,6 +4,7 @@
 {% endblock title %}
 {% load static %}
 {% load humanize %}
+{% load l10n %}
 {% block content_head %}
 <div class="content-head">
     <div class="left">
@@ -17,18 +18,18 @@
 {% block content %}
 <div class="card budget__card">
   <h6 class="budget__title">Total del presupuesto</h6>
-  <div class="budget__mount mount">2000</div>
+  <div class="budget__mount mount">{{ total }}</div>
 
   <div class="budget__detail">
     <div class="budget__detail-entry">
       <div class="budget__subtitle">Ingresos</div>
-      <div class="budget__detail-mount mount text-success">1500</div>
+      <div class="budget__detail-mount mount text-success">{{ total_entry }}</div>
     </div>
     <div class="budget__detail-expense">
       <div class="budget__subtitle">Gastos</div>
       <div class="budget__detail-excol">
-        <span class="badge badge-danger badge-xs percent">0.20</span>
-        <div class="budget__detail-mount mount text-danger">500</div>
+        <span class="badge badge-danger badge-xs">{{ percent|unlocalize }}%</span>
+        <div class="budget__detail-mount mount text-danger">{{ total_payment }}</div>
       </div>
     </div>
   </div>
@@ -44,30 +45,20 @@
       <p>Últimos pedidos realizados</p>
     </div>
     <div class="entry__list">
+      {% for entry in entries %}
       <div class="entry__item">
         <div class="icon icon-warning-default rounded rounded-md">
-          <img src="./static/icon/order-icon.svg">
+          <img src="{% static 'icon/order-icon.svg' %}">
         </div>
         <div class="entry__content">
-          <h6>Juan Rojas Cruz</h6>
-          <p>20 de junio de 2020 a las 20:00 a.m.</p>
+          <h6>{{ entry.client.full_name }}</h6>
+          <p>{{ entry.created_at }}</p>
         </div>
         <div class="enmount">
-          <span class="badge badge-success mount">12</span>
+          <span class="badge badge-success mount">{{ entry.price_rate|unlocalize }}</span>
         </div>
       </div>
-      <div class="entry__item">
-        <div class="icon icon-warning-default rounded rounded-md">
-          <img src="./static/icon/order-icon.svg">
-        </div>
-        <div class="entry__content">
-          <h6>Juan Rojas Cruz</h6>
-          <p>20 de junio de 2020 a las 20:00 a.m.</p>
-        </div>
-        <div class="enmount">
-          <span class="badge badge-success mount">12</span>
-        </div>
-      </div>
+      {% endfor %}
     </div>
   </div>
   
@@ -80,30 +71,20 @@
       <p>Últimos pagos realizados a los motorizados</p>
     </div>
     <div class="expense__list">
+      {% for expense in expenses %}
       <div class="expense__item">
         <div class="icon icon-secondary-default rounded rounded-md">
           <i class="bx bx-user-check bx-sm"></i>
         </div>
         <div class="expense__content">
-          <h6>Juan Rojas Cruz</h6>
-          <p>20 de junio de 2020 a las 20:00 a.m.</p>
+          <h6>{{ expense.driver.full_name }}</h6>
+          <p>{{ expense.created_at }}</p>
         </div>
         <div class="exmount">
-          <span class="badge badge-danger mount">12</span>
+          <span class="badge badge-danger mount">{{ expense.total|unlocalize }}</span>
         </div>
       </div>
-      <div class="expense__item">
-        <div class="icon icon-secondary-default rounded rounded-md">
-          <i class="bx bx-user-check bx-sm"></i>
-        </div>
-        <div class="expense__content">
-          <h6>Juan Rojas Cruz</h6>
-          <p>20 de junio de 2020 a las 20:00 a.m.</p>
-        </div>
-        <div class="exmount">
-          <span class="badge badge-danger mount">12</span>
-        </div>
-      </div>
+      {% endfor %}
     </div>
 
   </div>
