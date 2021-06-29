@@ -10,7 +10,7 @@
         <h4>{{ title }}</h4>
     </div>
     <div class="right">
-        <div x-data="{ isOpen: false }" class="container-modal">
+        <!-- <div x-data="{ isOpen: false }" class="container-modal">
             <button @click="isOpen = true" class="btn btn-link btn-small">
                 <svg class="filter" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -65,7 +65,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         {% if perms.orders.add_order %}
         {% if request.user.is_client%}

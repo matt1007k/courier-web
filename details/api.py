@@ -56,12 +56,14 @@ class DetailApiListView(APIView):
 
         return Response({
             'data': serializer.data,
-            'total': total,
-            'page': page,
-            'per_page': per_page,
-            'last_page': math.ceil(total / per_page),
-            'start': start + 1,
-            'end': end,
+            'links': {
+                'total': total,
+                'page': page,
+                'perPage': per_page,
+                'lastPage': math.ceil(total / per_page),
+                'start': start + 1,
+                'end': end,
+            }
         })
 
 class StatusDetailApiViewList(APIView):

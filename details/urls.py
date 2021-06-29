@@ -7,7 +7,7 @@ app_name = 'details'
 
 urlpatterns = [
     path('<int:pk>/paquete/', PackageDetailView.as_view(), name="detail"),
-    path('<int:pk>/status/change', change_status_view, name="change-status"),
+    path('<int:pk>/status/change/', change_status_view, name="change-status"),
     path('<int:pk>/delete/', DeleteDetailView.as_view(), name="delete"),
     path('<int:pk>/origin-map/', origin_map_view, name="origin-map"),
     path('<int:pk>/destiny-map/', destiny_map_view, name="destiny-map"),

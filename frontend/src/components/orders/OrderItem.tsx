@@ -38,13 +38,38 @@ const OrderItem: React.FC<OrderItemProps> = ({detail}) => {
                     </div>
                 }>
                     <div className="options">
-                        <a href="#" className="option-item">
-                            <span>Ver detalles</span>
-                            <div className="icon ">
-                                <i className='bx bx-show bx-sm'></i>
-                            </div>
-                        </a>
+                        { state.role.is_client || can(state.permissions, 'view_trackingorder')
+                            ? (
+                            <a href={`/details/${detail.tracking_code}/tracking/`} className="option-item">
+                                <span>Seguimiento</span>
+                                <div className="icon">
+                                    <i className='bx bx-list-check bx-sm'></i>
+                                </div>
+                            </a>)
+                            : null
+                        }
+                        { can(state.permissions, 'view_detail')
+                            ? (
+                            <a href={`/details/${detail.id}/paquete/?next=/orders/`} className="option-item">
+                                <span>Ver detalles</span>
+                                <div className="icon">
+                                    <i className='bx bx-show bx-sm'></i>
+                                </div>
+                            </a>)
+                            : null
+                        }
+                        { state.role.is_admin
+                            ? (
+                            <a href={`/details/${detail.id}/status/change/`} className="option-item">
+                                <span>Cambiar estado</span>
+                                <div className="icon">
+                                    <i className='bx bx-wrench bx-sm'></i>
+                                </div>
+                            </a>)
+                            : null
+                        }
                     </div>
+
                 </ModalBottom>
             </div>
             <div className="order-list-col">
@@ -72,7 +97,7 @@ const OrderItem: React.FC<OrderItemProps> = ({detail}) => {
                             <i className='bx bx-dots-horizontal-rounded bx-sm'></i>
                         </div>
                     }>
-                    { state.role.is_client
+                    { state.role.is_client || can(state.permissions, 'view_trackingorder')
                         ? (
                         <a href={`/details/${detail.tracking_code}/tracking/`} className="dropdown-item-2">
                             <span>Seguimiento</span>
@@ -83,8 +108,16 @@ const OrderItem: React.FC<OrderItemProps> = ({detail}) => {
                     { can(state.permissions, 'view_detail')
                         ? (
                         <a href={`/details/${detail.id}/paquete/?next=/orders/`} className="dropdown-item-2">
-                            <span>ver detalles</span>
+                            <span>Ver detalles</span>
                             <i className='bx bx-show bx-sm'></i>
+                        </a>)
+                        : null
+                    }
+                    { state.role.is_admin
+                        ? (
+                        <a href={`/details/${detail.id}/status/change/`} className="dropdown-item-2">
+                            <span>Cambiar estado</span>
+                            <i className='bx bx-wrench bx-sm'></i>
                         </a>)
                         : null
                     }

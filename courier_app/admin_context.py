@@ -20,13 +20,6 @@ def menu_items(request):
             'permission': request.user.has_perm('orders.view_order'),
         },
         {
-            'title': 'Mis pagos' if request.user.is_authenticated and request.user.is_driver else 'Pagos',
-            'icon': 'bx-credit-card',
-            'img': None,
-            'path': reverse('driver_payments:index'),
-            'permission': request.user.is_authenticated and request.user.is_driver or request.user.has_perm('driver_payments.view_driverpayment'),
-        },
-        {
             'title': 'Presupuesto',
             'icon': 'bxs-badge-dollar',
             'img': None,
@@ -39,6 +32,13 @@ def menu_items(request):
             'img': None,
             'path': reverse('drivers:index'),
             'permission': request.user.has_perm('drivers.view_driver'),
+        },
+        {
+            'title': 'Mis pagos' if request.user.is_authenticated and request.user.is_driver else 'Pagos',
+            'icon': 'bx-credit-card',
+            'img': None,
+            'path': reverse('driver_payments:index'),
+            'permission': request.user.is_authenticated and request.user.is_driver or request.user.has_perm('driver_payments.view_driverpayment'),
         },
         {
             'title': 'Clientes',
