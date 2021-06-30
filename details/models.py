@@ -365,7 +365,7 @@ class UnassignDeliveryAddress(models.Model):
         verbose_name_plural = 'direcciones de envío sin asignar '
 
 class PackageDelivered(models.Model):
-    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='dirección de envío')
+    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, verbose_name='paquete a entregar')
     driver = models.ForeignKey(Driver, null=True, blank=True, on_delete=models.CASCADE, verbose_name='motorizado')
     image = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', verbose_name='imagen o foto 1')
     image2 = models.ImageField(upload_to='orders/delivered/%Y/%m/%d/', null=True, blank=True, verbose_name='imagen o foto 2')
