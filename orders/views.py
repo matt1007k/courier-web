@@ -565,7 +565,7 @@ class ReportOrdersPDFView(View):
     def get(self, request, *args, **kwargs):
         try:
             template_name = 'orders/report/order-list.html'
-            orders = Detail.objects.search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_by_date(self.query_date())
+            orders = Detail.objects.exclude(tracking_code=None).search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_by_date(self.query_date())
             date_now = datetime.now().strftime("%d-%m-%Y")
 
             context={
