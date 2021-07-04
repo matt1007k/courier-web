@@ -663,7 +663,7 @@ def export_orders_excel_view(request):
     headers = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio S/']
     name_sheet = 'Ordenes'
 
-    qs = Detail.objects.search_detail_and_client(query).search_by_address_origin(query_origin).search_by_address_delivery(query_destiny).search_by_status(query_status).search_by_date(query_date)
+    qs = Detail.objects.exclude(tracking_code=None).search_detail_and_client(query).search_by_address_origin(query_origin).search_by_address_delivery(query_destiny).search_by_status(query_status).search_by_date(query_date)
     dict_qs = [{ 'tracking_code': detail.tracking_code, 
                 'client': detail.client.full_name(),
                 'created_at': detail.get_created_at_format(),
