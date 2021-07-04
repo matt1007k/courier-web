@@ -17,7 +17,7 @@ const OrderItem: React.FC<OrderItemProps> = ({detail}) => {
     const { state, dispatch } = useContext(AuthContext);
     useEffect(() => {
         getPermissions(dispatch);
-    }, [])
+    }, [dispatch]);
 
     return (
         <div className="card card-normal order-list-row">

@@ -1,5 +1,7 @@
+from io import BytesIO, StringIO
 import json
 import ast
+import os
 from settings.models import Setting
 import threading
 from datetime import datetime
@@ -12,7 +14,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from details.paginations import LargeResultsSetPagination
 from details.serializers import UnAssignOrignAddressSerializer
-from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http.response import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.serializers import serialize
 from rest_framework.generics import ListAPIView, get_object_or_404
 from orders.mails import Mail
@@ -319,29 +321,31 @@ def payment_view(request):
                 ruc = request.POST.get('ruc'),
             )
             for detail in order.detail_set.all():
-                detail.payed(
-                    tracking_code = get_generate_tracking_code(),
-                )
-                if detail.address_origin.email:
-                    thread = threading.Thread(
-                        target=Mail.send_complete_order,
-                        args=(detail, detail.address_origin.full_name, detail.address_origin.email, request)
+                if detail.tracking_code is None:
+                    detail.payed(
+                        tracking_code = get_generate_tracking_code(),
                     )
-                    thread.start()
-                if detail.address_destiny.email:
-                    thread2 = threading.Thread(
-                        target=Mail.send_complete_order,
-                        args=(detail, detail.address_destiny.full_name, detail.address_destiny.email, request)
+                if detail.tracking_code:
+                    if detail.address_origin.email:
+                        thread = threading.Thread(
+                            target=Mail.send_complete_order,
+                            args=(detail, detail.address_origin.full_name, detail.address_origin.email, request)
+                        )
+                        thread.start()
+                    if detail.address_destiny.email:
+                        thread2 = threading.Thread(
+                            target=Mail.send_complete_order,
+                            args=(detail, detail.address_destiny.full_name, detail.address_destiny.email, request)
+                        )
+                        thread2.start()
+                    TrackingOrder.objects.create(
+                        detail=detail,
+                        location='Pendiente a recojer en el dirección ingresada.'
                     )
-                    thread2.start()
-                TrackingOrder.objects.create(
-                    detail=detail,
-                    location='Pendiente a recojer en el dirección ingresada.'
-                )
-                if not detail.is_unassign_delivery:
-                    UnassignDeliveryAddress.objects.create(detail=detail)
-                if not detail.is_unassign_origin:
-                    UnassignOriginAddress.objects.create(detail=detail)
+                    if not detail.is_unassign_delivery:
+                        UnassignDeliveryAddress.objects.create(detail=detail)
+                    if not detail.is_unassign_origin:
+                        UnassignOriginAddress.objects.create(detail=detail)
             return redirect('orders:payment-success') 
         else:
             messages.error(request, 'Usted no ha realizado el pago, siga la forma de pago')
@@ -362,6 +366,7 @@ def payment_success_view(request):
 
 class ReportRotuladoView(View):
     def get(self, request, *args, **kwargs):
+        request.session['order_id'] = None
         try:
             template_name = 'orders/report/rotulado.html'
             order = get_object_or_404(Order, pk=self.kwargs['pk']) 
@@ -539,3 +544,177 @@ def return_unassign_delivery_view(request, pk):
             return redirect("orders:deliveries")
         messages.success(request, 'La dirección de envío, ya dejó de ser asignada previamente.')
         return redirect("orders:deliveries")
+
+
+class ReportOrdersPDFView(View):
+    def query(self):
+        return self.request.GET.get('q')
+
+    def query_date(self):
+        return self.request.GET.get('date')
+
+    def query_status(self):
+        return self.request.GET.get('status')
+
+    def query_origin(self):
+        return self.request.GET.get('origin')
+
+    def query_destiny(self):
+        return self.request.GET.get('destiny')
+
+    def get(self, request, *args, **kwargs):
+        try:
+            template_name = 'orders/report/order-list.html'
+            orders = Detail.objects.search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_by_date(self.query_date())
+            date_now = datetime.now().strftime("%d-%m-%Y")
+
+            context={
+                'filename': 'reporte-ordenes-{}'.format(date_now),
+                'date': date_now,
+                'logo': 'img/logo.png',
+                'ui': 'img/report/ui-rotulado.png',
+                'orders': orders,
+            }
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(context['filename'])
+            template = get_template(template_name)
+            html = template.render(context)
+
+            pisa_status = pisa.CreatePDF(
+                html, 
+                dest=response,
+                link_callback=link_callback
+            )
+            if pisa_status.err:
+                return HttpResponse('We had some errors <pre>' + html + '</pre>')
+            return response
+
+        except Exception as e:
+            return e
+        return HttpResponseRedirect(reverse_lazy('orders:index'))
+
+class ExportOrdersExcelView(View):
+    pass
+    # def query(self):
+    #     return self.request.GET.get('q')
+
+    # def query_date(self):
+    #     return self.request.GET.get('date')
+
+    # def query_status(self):
+    #     return self.request.GET.get('status')
+
+    # def query_origin(self):
+    #     return self.request.GET.get('origin')
+
+    # def query_destiny(self):
+    #     return self.request.GET.get('destiny')
+
+    # def get(self, request, *args, **kwargs):
+    #     # try:
+    #     date_now = datetime.now().strftime("%d-%m-%Y")
+    #     filename = 'reporte-ordenes-{}'.format(date_now),
+
+    #     response = HttpResponse(content_type='application/vnd.ms-excel')
+    #     # response['Content-Disposition'] = 'attachment; filename={}.xls'.format(filename)
+
+    #     wb = xlwt.Workbook(encoding='utf-8')
+    #     ws = wb.add_sheet('Ordenes')
+    #     row_num = 0
+    #     font_style = xlwt.XFStyle()
+    #     font_style.font.bold = True
+
+    #     headers = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio']
+    #     for col_num in range(len(headers)):
+    #         ws.write(row_num, col_num, headers[col_num], font_style)
+
+    #     font_style = xlwt.XFStyle()
+
+    #     columns = ['tracking_code', 'client__first_name', 'created_at', 'address_destiny__address', 'address_destiny__full_name', 'address_destiny__cell_phone', 'price_rate']
+    #     # rows = Detail.objects.search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_by_date(self.query_date())
+    #     rows = Detail.objects.all().order_by('-id')
+
+    #     for detail in rows:
+    #         row_num += 1
+    #         ws.write(row_num, 0, detail.tracking_code, font_style)
+    #         ws.write(row_num, 1, detail.client.full_name(), font_style)
+    #         ws.write(row_num, 2, detail.created_at_localtime_localize(), font_style)
+    #         ws.write(row_num, 3, detail.address_destiny.address_complete(), font_style)
+    #         ws.write(row_num, 4, detail.address_destiny.full_name, font_style)
+    #         ws.write(row_num, 5, detail.address_destiny.cell_phone, font_style)
+    #         ws.write(row_num, 6, detail.price_rate, font_style)
+
+    #     # output = StringIO()
+    #     output = BytesIO()
+    #     wb.save(output)
+
+    #     output.seek(0)
+    #     response["Content-Disposition"] = "attachment;filename*=utf-8''{}".format(filename)
+
+    #     response.write(output.getValue())
+
+            # for i, h in enumerate(headers):
+            #     ws.write(0, i, h, font_style)
+            # cols = 1
+            # for query in rows.values(*columns):
+            #     for i, k in enumerate(columns):
+            #         v = query.get(k)
+            #         if isinstance(v, datetime):
+            #             v = v.strftime('%Y-%m-%d %H:%M:%S')
+            #         ws.write(cols, i, v)
+            #     cols += 1
+            # wb.save(filename)
+            # response = FileResponse(file_iterator(filename))
+            # response['Content-Type'] = 'application/vnd.ms-excel'
+            # response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+
+            # wb.save(response)
+        # wb.save(response)
+        # return response
+
+        # except Exception as e:
+        #     return e
+
+
+
+def export_orders_excel_view(request):
+    return HttpResponse({
+        'status': True
+    })
+    # query = request.GET.get('q')
+    # query_date = request.GET.get('date')
+    # query_status = request.GET.get('status')
+    # query_origin = request.GET.get('origin')
+    # query_destiny = request.GET.get('destiny')
+
+    # date_now = datetime.now().strftime("%d-%m-%Y")
+    # filename = 'reporte-ordenes-{}'.format(date_now),
+
+    # response = HttpResponse(content_type='application/vnd.ms-excel')
+    # response['Content-Disposition'] = 'attachment; filename={}.xls'.format(filename)
+
+    # wb = xlwt.Workbook(encoding='utf-8')
+    # ws = wb.add_sheet(u'Ordenes')
+    # row_num = 0
+    # font_style = xlwt.XFStyle()
+    # font_style.font.bold = True
+
+    # columns = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio']
+    # for col_num in range(len(columns)):
+    #     ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # font_style = xlwt.XFStyle()
+
+    # rows = Detail.objects.search_detail_and_client(query).search_by_address_origin(query_origin).search_by_address_delivery(query_destiny).search_by_status(query_status).search_by_date(query_date).values_list('tracking_code', 'client__first_name', 'created_at', 'address_destiny__address', 'address_destiny__full_name', 'address_destiny__cell_phone', str('price_rate'))
+
+    # for row in rows:
+    #     row_num += 1
+
+    #     for col_num in range(len(row)):
+    #         ws.write(row_num, col_num, str(row[col_num]), font_style)
+
+    # wb.save(response)
+    # return response
+
+
+

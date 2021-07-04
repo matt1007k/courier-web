@@ -1,5 +1,9 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState, useContext } from 'react'
 import { FilterWrapper, FilterHeader, FilterContent, FilterForm } from './styles';
+
+import { AuthContext } from '../../../context/AuthContext';
+import { getPermissions } from '../../../api/authApi'
+import { can } from '../../../utils/authorization';
 
 export interface FilterFormState{
 	q: string;
@@ -10,15 +14,21 @@ export interface FilterFormState{
 
 interface FilterAdvancedProps {
 	onSubmitForm: (form: FilterFormState) => void;
+	status: string;
 }
 
-const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm }) => {
+const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status }) => {
 	const [show, setShow] = useState<boolean>(false);
 
 	const [q, setQ] = useState<string>('');
 	const [origin, setOrigin] = useState<string>('');
 	const [destiny, setDestiny] = useState<string>('');
 	const [date, setDate] = useState<string>('');
+    const { state, dispatch } = useContext(AuthContext);
+
+    useEffect(() => {
+        getPermissions(dispatch);
+    }, [])
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -33,6 +43,24 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm }) => {
 		onSubmitForm({q: '', origin: '', destiny: '', date: ''});
 	}
 
+	const getParamsFilter = () => {
+		return '?' + (new URLSearchParams({
+			status,
+			q,
+			origin,
+			destiny,
+			date,
+		})).toString();
+	}
+	
+	const exportPDF = () => {
+		window.location.href = '/orders/exportPDF/' + getParamsFilter();
+	}
+
+	const exportExcel = () => {
+		window.location.href = '/orders/exportExcel/' + getParamsFilter();
+	}
+
 	return (
 		<FilterWrapper>
 			<FilterHeader>
@@ -40,6 +68,26 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm }) => {
 					<i className='bx bx-sm bx-slider-alt'></i>
 					<span>Filtrar</span>
 				</button>
+				<div style={{marginLeft: '20px', display: 'flex', overflowX: 'auto'}}>
+					{ state.role.is_admin && <>
+						<button 
+							style={{ marginRight: '4px', padding: '8px', background: '#f40f02'}}
+							className="btn btn-danger btn-small" 
+							onClick={() => exportPDF()}
+							>
+							<i className='bx bxs-file-pdf bx-sm'></i>
+							<span>PDF</span>
+						</button>
+						<button 
+							style={{ padding: '8px', background: '#1d6f42', color: 'white'}}
+							className="btn btn-success btn-small" 
+							onClick={() => exportExcel()}
+							>
+							<i className='bx bxs-file bx-sm'></i>
+							<span>Excel</span>
+						</button>
+					</>}
+				</div>
 			</FilterHeader>
 			<FilterContent isShow={show}>
 				<h6>Búsqueda avanzada</h6>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de pedidos - {{ date }}</title>
+    <style>
+        .header{
+           margin-bottom: 30px;
+        }
+       .logo{
+           width: 120px;
+       } 
+       .title{
+           font-size: x-large;
+       }
+       .table-content {
+           border: 1px solid rgb(230, 230, 230);
+       }
+       .table-content thead tr{
+           padding: 5px 13px;
+       }
+       .table-content tbody tr{
+           padding: 10px 12px;
+       }
+       .text-center{
+           text-align: center;
+       }
+       .text-left{
+           text-align: left;
+       }
+       .text-right{
+           text-align: right;
+       }
+       .text-muted{
+           color:rgb(75, 75, 75);
+       }
+       .font-medium{
+            font-weight: 500;
+       }
+
+       .driver{
+            font-size: 12px;
+       }
+       .tracking-code{
+           color:rgb(75, 75, 75);
+       }
+       p{
+           margin: 0;
+           padding: 0;
+           font-size: 11px;
+       }
+    </style>
+</head>
+<body>
+    <table class="header">
+        <tr>
+            <td>
+                <img src="{{ logo }}" class="logo" />
+            </td>
+            <td>
+                <h2 class="title text-center">Lista de pedidos</h2>
+            </td>
+            <td>
+                <p class="text-right">{{ date }}</p>
+            </td>
+        </tr>
+    </table>
+    <table class="table-content">
+        <thead>
+            <tr>
+                <th>Detalle del pedido</th>
+                <th>Dirección de entrega</th>
+                <th>¿Quién te atenderá? </th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detail in orders %}
+            <tr>
+                <td>
+                    <p class="tracking-code">{{ detail.get_tracking_code_text }}</p>
+                    <p class="driver">
+                        {{ detail.client.full_name }}
+                    </p>
+                    <p class="text-muted">Fecha: {{ detail.created_at }} </p>
+                </td>
+                <td>
+                    <p class="driver">{{ detail.address_destiny.address }}</p>
+                    <p class="text-muted">
+                        {{ detail.address_destiny.address_city }}
+                    </p>
+                </td>
+                <td>
+                    <p class="driver">{{ detail.address_destiny.full_name }}</p>
+                    <p class="text-muted">Celular: {{ detail.address_destiny.cell_phone }}</p>
+                </td>
+                <td style="width:10%;" class="text-right">
+                    <p>S/ {{ detail.price_rate }}</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -52,7 +52,7 @@ const OrderList: React.FC = () => {
   return (
     <>
       <FilterStatus status={status} onStatus={filterByStatus} />
-      <FilterAdvanced onSubmitForm={onSubmit} />
+      <FilterAdvanced onSubmitForm={onSubmit} status={status} />
       { isFetching 
         ?  <div>Cargando...</div>
         : (<div className="mb-10 order-list-grid">
@@ -87,7 +87,7 @@ const OrderList: React.FC = () => {
   );
 }
 
-export default OrderList;
+export default React.memo(OrderList);
 
 const container = document.getElementById("orders");
 render(
