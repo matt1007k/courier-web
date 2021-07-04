@@ -1,7 +1,7 @@
-from io import BytesIO, StringIO
+from io import BytesIO
+import pandas as pd
 import json
 import ast
-import os
 from settings.models import Setting
 import threading
 from datetime import datetime
@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from details.paginations import LargeResultsSetPagination
 from details.serializers import UnAssignOrignAddressSerializer
-from django.http.response import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.serializers import serialize
 from rest_framework.generics import ListAPIView, get_object_or_404
 from orders.mails import Mail
@@ -569,7 +569,7 @@ class ReportOrdersPDFView(View):
             date_now = datetime.now().strftime("%d-%m-%Y")
 
             context={
-                'filename': 'reporte-ordenes-{}'.format(date_now),
+                'filename': 'reporte-ordenes-pdf-{}'.format(date_now),
                 'date': date_now,
                 'logo': 'img/logo.png',
                 'ui': 'img/report/ui-rotulado.png',
@@ -594,127 +594,108 @@ class ReportOrdersPDFView(View):
         return HttpResponseRedirect(reverse_lazy('orders:index'))
 
 class ExportOrdersExcelView(View):
-    pass
-    # def query(self):
-    #     return self.request.GET.get('q')
+    def query(self):
+        return self.request.GET.get('q')
 
-    # def query_date(self):
-    #     return self.request.GET.get('date')
+    def query_date(self):
+        return self.request.GET.get('date')
 
-    # def query_status(self):
-    #     return self.request.GET.get('status')
+    def query_status(self):
+        return self.request.GET.get('status')
 
-    # def query_origin(self):
-    #     return self.request.GET.get('origin')
+    def query_origin(self):
+        return self.request.GET.get('origin')
 
-    # def query_destiny(self):
-    #     return self.request.GET.get('destiny')
+    def query_destiny(self):
+        return self.request.GET.get('destiny')
 
-    # def get(self, request, *args, **kwargs):
-    #     # try:
-    #     date_now = datetime.now().strftime("%d-%m-%Y")
-    #     filename = 'reporte-ordenes-{}'.format(date_now),
+    def get(self, request, *args, **kwargs):
+        date_now = datetime.now().strftime("%d-%m-%Y")
+        filename = 'reporte-ordenes-excel-{}'.format(date_now),
+        headers = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio S/']
+        name_sheet = 'Ordenes'
 
-    #     response = HttpResponse(content_type='application/vnd.ms-excel')
-    #     # response['Content-Disposition'] = 'attachment; filename={}.xls'.format(filename)
+        qs = Detail.objects.search_detail_and_client(query).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_by_date(self.query_date())
+        dict_qs = [{ 'tracking_code': detail.tracking_code, 
+                    'client': detail.client.full_name(),
+                    'created_at': detail.get_created_at_format(),
+                    'address_destiny': detail.address_destiny.address_complete(),
+                    'address_client': detail.address_destiny.full_name,
+                    'address_cell_phone': detail.address_destiny.cell_phone,
+                    'price_rate': detail.price_rate
+                } for detail in qs]
+        df = pd.DataFrame(dict_qs)
+        with BytesIO() as b:
+            # Use the StringIO object as the filehandle.
+            writer = pd.ExcelWriter(b, engine='xlsxwriter')
+            df.to_excel(writer, sheet_name=name_sheet, index=False)
+            # Get the xlsxwriter workbook and worksheet objects.
+            workbook  = writer.book
+            worksheet = writer.sheets[name_sheet]
 
-    #     wb = xlwt.Workbook(encoding='utf-8')
-    #     ws = wb.add_sheet('Ordenes')
-    #     row_num = 0
-    #     font_style = xlwt.XFStyle()
-    #     font_style.font.bold = True
-
-    #     headers = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio']
-    #     for col_num in range(len(headers)):
-    #         ws.write(row_num, col_num, headers[col_num], font_style)
-
-    #     font_style = xlwt.XFStyle()
-
-    #     columns = ['tracking_code', 'client__first_name', 'created_at', 'address_destiny__address', 'address_destiny__full_name', 'address_destiny__cell_phone', 'price_rate']
-    #     # rows = Detail.objects.search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_by_date(self.query_date())
-    #     rows = Detail.objects.all().order_by('-id')
-
-    #     for detail in rows:
-    #         row_num += 1
-    #         ws.write(row_num, 0, detail.tracking_code, font_style)
-    #         ws.write(row_num, 1, detail.client.full_name(), font_style)
-    #         ws.write(row_num, 2, detail.created_at_localtime_localize(), font_style)
-    #         ws.write(row_num, 3, detail.address_destiny.address_complete(), font_style)
-    #         ws.write(row_num, 4, detail.address_destiny.full_name, font_style)
-    #         ws.write(row_num, 5, detail.address_destiny.cell_phone, font_style)
-    #         ws.write(row_num, 6, detail.price_rate, font_style)
-
-    #     # output = StringIO()
-    #     output = BytesIO()
-    #     wb.save(output)
-
-    #     output.seek(0)
-    #     response["Content-Disposition"] = "attachment;filename*=utf-8''{}".format(filename)
-
-    #     response.write(output.getValue())
-
-            # for i, h in enumerate(headers):
-            #     ws.write(0, i, h, font_style)
-            # cols = 1
-            # for query in rows.values(*columns):
-            #     for i, k in enumerate(columns):
-            #         v = query.get(k)
-            #         if isinstance(v, datetime):
-            #             v = v.strftime('%Y-%m-%d %H:%M:%S')
-            #         ws.write(cols, i, v)
-            #     cols += 1
-            # wb.save(filename)
-            # response = FileResponse(file_iterator(filename))
-            # response['Content-Type'] = 'application/vnd.ms-excel'
-            # response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
-
-            # wb.save(response)
-        # wb.save(response)
-        # return response
-
-        # except Exception as e:
-        #     return e
-
+            header_format = workbook.add_format({
+                'bold': True,
+                'text_wrap': True,
+                'valign': 'top',
+                'fg_color': '#D7E4BC',
+                'border': 1})
+            for col_num, value in enumerate(headers):
+                worksheet.write(0, col_num, value, header_format)
+            writer.save()
+            # Set up the Http response.
+            response = HttpResponse(
+                b.getvalue(),
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % filename
+            return response
 
 
 def export_orders_excel_view(request):
-    return HttpResponse({
-        'status': True
-    })
-    # query = request.GET.get('q')
-    # query_date = request.GET.get('date')
-    # query_status = request.GET.get('status')
-    # query_origin = request.GET.get('origin')
-    # query_destiny = request.GET.get('destiny')
+    query = request.GET.get('q')
+    query_date = request.GET.get('date')
+    query_status = request.GET.get('status')
+    query_origin = request.GET.get('origin')
+    query_destiny = request.GET.get('destiny')
+    
+    date_now = datetime.now().strftime("%d-%m-%Y")
+    filename = 'reporte-ordenes-excel-{}'.format(date_now),
+    headers = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio S/']
+    name_sheet = 'Ordenes'
 
-    # date_now = datetime.now().strftime("%d-%m-%Y")
-    # filename = 'reporte-ordenes-{}'.format(date_now),
+    qs = Detail.objects.search_detail_and_client(query).search_by_address_origin(query_origin).search_by_address_delivery(query_destiny).search_by_status(query_status).search_by_date(query_date)
+    dict_qs = [{ 'tracking_code': detail.tracking_code, 
+                'client': detail.client.full_name(),
+                'created_at': detail.get_created_at_format(),
+                'address_destiny': detail.address_destiny.address_complete(),
+                'address_client': detail.address_destiny.full_name,
+                'address_cell_phone': detail.address_destiny.cell_phone,
+                'price_rate': detail.price_rate
+            } for detail in qs]
+    df = pd.DataFrame(dict_qs)
+    with BytesIO() as b:
+        # Use the StringIO object as the filehandle.
+        writer = pd.ExcelWriter(b, engine='xlsxwriter')
+        df.to_excel(writer, sheet_name=name_sheet, index=False)
+        # Get the xlsxwriter workbook and worksheet objects.
+        workbook  = writer.book
+        worksheet = writer.sheets[name_sheet]
 
-    # response = HttpResponse(content_type='application/vnd.ms-excel')
-    # response['Content-Disposition'] = 'attachment; filename={}.xls'.format(filename)
-
-    # wb = xlwt.Workbook(encoding='utf-8')
-    # ws = wb.add_sheet(u'Ordenes')
-    # row_num = 0
-    # font_style = xlwt.XFStyle()
-    # font_style.font.bold = True
-
-    # columns = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio']
-    # for col_num in range(len(columns)):
-    #     ws.write(row_num, col_num, columns[col_num], font_style)
-
-    # font_style = xlwt.XFStyle()
-
-    # rows = Detail.objects.search_detail_and_client(query).search_by_address_origin(query_origin).search_by_address_delivery(query_destiny).search_by_status(query_status).search_by_date(query_date).values_list('tracking_code', 'client__first_name', 'created_at', 'address_destiny__address', 'address_destiny__full_name', 'address_destiny__cell_phone', str('price_rate'))
-
-    # for row in rows:
-    #     row_num += 1
-
-    #     for col_num in range(len(row)):
-    #         ws.write(row_num, col_num, str(row[col_num]), font_style)
-
-    # wb.save(response)
-    # return response
-
+        header_format = workbook.add_format({
+            'bold': True,
+            'text_wrap': True,
+            'valign': 'top',
+            'fg_color': '#D7E4BC',
+            'border': 1})
+        for col_num, value in enumerate(headers):
+            worksheet.write(0, col_num, value, header_format)
+        writer.save()
+        # Set up the Http response.
+        response = HttpResponse(
+            b.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % filename
+        return response
 
 
