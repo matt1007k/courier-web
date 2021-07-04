@@ -674,11 +674,11 @@ def export_orders_excel_view(request):
             } for detail in qs]
     df = pd.DataFrame(dict_qs)
     with BytesIO() as b:
-        # Use the StringIO object as the filehandle.
+
         writer = pd.ExcelWriter(b, engine='xlsxwriter')
         df.to_excel(writer, sheet_name=name_sheet, index=False)
-        # Get the xlsxwriter workbook and worksheet objects.
         workbook  = writer.book
+        
         worksheet = writer.sheets[name_sheet]
 
         header_format = workbook.add_format({
@@ -687,15 +687,18 @@ def export_orders_excel_view(request):
             'valign': 'top',
             'fg_color': '#D7E4BC',
             'border': 1})
+
         for col_num, value in enumerate(headers):
             worksheet.write(0, col_num, value, header_format)
+
         writer.save()
-        # Set up the Http response.
+
         response = HttpResponse(
             b.getvalue(),
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % filename
+
         return response
 
 
