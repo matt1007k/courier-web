@@ -565,10 +565,13 @@ class ReportOrdersPDFView(View):
     def query_destiny(self):
         return self.request.GET.get('destiny')
 
+    def query_type_ticket(self):
+        return self.request.GET.get('type_ticket')
+
     def get(self, request, *args, **kwargs):
         try:
             template_name = 'orders/report/order-list.html'
-            orders = Detail.objects.exclude(tracking_code=None).search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to())
+            orders = Detail.objects.exclude(tracking_code=None).search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to()).search_type_ticket(self.query_type_ticket())
             date_now = datetime.now().strftime("%d-%m-%Y")
 
             context={
@@ -661,13 +664,14 @@ def export_orders_excel_view(request):
     query_destiny = request.GET.get('destiny')
     query_date_from = request.GET.get('date_from')
     query_date_to = request.GET.get('date_to')
+    query_type_ticket = request.GET.get('type_ticket')
     
     date_now = datetime.now().strftime("%d-%m-%Y")
     filename = 'reporte-ordenes-excel-{}'.format(date_now),
     headers = ['# Tracking', 'Cliente', 'Fecha', 'Dirección', 'Quien atenderá', 'Celular', 'Precio S/']
     name_sheet = 'Ordenes'
 
-    qs = Detail.objects.exclude(tracking_code=None).search_detail_and_client(query).search_by_address_origin(query_origin).search_by_address_delivery(query_destiny).search_by_status(query_status).search_date_from(query_date_from).search_date_to(query_date_to)
+    qs = Detail.objects.exclude(tracking_code=None).search_detail_and_client(query).search_by_address_origin(query_origin).search_by_address_delivery(query_destiny).search_by_status(query_status).search_date_from(query_date_from).search_date_to(query_date_to).search_type_ticket(query_type_ticket)
     dict_qs = [{ 'tracking_code': detail.tracking_code, 
                 'client': detail.client.full_name(),
                 'created_at': detail.get_created_at_format(),
