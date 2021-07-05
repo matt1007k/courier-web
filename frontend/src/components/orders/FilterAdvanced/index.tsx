@@ -3,13 +3,14 @@ import { FilterWrapper, FilterHeader, FilterContent, FilterForm } from './styles
 
 import { AuthContext } from '../../../context/AuthContext';
 import { getPermissions } from '../../../api/authApi'
-import { can } from '../../../utils/authorization';
 
 export interface FilterFormState{
 	q: string;
 	origin: string;
 	destiny: string;
-	date: string;
+	date_from: string;
+	date_to: string;
+	type_ticket: string;
 }
 
 interface FilterAdvancedProps {
@@ -23,7 +24,9 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status })
 	const [q, setQ] = useState<string>('');
 	const [origin, setOrigin] = useState<string>('');
 	const [destiny, setDestiny] = useState<string>('');
-	const [date, setDate] = useState<string>('');
+	const [date_from, setDateFrom] = useState<string>('');
+	const [date_to, setDateTo] = useState<string>('');
+	const [type_ticket, setTypeTicket] = useState<string>('');
     const { state, dispatch } = useContext(AuthContext);
 
     useEffect(() => {
@@ -32,15 +35,17 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status })
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		onSubmitForm({q, origin, destiny, date});
+		onSubmitForm({q, origin, destiny, date_from, date_to, type_ticket});
 	};
 
 	const setClean = () => {
 		setQ('');
 		setOrigin('');
 		setDestiny('');
-		setDate('');
-		onSubmitForm({q: '', origin: '', destiny: '', date: ''});
+		setDateFrom('');
+		setDateTo('');
+		setTypeTicket('');
+		onSubmitForm({q: '', origin: '', destiny: '', date_from: '', date_to: '', type_ticket: ''});
 	}
 
 	const getParamsFilter = () => {
@@ -49,7 +54,9 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status })
 			q,
 			origin,
 			destiny,
-			date,
+			date_from,
+			date_to,
+			type_ticket
 		})).toString();
 	}
 	
@@ -97,6 +104,7 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status })
 						<input
 							type='search'
 							name='q'
+							id='search'
 							placeholder="Buscar por # seguimiento o datos del cliente"
 							className="input"
 							style={{ padding: '14px' }} 
@@ -108,6 +116,7 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status })
 						<input 
 							type='search' 
 							name='origin' 
+							id='origin' 
 							placeholder="Buscar por distrito, datos de la persona"
 							className="input" 
 							style={{ padding: '14px' }} 
@@ -119,6 +128,7 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status })
 						<input 
 							type='search' 
 							name='destiny' 
+							id='destiny' 
 							placeholder="Buscar por distrito, datos de la persona"
 							className="input" 
 							style={{ padding: '14px' }} 
@@ -126,18 +136,47 @@ const FilterAdvanced: React.FC<FilterAdvancedProps> = ({ onSubmitForm, status })
 							value={destiny} />
 					</div>
 					<div className="form-group">
-						<label htmlFor="date">Fecha de registro</label>
+						<label htmlFor="type_ticket">Comprobante electrónico</label>
+						<select 
+							name='type_ticket' 
+							id='type_ticket' 
+							className="input" 
+							style={{ padding: '14px' }} 
+							onChange={(e) => setTypeTicket(e.target.value)} 
+							value={type_ticket}>
+								<option value="">--- Seleccionar ---</option>
+								<option value="BOLETA">BOLETA</option>
+								<option value="FACTURA">FACTURA</option>
+						</select>
+					</div>
+					<div className="form-group">
+						<label htmlFor="date_from">Fecha de</label>
 						<input 
 							type="date" 
 							className="input" 
-							name="date" 
-							id="date" 
+							name="date_from" 
+							id="date_from" 
 							style={{ padding: '11px' }} 
-							onChange={(e) => setDate(e.target.value)} 
-							value={date} />
+							onChange={(e) => setDateFrom(e.target.value)} 
+							value={date_from} />
 					</div>
-					<button className="btn btn-primary btn-small" type="submit">Buscar</button>
-					<button className="btn btn-default btn-small" type="button" onClick={setClean}>Limpiar campos</button>
+					<div className="form-group">
+						<label htmlFor="date_to">Fecha hasta</label>
+						<input 
+							type="date" 
+							className="input" 
+							name="date_to" 
+							id="date_to" 
+							style={{ padding: '11px' }} 
+							onChange={(e) => setDateTo(e.target.value)} 
+							value={date_to} />
+					</div>
+					<div style={{ alignSelf: 'center'}}>
+						<button className="btn btn-primary btn-small btn-full" type="submit">Buscar</button>
+					</div>
+					<div style={{ alignSelf: 'center'}}>
+						<button className="btn btn-default btn-small btn-full" type="button" onClick={setClean}>Limpiar campos</button>
+					</div>
 				</FilterForm>
 			</FilterContent>
 		</FilterWrapper>

@@ -20,12 +20,16 @@ from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
 from django.db.models import Q
+from django.db.models import Value
+from django.db.models.functions import Concat
 
 class DetailQuerySet(models.QuerySet):
     def search_detail_and_client(self, query):
         if is_valid_queryparams(query):
-            filters = Q(tracking_code__icontains=query) | Q(client__first_name__icontains=query) | Q(client__last_name__icontains=query) | Q(client__cell_phone__icontains=query)
-            return self.filter(filters)
+            filters = Q(tracking_code__icontains=query) | Q(full_name__icontains=query) | Q(client__cell_phone__icontains=query)
+            return self.annotate(
+                full_name=Concat('client__first_name', Value(' '), 'client__last_name'),
+            ).filter(filters,)
         return self
 
     def search_by_address_delivery(self, query):
@@ -48,6 +52,21 @@ class DetailQuerySet(models.QuerySet):
     def search_by_date(self, query):
         if is_valid_queryparams(query):
             return self.filter(created_at__date=query)
+        return self
+
+    def search_date_from(self, query_date):
+        if is_valid_queryparams(query_date):
+            return self.filter(created_at__gte=query_date)
+        return self
+        
+    def search_date_to(self, query_date):
+        if is_valid_queryparams(query_date):
+            return self.filter(created_at__lt=query_date)
+        return self
+
+    def search_type_ticket(self, query):
+        if is_valid_queryparams(query):
+            return self.filter(order__type_ticket=query)
         return self
 
 class DetailManager(models.Manager):
@@ -245,8 +264,10 @@ class Detail(models.Model):
 class AssignOriginAddressQueryset(models.QuerySet):
     def search_driver(self, query):
         if is_valid_queryparams(query):
-            filters = (Q(driver__dni__icontains=query) | Q(driver__code__icontains=query) | Q(driver__first_name__icontains=query) | Q(driver__last_name__icontains=query))
-            return self.filter(filters)
+            filters = (Q(driver__dni__icontains=query) | Q(driver__code__icontains=query) | Q(full_name__icontains=query))
+            return self.annotate(
+                full_name=Concat('driver__first_name', Value(' '), 'driver__last_name'),
+            ).filter(filters)
         return self
 
     def search_date_from(self, query_date):

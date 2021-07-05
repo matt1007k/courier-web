@@ -18,8 +18,11 @@ class DetailApiListView(APIView):
     def query(self):
         return self.request.GET.get('q')
 
-    def query_date(self):
-        return self.request.GET.get('date')
+    def query_date_from(self):
+        return self.request.GET.get('date_from')
+
+    def query_date_to(self):
+        return self.request.GET.get('date_to')
 
     def query_status(self):
         return self.request.GET.get('status')
@@ -29,6 +32,9 @@ class DetailApiListView(APIView):
 
     def query_destiny(self):
         return self.request.GET.get('destiny')
+
+    def query_type_ticket(self):
+        return self.request.GET.get('type_ticket')
 
     def query_page(self):
         return self.request.GET.get('page', 1)
@@ -44,7 +50,7 @@ class DetailApiListView(APIView):
         else:
             qs = Detail.objects.exclude(tracking_code=None).order_by('-id')
         
-        qs = qs.search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_by_date(self.query_date())
+        qs = qs.search_detail_and_client(self.query()).search_by_address_origin(self.query_origin()).search_by_address_delivery(self.query_destiny()).search_by_status(self.query_status()).search_date_from(self.query_date_from()).search_date_to(self.query_date_to()).search_type_ticket(self.query_type_ticket())
 
         page = int(self.query_page())
         per_page = 10

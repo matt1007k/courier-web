@@ -23,7 +23,9 @@ const OrderList: React.FC = () => {
     q: '',
     origin: '',
     destiny: '',
-    date: ''
+    date_from: '', 
+    date_to: '',
+    type_ticket: '',
   }) => {
     setFetching(true);
      get('/details/api/', { page, status, ...form })
