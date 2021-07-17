@@ -28,7 +28,7 @@ def dashboard(request):
 def budget_view(request):
     template_name = 'service_prices/budgets.html'
     total_payment = sum([payment.total for payment in DriverPayment.objects.all()])
-    total_entry = sum([order.total for order in Order.objects.all()])
+    total_entry = sum([order.total for order in Order.objects.exclude(payed_image=None)])
     total = total_entry - total_payment
     percent = round(total_payment / total_entry, 2) * 100
     entries = Detail.objects.all().order_by('-id')[:5]
