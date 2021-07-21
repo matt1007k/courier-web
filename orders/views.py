@@ -272,8 +272,9 @@ def create_order_view(request):
 
         if not get_time_now() >= setting.time_limit_to and (get_time_now() <= setting.time_limit_from or get_time_now() >= setting.time_limit_from):
             setting.cannot_create_order()
-            messages.error(request, setting.message_origin)
-            return redirect('orders:index')
+            if setting.can_you_create_orders:
+                messages.error(request, setting.message_origin)
+                return redirect('orders:index')
         else:
             setting.can_create_order()
 
