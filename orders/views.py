@@ -275,6 +275,9 @@ def create_order_view(request):
             if setting.can_you_create_orders:
                 messages.error(request, setting.message_origin)
                 return redirect('orders:index')
+        elif setting.can_you_create_orders:
+            messages.error(request, setting.message_origin)
+            return redirect('orders:index')
         else:
             setting.can_create_order()
 
