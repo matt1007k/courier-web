@@ -17,7 +17,7 @@ class Setting(models.Model):
 		self.save()
 
 	def can_create_order(self):
-		self.can_you_create_orders = True
+		self.can_you_create_orders = False
 		self.save()
 
 
