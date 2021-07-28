@@ -107,10 +107,12 @@ def origin_map_view(request, pk):
     detail = Detail.objects.get(pk=pk) 
     if not detail.is_delivered and request.user.is_driver:
         detail.on_routed()
-        TrackingOrder.objects.create(
-            detail=detail,
-            location='El motorizado está en camino de recojer tu paquete'
-        )
+        text = 'El motorizado está en camino de recojer tu paquete'
+        if not TrackingOrder.objects.filter(detail=detail).filter(location=text).exists():
+            TrackingOrder.objects.create(
+                detail=detail,
+                location=text
+            )
 
     if detail.is_assign_origin:
         driver = AssignOriginAddress.objects.filter(detail=detail).first().driver
@@ -130,10 +132,12 @@ def destiny_map_view(request, pk):
     detail = Detail.objects.get(pk=pk) 
     if not detail.is_delivered and request.user.is_driver:
         detail.on_routed()
-        TrackingOrder.objects.create(
-            detail=detail,
-            location='El motorizado está en camino de entregar tu pedido. (Nos comunicaremos para confirmar la entrega)'
-        )
+        text = 'El motorizado está en camino de entregar tu pedido. (Nos comunicaremos para confirmar la entrega)'
+        if not TrackingOrder.objects.filter(detail=detail).filter(location=text).exists():
+            TrackingOrder.objects.create(
+                detail=detail,
+                location=text
+            )
     if detail.is_assign_delivery:
         driver = AssignDeliveryAddress.objects.filter(detail=detail).first().driver
     else:

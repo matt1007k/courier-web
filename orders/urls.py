@@ -4,7 +4,6 @@ from .views import (
     AssignDeliveryAddressListView, 
     DetailOrderView, 
     ExportOrdersExcelView, 
-    OrderListView, 
     AssignOriginAddressListView, 
     ReportOrdersPDFView, 
     ReportRotuladoView, 
@@ -19,7 +18,8 @@ from .views import (
     cancel_order_view, 
     create_order_view,
     export_orders_excel_view, 
-    get_client_view, 
+    get_client_view,
+    index, 
     payment_success_view, 
     payment_view, 
     return_unassign_delivery_view, 
@@ -31,7 +31,7 @@ from details.views import create_detail_view, update_detail_view
 app_name = 'orders'
 
 urlpatterns = [
-    path('', OrderListView.as_view(), name='index'),
+    path('', index, name='index'),
     path('get-client/', get_client_view),
     path('origins/', AssignOriginAddressListView.as_view(), name='origins'),
     path('origins/report/', ReporteAssignOriginAddressView.as_view(), name='origins-report'),

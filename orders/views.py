@@ -30,66 +30,14 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .utils import delete_order, get_or_create_order
-from pages.utils import is_valid_queryparams
 from details.utils import get_generate_tracking_code, get_time_now, time_in_range
 from .models import Order
 
-
-class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    permission_required = 'orders.view_order'
+@login_required()
+@permission_required('orders.view_order', raise_exception=True)
+def index(request):
     template_name = 'orders/index.html'
-    paginate_by = 10
-    model = Detail
-
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Pedidos'
-        context['statuses'] = Detail.PackageStatus
-        context['status'] = self.query_status() or None
-        self.request.session['order_id'] = None
-        return context
-
-    def query(self):
-        return self.request.GET.get('q')
-
-    def query_date(self):
-        return self.request.GET.get('date')
-
-    def query_status(self):
-        return self.request.GET.get('status')
-
-    def query_origin(self):
-        return self.request.GET.get('origin')
-
-    def query_destiny(self):
-        return self.request.GET.get('destiny')
-
-    def get_queryset(self):
-        if self.request.user.is_client:
-            object_list = self.request.user.client.detail_set.exclude(
-                tracking_code=None).order_by('-id')
-        elif self.request.user.is_driver:
-            clients = self.request.user.driver.get_clients()
-            object_list = Detail.objects.none()
-            for client in clients:
-                object_list = object_list | client.detail_set.exclude(
-                    tracking_code=None).order_by('-id')
-        else:
-            object_list = self.model.objects.exclude(
-                tracking_code=None).order_by('-id')
-
-        if is_valid_queryparams(self.query_status()):
-            object_list = object_list.filter(status=self.query_status())
-
-        object_list = object_list.search_detail_and_client(self.query()).search_by_address_origin(
-            self.query_origin()).search_by_address_delivery(self.query_destiny())
-
-        if is_valid_queryparams(self.query_date()):
-            object_list = object_list.filter(
-                created_at__date=self.query_date())
-
-        return object_list
-
+    return render(request, template_name, context={})
 
 class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'details.view_assignoriginaddress'
