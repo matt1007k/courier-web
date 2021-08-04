@@ -37,7 +37,10 @@ from .models import Order
 @permission_required('orders.view_order', raise_exception=True)
 def index(request):
     template_name = 'orders/index.html'
-    return render(request, template_name, context={})
+    title = "Pedidos"
+    return render(request, template_name, context={
+        'title': title
+    })
 
 class AssignOriginAddressListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'details.view_assignoriginaddress'

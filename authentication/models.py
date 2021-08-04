@@ -26,3 +26,10 @@ class User(AbstractUser):
     def set_client(self):
         client_group = Group.objects.get(name='Cliente')
         self.groups.add(client_group)
+
+    def full_name(self):
+        return "{} {}".format(self.first_name, self.last_name)
+
+    def editAvatar(self, avatarFile):
+        self.avatar = avatarFile
+        self.save()

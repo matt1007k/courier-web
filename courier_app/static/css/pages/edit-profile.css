@@ -1,0 +1,34 @@
+.wrapper__profile {
+  width: 100%;
+  margin: 3rem auto;
+}
+.profile__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 5rem !important;
+}
+.wrapper__avatar {
+  display: flex;
+  align-items: center;
+}
+.form__avatar {
+  margin-left: 10px;
+}
+#input-upload {
+  display: none;
+}
+@media (min-width: 768px) {
+  .wrapper__profile {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .wrapper__profile {
+    width: 80%;
+  }
+  .profile__row {
+    grid-template-columns: 40% auto;
+  }
+}

@@ -1,0 +1,63 @@
+{% extends "layouts/admin.html" %} 
+{% block title %}
+<title>Cuy Click Perú - {{ title }}</title>
+{% endblock title %}
+{% block content_head %}
+<div class="content-head">
+  <div class="left">
+    <a href="{{ request.GET.next }}" class="btn btn-link btn-small text-primary">
+      <i class='bx bx-left-arrow-alt bx-sm'></i>
+    </a>
+    <h4>{{ title }}</h4>
+  </div>
+</div>
+{% endblock content_head %}
+{% block content %}
+<div class="wrapper__profile">
+
+    <div class="profile__row">
+      <div class="profile__col">
+        <h5>Editar avatar</h5>
+        <p>Cambia tu avatar con una imagen que te guste.</p>
+      </div>
+      <div class="profile__col" id="upload-avatar">
+      </div>
+    </div>
+
+    <div class="profile__row">
+      <div class="profile__col">
+        <h5>Editar contraseña</h5>
+        <p>Cambia su contraseña para mayor seguridad.</p>
+      </div>
+      <div class="profile__col">
+        <form>
+          <div class="form-group-password">
+            <label for="new_password">Nueva contraseña</label>
+            <input type="password" id="new_password" name="new_password" class="input" required="">
+            <div id="show-password">mostrar</div>
+          </div>
+          <div class="form-group-password">
+            <label for="confirm_password">Repetir contraseña</label>
+            <input type="password" id="confirm_password" name="passwordpassword" class="input" required="">
+            <div id="show-password">mostrar</div>
+          </div>
+          <div class="actions right">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="profile__row">
+      <div class="profile__col">
+        <h5>Editar datos</h5>
+        <p>Cambia mi datos de mi cuenta.</p>
+      </div>
+      <div class="profile__col">
+        <p>Para editar sus datos es necesario comunicarse con el administrador, para  que le habilite la opcion de editar datos.</p>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock content %}

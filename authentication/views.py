@@ -14,8 +14,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser
 
-from .serializers import PermissionSerializer
+from .serializers import PermissionSerializer, UserSerializer
 
 from django.utils.encoding import force_text
 from .utils import generate_token
@@ -66,6 +67,15 @@ def register_view(request):
         
     return render(request, 'auth/register.html', context={
         'form': form
+    })
+
+@login_required()
+def edit_profile_view(request):
+    title = 'Editar perfil'
+    template_name = 'auth/edit-profile.html'
+
+    return render(request, template_name, context={
+        'title': title
     })
 
 class CompleteInfoClientView(LoginRequiredMixin, CreateView):
@@ -175,11 +185,13 @@ class PermissionAuthListApiView(APIView):
             'is_driver': auth.is_driver,     
             'is_client': auth.is_client,     
         }
+        userSr = UserSerializer(auth)
         try:
             permission_group = auth.groups.first().permissions.all()
             sr = PermissionSerializer(permission_group | permission_auth, many=True)
 
             return Response({
+                'user': userSr.data,
                 'permissions': sr.data,
                 'role': role
             })
@@ -188,6 +200,20 @@ class PermissionAuthListApiView(APIView):
 
         sr = PermissionSerializer(permission_auth, many=True)
         return Response({ 
+            'user': userSr.data,
             'permissions': sr.data,
             'role': role
         })
+
+class AvatarUploadView(APIView):
+    parser_classes = [MultiPartParser]
+
+    def put(self, request, username, format=None):
+        file_obj = request.data['avatar']
+        user = User.objects.filter(username=username).first()
+        user.editAvatar(file_obj)
+        # ...
+        # do some stuff with uploaded file
+        # ...
+        userSr = UserSerializer(user)
+        return Response(userSr.data, status=200)
