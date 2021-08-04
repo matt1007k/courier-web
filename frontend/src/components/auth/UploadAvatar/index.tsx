@@ -1,42 +1,17 @@
-import React, {
-  ChangeEventHandler,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { render } from "react-dom";
 import { AuthContextProvider, AuthContext } from "../../../context/AuthContext";
 import { getPermissions } from "../../../api/authApi";
+import ProgressLinear from "../../status/ProgressLinear";
+import getCookie from "../../../utils/getCookie";
 
 const typesValid = ["image/png", "image/jpeg", "image/jpg"];
-function getCookie(name: string) {
-  // Split cookie string and get all individual name=value pairs in an array
-  var cookieArr = document.cookie.split(";");
-
-  // Loop through the array elements
-  for (var i = 0; i < cookieArr.length; i++) {
-    var cookiePair = cookieArr[i].split("=");
-
-    /* Removing whitespace at the beginning of the cookie name
-        and compare it with the given string */
-    if (name == cookiePair[0].trim()) {
-      // Decode the cookie value and return
-      return decodeURIComponent(cookiePair[1]);
-    }
-  }
-
-  // Return null if not found
-  return null;
-}
 
 const UploadAvatar: React.FC = () => {
   const inputUploadRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
-    "/static/img/avatar.png"
-  );
+  const [percentage, setPercentaje] = useState<number>(0);
 
   const { state, dispatch } = useContext(AuthContext);
   useEffect(() => {
@@ -54,6 +29,7 @@ const UploadAvatar: React.FC = () => {
         if (!typesValid.includes(file.type)) {
           setMessage("El archivo no es una imagen.");
           setIsError(true);
+          setPercentaje(0);
           return;
         }
         setIsError(false);
@@ -61,22 +37,29 @@ const UploadAvatar: React.FC = () => {
         const formData = new FormData();
         formData.append("avatar", file);
 
-        const headers = new Headers();
-        headers.append("X-CSRFToken", getCookie("csrftoken") ?? "");
+        const url = `/auth/avatar-upload/${state.user?.username}/`;
 
-        fetch(`/auth/avatar-upload/${state.user?.username}/`, {
-          method: "PUT",
-          body: formData,
-          headers,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            getPermissions(dispatch);
-            setMessage("Avatar actualizado con éxito.");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        const res = new XMLHttpRequest();
+        res.open("PUT", url);
+        res.setRequestHeader("X-CSRFToken", getCookie("csrftoken") ?? "");
+
+        res.onreadystatechange = () => {
+          if (res.readyState === XMLHttpRequest.DONE) {
+            const status = res.status;
+            if (status === 0 || (status >= 200 && status < 400)) {
+              getPermissions(dispatch);
+              setMessage("Avatar actualizado con éxito.");
+            }
+          }
+        };
+
+        res.upload.addEventListener("progress", ({ loaded, total }) => {
+          setPercentaje(Math.floor(loaded / total) * 100);
+
+          setTimeout(() => setPercentaje(0), 3000);
+        });
+
+        res.send(formData);
       }
     }
   };
@@ -106,6 +89,11 @@ const UploadAvatar: React.FC = () => {
           />
         </div>
       </div>
+      {percentage > 4 && (
+        <div className="mt-2">
+          <ProgressLinear percentage={percentage} />
+        </div>
+      )}
       {message && (
         <div className={`alert alert-${isError ? "danger" : "success"} mt-2`}>
           {message}
