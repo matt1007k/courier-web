@@ -1,4 +1,7 @@
 import threading
+
+from django.utils.translation import gettext as _
+from django.core.exceptions import ValidationError
 from orders.mails import Mail
 from typing import Any, Dict
 from django.core.mail import message
@@ -174,6 +177,31 @@ def activate_user(request, uidb64, token):
     template_name = 'auth/activate-failed.html'
 
     return render(request, template_name, context={})
+
+@login_required()
+def profile_view(request):
+    template_name = 'auth/profile.html'
+    title = 'Perfil del usuario'
+    return render(request, template_name, context={
+        'title': title
+    })
+
+
+@login_required()
+def change_password_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password != confirm_password:
+            messages.error(request, 'La contraseña no son las mismas.')
+            return redirect('auth:edit-profile')
+        else:
+            user = User.objects.get(username=username)
+            user.change_password(new_password)
+            messages.success(request, 'La contraseña ha sido cambiada. Por favor, ingrese con su nueva contraseña.')
+            return redirect('auth:edit-profile')
 
 class PermissionAuthListApiView(APIView):
     permission_classes = [IsAuthenticated,]

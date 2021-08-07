@@ -109,7 +109,7 @@ const containerUploadAvatar = document.getElementById("upload-avatar");
 if (containerUploadAvatar) {
   render(
     <AuthContextProvider>
-      <UploadAvatar />,
+      <UploadAvatar />
     </AuthContextProvider>,
     containerUploadAvatar
   );

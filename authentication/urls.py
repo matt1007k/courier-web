@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import AvatarUploadView, CompleteInfoClientView, PermissionAuthListApiView, activate_user, edit_profile_view, login_view, logout_view, register_view, CompleteAddressClientView, user_create_client_view, user_create_view
+from .views import AvatarUploadView, CompleteInfoClientView, PermissionAuthListApiView, activate_user, change_password_view, edit_profile_view, login_view, logout_view, register_view, CompleteAddressClientView, user_create_client_view, user_create_view
 
 app_name = 'auth'
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path('register/complete-address/', CompleteAddressClientView.as_view(), name='complete-address'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('change-password/', change_password_view, name='change-password'),
     path('avatar-upload/<username>/', AvatarUploadView.as_view(), name='avatar-upload'),
     # path('create/', UserCreateView.as_view(), name='create')
     path('edit-profile/', edit_profile_view, name='edit-profile'),

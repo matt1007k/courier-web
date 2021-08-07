@@ -30,15 +30,17 @@
         <p>Cambia su contraseña para mayor seguridad.</p>
       </div>
       <div class="profile__col">
-        <form>
+        <form action="{% url 'auth:change-password' %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="username" value="{{ request.user.username }}">
           <div class="form-group-password">
             <label for="new_password">Nueva contraseña</label>
-            <input type="password" id="new_password" name="new_password" class="input" required="">
+            <input type="password" id="new_password" name="new_password" class="input" required="" value="{{ request.POST.new_password }}">
             <div id="show-password">mostrar</div>
           </div>
           <div class="form-group-password">
             <label for="confirm_password">Repetir contraseña</label>
-            <input type="password" id="confirm_password" name="passwordpassword" class="input" required="">
+            <input type="password" id="confirm_password" name="confirm_password" class="input" required="" value="{{ request.POST.confirm_password }}">
             <div id="show-password">mostrar</div>
           </div>
           <div class="actions right">
@@ -48,7 +50,7 @@
       </div>
     </div>
 
-    <div class="profile__row">
+    <!-- <div class="profile__row">
       <div class="profile__col">
         <h5>Editar datos</h5>
         <p>Cambia mi datos de mi cuenta.</p>
@@ -56,7 +58,7 @@
       <div class="profile__col">
         <p>Para editar sus datos es necesario comunicarse con el administrador, para  que le habilite la opcion de editar datos.</p>
       </div>
-    </div>
+    </div> -->
 
   </div>
 

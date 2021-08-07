@@ -33,3 +33,7 @@ class User(AbstractUser):
     def editAvatar(self, avatarFile):
         self.avatar = avatarFile
         self.save()
+
+    def change_password(self, new_password):
+        self.set_password(new_password)
+        self.save()
